@@ -10,6 +10,7 @@
                 Maximum="3"
                 Increment="1"
                 />
+          
         </StackLayout>
   </ContentView.Content>
 </ContentView>
