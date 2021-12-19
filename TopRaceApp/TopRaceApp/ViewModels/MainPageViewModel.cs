@@ -15,6 +15,6 @@ namespace TopRaceApp.ViewModels
 {
     class MainPageViewModel:BaseViewModel
     {
-
+        
     }
 }

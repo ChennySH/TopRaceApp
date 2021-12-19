@@ -24,7 +24,7 @@ namespace TopRaceApp
             InitializeComponent();
             this.currentUser = null;
             this.currentPlayer = null;
-            MainPage = new HomePage();
+            MainPage = new StartPage();
 
         }
 

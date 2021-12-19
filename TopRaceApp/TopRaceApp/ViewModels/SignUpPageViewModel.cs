@@ -453,8 +453,8 @@ namespace TopRaceApp.ViewModels
         public bool ValidationAllValues()
         {
             UserNameValidation();
-            FirstNameValidation();
-            LastNameValidation();
+            //FirstNameValidation();
+       //     LastNameValidation();
             EmailValidation();
             PhoneNumberValidation();
             PasswordValidation();
