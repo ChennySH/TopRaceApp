@@ -4,9 +4,15 @@
              x:Class="TopRaceApp.Views.LoginPage">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Label Text="UserName or Email:"></Label>
+            <Entry Placeholder="UserName/Email" Text="{Binding UserNameOrEmail}"/>
+            <Label Text="{Binding UserNameOrEmailErrorMessege}" IsVisible="{Binding UserNameOrEmailErrorMessegeIsVisible}" TextColor="Red"/>
+
+            <Label Text="Password:"/>
+            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}"/>
+            <Label Text="{Binding PasswordErrorMessege}" IsVisible="{Binding PasswordErrorMessegeIsVisible}" TextColor="Red"/>
+
+            <Button Text="Submit" HorizontalOptions="Center" Command="{Binding SubmitCommand}"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace TopRaceApp.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class HomePage : ContentPage
+    public partial class MainPage : ContentPage
     {
-        public HomePage()
+        public MainPage()
         {
             InitializeComponent();
         }

@@ -3,10 +3,45 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="TopRaceApp.Views.SignUpPage">
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="Welcome to Xamarin.Forms!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
+        <ScrollView>
+            <StackLayout>
+
+                <Label Text="User Name: "/>
+                <Entry Placeholder="UserName" Text="{Binding UserName}"/>
+                <Label Text="{Binding UserNameErrorMessege}" IsVisible="{Binding UserNameErrorMessegeIsVisible}" TextColor="Red"/>
+
+          <!--      <Label Text="First Name: "/>
+                <Entry Placeholder="FirstName" Text="{Binding FirstName}"/>
+                <Label Text="{Binding FirstNameErrorMessege}" IsVisible="{Binding FirstNameErrorMessegeIsVisible}" TextColor="Red"/>
+
+                <Label Text="Last Name: "/>
+                <Entry Placeholder="LastName" Text="{Binding LastName}"/>
+                <Label Text="{Binding LastNameErrorMessege}" IsVisible="{Binding LastNameErrorMessegeIsVisible}" TextColor="Red"/>
+-->
+
+                <Label Text="Email: "/>
+                <Entry Placeholder="Email" Text="{Binding Email}"/>
+                <Label Text="{Binding EmailErrorMessege}" IsVisible="{Binding EmailErrorMessegeIsVisible}" TextColor="Red"/>
+
+
+                <Label Text="Password: "/>
+                <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}"/>
+                <Label Text="{Binding PasswordErrorMessege}" IsVisible="{Binding PasswordErrorMessegeIsVisible}" TextColor="Red"/>
+
+
+                <Label Text="Repeat Password: "/>
+                <Entry Placeholder="Repeat Password" Text="{Binding RepeatPassword}" IsPassword="True"/>
+                <Label Text="{Binding RepeatPasswordErrorMessege}" IsVisible="{Binding RepeatPasswordErrorMessegeIsVisible}" TextColor="Red"/>
+
+
+                <Label Text="Phone Number: "/>
+                <Entry Placeholder="Phone Number" Text="{Binding PhoneNumber}"/>
+                <Label Text="{Binding PhoneNumberErrorMessege}" IsVisible="{Binding PhoneNumberErrorMessegeIsVisible}" TextColor="Red"/>
+
+                <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
+
+
+            </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

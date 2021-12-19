@@ -17,13 +17,13 @@ namespace TopRaceApp
         }
 
         //The current logged in user
-        public User CurrentUser { get; set; }
-        public Player CurrentPlayer { get; set; }
+        public User currentUser { get; set; }
+        public Player currentPlayer { get; set; }
         public App()
         {
             InitializeComponent();
-            this.CurrentUser = null;
-            this.CurrentPlayer = null;
+            this.currentUser = null;
+            this.currentPlayer = null;
             MainPage = new HomePage();
 
         }
