@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TopRaceApp.ViewModels;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
@@ -14,6 +15,7 @@ namespace TopRaceApp.Views
     {
         public MainPage()
         {
+            this.BindingContext = new MainPageViewModel();
             InitializeComponent();
         }
     }

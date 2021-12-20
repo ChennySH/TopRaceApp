@@ -13,6 +13,7 @@ namespace TopRaceApp.Models
         }
 
         public int Id { get; set; }
+        public string PlayerName { get; set; }
         public int WinsNumber { get; set; }
         public int LosesNumber { get; set; }
         public int WinStreak { get; set; }

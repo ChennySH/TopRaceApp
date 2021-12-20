@@ -24,8 +24,7 @@ namespace TopRaceApp
             InitializeComponent();
             this.currentUser = null;
             this.currentPlayer = null;
-            MainPage = new StartPage();
-
+            MainPage = new NavigationPage(new StartPage());
         }
 
         protected override void OnStart()
