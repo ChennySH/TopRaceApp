@@ -29,6 +29,7 @@ namespace TopRaceApp.ViewModels
 
         private async void Register()
         {
+
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
