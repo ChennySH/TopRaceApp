@@ -96,6 +96,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private string status;
+        public string Status
+        {
+            get
+            {
+                return status;
+            }
+            set
+            {
+                if(this.status != value)
+                {
+                    this.status = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         #endregion
         public MainPageViewModel()
@@ -105,6 +121,7 @@ namespace TopRaceApp.ViewModels
             this.WinsCount = ((App)App.Current).currentPlayer.WinsNumber;
             this.LosesCount = ((App)App.Current).currentPlayer.LosesNumber;
             this.WinStreak = ((App)App.Current).currentPlayer.WinStreak;
+            this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
         }
     }
 }

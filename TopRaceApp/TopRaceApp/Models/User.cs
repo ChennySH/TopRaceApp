@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
 
-namespace TopRaceApp.Models
+namespace TopRaceServerBL.Models
 {
     public partial class User
     {

@@ -173,7 +173,7 @@ namespace TopRaceApp.Services
             try
             {
                 string emailJson = JsonSerializer.Serialize(email);
-                StringContent emailJsonContent = new StringContent(email, Encoding.UTF8, "application/json");
+                StringContent emailJsonContent = new StringContent(emailJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/IsEmailExist", emailJsonContent);
                 if (response.IsSuccessStatusCode)
                 {
