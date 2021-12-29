@@ -8,6 +8,7 @@ namespace TopRaceApp.Models
     {
         public Player()
         {
+            Games = new List<Game>();
             PlayersInGames = new List<PlayersInGame>();
             Users = new List<User>();
         }
@@ -19,6 +20,7 @@ namespace TopRaceApp.Models
         public int WinStreak { get; set; }
         public string ProfilePic { get; set; }
 
+        public virtual List<Game> Games { get; set; }
         public virtual List<PlayersInGame> PlayersInGames { get; set; }
         public virtual List<User> Users { get; set; }
     }

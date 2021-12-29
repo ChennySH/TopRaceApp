@@ -123,5 +123,10 @@ namespace TopRaceApp.ViewModels
             this.WinStreak = ((App)App.Current).currentPlayer.WinStreak;
             this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
         }
+        public ICommand HostGameCommand { get; set; }
+        public async void HostGame()
+        {
+
+        }
     }
 }
