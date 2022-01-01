@@ -126,7 +126,27 @@ namespace TopRaceApp.ViewModels
         public ICommand HostGameCommand { get; set; }
         public async void HostGame()
         {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            try
+            {
+                Game newGame = new Game
+                {
+                    GameName = $"{((App)App.Current).currentPlayer.PlayerName}'s Game",
+                    IsPrivate = true,
+                    PrivateKey = await proxy.GetPrivateKeyAsync(),
+                    Status = await proxy.GetGameStatusAsync(0),
+                };
+                ChatRoom chatRoom = new ChatRoom();
+                newGame.ChatRoom = chatRoom;
+                newGame.HostPlayer = ((App)App.Current).currentPlayer;
+                ((App)App.Current).currentGame = newGame;
+                
+            }
+            catch
+            {
 
+            }
         }
+
     }
 }
