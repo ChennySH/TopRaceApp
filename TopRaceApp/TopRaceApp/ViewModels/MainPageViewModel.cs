@@ -140,11 +140,11 @@ namespace TopRaceApp.ViewModels
                 newGame.ChatRoom = chatRoom;
                 newGame.HostPlayer = ((App)App.Current).currentPlayer;
                 ((App)App.Current).currentGame = newGame;
-                
+                await proxy.HostGameAsync(newGame);
             }
             catch
             {
-
+                await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
             }
         }
 

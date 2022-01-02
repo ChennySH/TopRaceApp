@@ -220,7 +220,6 @@ namespace TopRaceApp.Services
                 return true;
             }
         }
-    }
         public async Task<GameStatus> GetGameStatusAsync(int statusID)
         {
             try
@@ -276,4 +275,5 @@ namespace TopRaceApp.Services
             }
         }
     }
+        
 }

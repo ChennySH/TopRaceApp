@@ -8,6 +8,7 @@ namespace TopRaceApp.Models
     {
         public Game()
         {
+            MoversInGames = new List<MoversInGame>();
             PlayersInGames = new List<PlayersInGame>();
         }
 
@@ -19,10 +20,12 @@ namespace TopRaceApp.Models
         public int CurrentTurn { get; set; }
         public int ChatRoomId { get; set; }
         public int StatusId { get; set; }
+        public DateTime LastUpdateTime { get; set; }
 
         public virtual ChatRoom ChatRoom { get; set; }
         public virtual Player HostPlayer { get; set; }
         public virtual GameStatus Status { get; set; }
+        public virtual List<MoversInGame> MoversInGames { get; set; }
         public virtual List<PlayersInGame> PlayersInGames { get; set; }
     }
 }
