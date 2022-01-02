@@ -14,7 +14,8 @@ namespace TopRaceApp.Models
         }
 
         public int Id { get; set; }
-        public string String { get; set; }
+        public int X { get; set; }
+        public int Y { get; set; }
 
         public virtual List<MoversInGame> MoversInGameEndPos { get; set; }
         public virtual List<MoversInGame> MoversInGameStartPos { get; set; }
