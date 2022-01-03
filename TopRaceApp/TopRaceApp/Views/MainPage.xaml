@@ -29,7 +29,7 @@
                 <Button Text="Public Game" Grid.Row="3" Grid.Column="0"/>
                 <Button Text="Private Game" Grid.Row="4" Grid.Column="0"/>
                 <Label Text="Host Game:" FontSize="Large" VerticalOptions="FillAndExpand" Grid.Row="5" Grid.Column="0"/>
-                <Button Text="Host Game" Grid.Row="6" Grid.Column="0"/>
+                <Button Text="Host Game" Grid.Row="6" Grid.Column="0" Command="{Binding HostGameCommand}"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

@@ -122,6 +122,7 @@ namespace TopRaceApp.ViewModels
             this.LosesCount = ((App)App.Current).currentPlayer.LosesNumber;
             this.WinStreak = ((App)App.Current).currentPlayer.WinStreak;
             this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
+            HostGameCommand = new Command(HostGame);
         }
         public ICommand HostGameCommand { get; set; }
         public async void HostGame()
@@ -133,19 +134,26 @@ namespace TopRaceApp.ViewModels
                 {
                     GameName = $"{((App)App.Current).currentPlayer.PlayerName}'s Game",
                     IsPrivate = true,
-                    PrivateKey = await proxy.GetPrivateKeyAsync(),
-                    Status = await proxy.GetGameStatusAsync(0),
                 };
-                ChatRoom chatRoom = new ChatRoom();
-                newGame.ChatRoom = chatRoom;
                 newGame.HostPlayer = ((App)App.Current).currentPlayer;
-                ((App)App.Current).currentGame = newGame;
-                await proxy.HostGameAsync(newGame);
+                Game fullGame = await proxy.HostGameAsync(newGame);
+                if (fullGame == null)
+                    await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
+                else
+                {
+                    ((App)App.Current).currentGame = fullGame;
+                    MoveToLobbyPage();
+                }
             }
             catch
             {
                 await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
             }
+        }
+        public async void MoveToLobbyPage()
+        {
+            LobbyPage lobbyPage = new LobbyPage();
+            await App.Current.MainPage.Navigation.PushAsync(lobbyPage);
         }
 
     }

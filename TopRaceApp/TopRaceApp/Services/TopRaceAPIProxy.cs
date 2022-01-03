@@ -194,7 +194,7 @@ namespace TopRaceApp.Services
                 return true;
             }
         }
-        public async Task<bool> HostGameAsync(Game game)
+        public async Task<Game> HostGameAsync(Game game)
         {
             try
             {
@@ -209,15 +209,15 @@ namespace TopRaceApp.Services
                         PropertyNameCaseInsensitive = true
                     };
                     string content = await response.Content.ReadAsStringAsync();
-                    bool gameAdded = JsonSerializer.Deserialize<bool>(content, options);
+                    Game gameAdded = JsonSerializer.Deserialize<Game>(content, options);
                     return gameAdded;
                 }
                 else
-                    return false;
+                    return null;
             }
             catch (Exception)
             {
-                return true;
+                return null;
             }
         }
         public async Task<GameStatus> GetGameStatusAsync(int statusID)

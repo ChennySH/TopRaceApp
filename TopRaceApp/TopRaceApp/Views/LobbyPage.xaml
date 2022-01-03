@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TopRaceApp.ViewModels"
+             x:Class="TopRaceApp.Views.LobbyPage"
+             Title="{Binding GameName}">
+    <ContentPage.BindingContext>
+        <local:LobbyPageViewModel/>
+    </ContentPage.BindingContext>
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="{Binding IsPrivate}"/>
+            <Label Text="{Binding PrivateKey}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
