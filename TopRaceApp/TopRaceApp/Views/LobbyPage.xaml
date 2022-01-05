@@ -9,9 +9,24 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="{Binding IsPrivate}"/>
-            <Label Text="{Binding PrivateKey}"/>
-            <CollectionView ItemsSource="{Binding PlayersInGameList}">
+            <Grid VerticalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+            <Label Text="{Binding RoomStatus}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
+            <Label Text="Key:" Grid.Column="0" Grid.Row="2"/>
+            <Label Text="{Binding PrivateKey}" Grid.Column="0" Grid.Row="2"/>
+            <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="4" HorizontalOptions="FillAndExpand">
@@ -27,9 +42,11 @@
                             <Label Text="{Binding Player.PlayerName}" Grid.Column="1" Grid.Row="0"/>
                             <Label Text="Color" Grid.Column="2" Grid.Row="0"/>
                         </Grid> 
+                        
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

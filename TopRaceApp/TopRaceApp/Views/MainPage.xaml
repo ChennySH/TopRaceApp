@@ -26,10 +26,10 @@
                 <Label Text="{Binding PlayerName}" Grid.Column="1" Grid.Row="0" FontSize="Large" VerticalOptions="FillAndExpand"/>
                 <Label Text="{Binding Status} " Grid.Column="1" Grid.Row="1" FontSize="Large" VerticalOptions="FillAndExpand"/>
                 <Label Text="Join Game:" FontSize="Large" VerticalOptions="FillAndExpand" Grid.Row="2" Grid.Column="0"/>
-                <Button Text="Public Game" Grid.Row="3" Grid.Column="0"/>
-                <Button Text="Private Game" Grid.Row="4" Grid.Column="0"/>
+                <Button Text="Public Game" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"/>
+                <Button Text="Private Game" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"/>
                 <Label Text="Host Game:" FontSize="Large" VerticalOptions="FillAndExpand" Grid.Row="5" Grid.Column="0"/>
-                <Button Text="Host Game" Grid.Row="6" Grid.Column="0" Command="{Binding HostGameCommand}"/>
+                <Button Text="Host Game" Grid.Row="6" Grid.Column="0" Command="{Binding HostGameCommand}" Grid.ColumnSpan="2"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

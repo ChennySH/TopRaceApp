@@ -76,6 +76,63 @@ namespace TopRaceApp.ViewModels
                 {
                     isPrivate = value;
                     OnPropertyChanged();
+                    if (isPrivate)
+                    {
+                        RoomStatus = "Private";
+                    }
+                    else
+                    { 
+                        RoomStatus = "Public"; 
+                    }
+                        
+                }
+            }
+        }
+        private string roomStatus;
+        public string RoomStatus
+        {
+            get
+            {
+                return roomStatus;
+            }
+            set
+            {
+                if (roomStatus != value)
+                {
+                    roomStatus = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string hostName;
+        public string HostName
+        {
+            get
+            {
+                return hostName;
+            }
+            set
+            {
+                if (hostName != value)
+                {
+                    hostName = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string hostProfilePic;
+        public string HostProfilePic
+        {
+            get
+            {
+                return hostProfilePic;
+            }
+            set
+            {
+                if (hostProfilePic != value)
+                {
+                    hostProfilePic = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -87,6 +144,8 @@ namespace TopRaceApp.ViewModels
             GameName = ((App)App.Current).currentGame.GameName;
             PrivateKey = ((App)App.Current).currentGame.PrivateKey;
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;
+            HostName = ((App)App.Current).currentGame.HostPlayer.PlayerName;
+            HostProfilePic = ((App)App.Current).currentGame.HostPlayer.ProfilePic;
             PlayersInGameList = new List<PlayersInGame>();
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
