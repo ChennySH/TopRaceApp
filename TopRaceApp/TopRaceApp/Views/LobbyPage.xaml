@@ -11,6 +11,25 @@
         <StackLayout>
             <Label Text="{Binding IsPrivate}"/>
             <Label Text="{Binding PrivateKey}"/>
+            <CollectionView ItemsSource="{Binding PlayersInGameList}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="4" HorizontalOptions="FillAndExpand">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding Player.ProfilePic}" Grid.Column="0" Grid.Row="0"/>
+                            <Label Text="{Binding Player.PlayerName}" Grid.Column="1" Grid.Row="0"/>
+                            <Label Text="Color" Grid.Column="2" Grid.Row="0"/>
+                        </Grid> 
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

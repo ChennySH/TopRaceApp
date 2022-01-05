@@ -155,7 +155,7 @@ namespace TopRaceApp.Services
                     {
                         ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
                         PropertyNameCaseInsensitive = true
-                    };
+                    }; ;
                     string content = await response.Content.ReadAsStringAsync();
                     bool isExist = JsonSerializer.Deserialize<bool>(content, options);
                     return isExist;
