@@ -200,7 +200,7 @@ namespace TopRaceApp.Services
             {
                 string gameJson = JsonSerializer.Serialize(game);
                 StringContent gameJsonContent = new StringContent(gameJson, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/IsHostGame", gameJsonContent);
+                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/HostGame", gameJsonContent);
                 if (response.IsSuccessStatusCode)
                 {
                     JsonSerializerOptions options = new JsonSerializerOptions
@@ -220,11 +220,11 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
-        public async Task<GameStatus> GetGameStatusAsync(int statusID)
+        public async Task<Game> GetGame(int GameID)
         {
             try
             {
-                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGameStatus?statusId={statusID}");
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGame?={GameID}");
                 if (response.IsSuccessStatusCode)
                 {
                     JsonSerializerOptions options = new JsonSerializerOptions
@@ -233,47 +233,74 @@ namespace TopRaceApp.Services
                         PropertyNameCaseInsensitive = true
                     };
                     string content = await response.Content.ReadAsStringAsync();
-                    GameStatus s = JsonSerializer.Deserialize<GameStatus>(content, options);
-                    return s;
+                    Game game = JsonSerializer.Deserialize<Game>(content, options);
+                    return game;
                 }
                 else
                 {
                     return null;
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
                 Console.WriteLine(e.Message);
                 return null;
             }
         }
-        public async Task<string> GetPrivateKeyAsync()
-        {
-            try
-            {
-                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetPrivateKey");
-                if (response.IsSuccessStatusCode)
-                {
-                    JsonSerializerOptions options = new JsonSerializerOptions
-                    {
-                        ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
-                        PropertyNameCaseInsensitive = true
-                    };
-                    string content = await response.Content.ReadAsStringAsync();
-                    string key = JsonSerializer.Deserialize<string>(content, options);
-                    return key;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
-        }
+        //public async Task<GameStatus> GetGameStatusAsync(int statusID)
+        //{
+        //    try
+        //    {
+        //        HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGameStatus?statusId={statusID}");
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            JsonSerializerOptions options = new JsonSerializerOptions
+        //            {
+        //                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+        //                PropertyNameCaseInsensitive = true
+        //            };
+        //            string content = await response.Content.ReadAsStringAsync();
+        //            GameStatus s = JsonSerializer.Deserialize<GameStatus>(content, options);
+        //            return s;
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.Message);
+        //        return null;
+        //    }
+        //}
+        //public async Task<string> GetPrivateKeyAsync()
+        //{
+        //    try
+        //    {
+        //        HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetPrivateKey");
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            JsonSerializerOptions options = new JsonSerializerOptions
+        //            {
+        //                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+        //                PropertyNameCaseInsensitive = true
+        //            };
+        //            string content = await response.Content.ReadAsStringAsync();
+        //            string key = JsonSerializer.Deserialize<string>(content, options);
+        //            return key;
+        //        }
+        //        else
+        //        {
+        //            return null;
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        Console.WriteLine(e.Message);
+        //        return null;
+        //    }
+        //}
     }
         
 }

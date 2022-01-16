@@ -88,10 +88,10 @@ namespace TopRaceApp.ViewModels
                 await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
             }
         }
-        public async void Login()
+        public  void Login()
         {
             LoginPage loginPage = new LoginPage();
-            await App.Current.MainPage.Navigation.PushAsync(loginPage);
+            App.Current.MainPage = loginPage;
         }
         #region properties
 

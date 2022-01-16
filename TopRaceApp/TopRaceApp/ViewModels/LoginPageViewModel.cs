@@ -50,10 +50,10 @@ namespace TopRaceApp.ViewModels
                 await App.Current.MainPage.DisplayAlert("Login Failed", "Something went wrong", "Okay");
             }
         }
-        public async void MoveToHomePage()
+        public void MoveToHomePage()
         {
             MainPage mainPage = new MainPage();
-            await App.Current.MainPage.Navigation.PushAsync(mainPage);
+            App.Current.MainPage = mainPage;
         }
         #region Properties
 

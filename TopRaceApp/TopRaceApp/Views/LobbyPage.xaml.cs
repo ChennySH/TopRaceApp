@@ -15,7 +15,6 @@ namespace TopRaceApp.Views
     {
         public LobbyPage()
         {
-            this.BindingContext = new LobbyPageViewModel();
             InitializeComponent();
         }
     }

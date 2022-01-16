@@ -10,6 +10,8 @@ using TopRaceApp.Models;
 using TopRaceApp.Views;
 using Xamarin.Essentials;
 using System.Linq;
+using System.Collections.ObjectModel;
+
 namespace TopRaceApp.ViewModels
 {
     class LobbyPageViewModel:BaseViewModel
@@ -136,7 +138,8 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
-        public List<PlayersInGame> PlayersInGameList;
+        public ObservableCollection<PlayersInGame> PlayersInGameList;
+        public ObservableCollection<Message> ChatMessages;
         #endregion
         public LobbyPageViewModel()
         {
@@ -146,11 +149,57 @@ namespace TopRaceApp.ViewModels
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;
             HostName = ((App)App.Current).currentGame.HostPlayer.PlayerName;
             HostProfilePic = ((App)App.Current).currentGame.HostPlayer.ProfilePic;
-            PlayersInGameList = new List<PlayersInGame>();
+            PlayersInGameList = new ObservableCollection<PlayersInGame>();
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
                 PlayersInGameList.Add(p);
             }
+            ChatMessages = new ObservableCollection<Message>();
+            foreach(Message m in ((App)App.Current).currentGame.ChatRoom.Messages)
+            {
+                ChatMessages.Add(m);
+            }
+        }
+        public async void Run()
+        {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            Device.StartTimer(new TimeSpan(0, 0, 3), () =>
+            {
+                // do something every 3 seconds
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    ((App)App.Current).currentGame = await proxy.GetGame(((App)App.Current).currentGame.Id);
+                    UpdatePlayersInGameList();
+                    UpdateChatRoom();
+                    // interact with UI elements
+                });
+                return true; // runs again, or false to stop
+            });
+        }
+        public void UpdateChatRoom()
+        {
+            foreach(Message m in ((App)App.Current).currentGame.ChatRoom.Messages)
+            {
+                if (!IsInChatMessages(m))
+                    ChatMessages.Add(m);
+            }
+        }
+        public bool IsInChatMessages(Message message)
+        {
+            foreach (Message m in ChatMessages)
+            {
+                if (m.Id == message.Id)
+                    return true;
+            }
+            return false;
+        }
+        public void UpdatePlayersInGameList()
+        {
+            PlayersInGameList.Clear();
+            foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
+            {
+                PlayersInGameList.Add(p);
+            }            
         }
     }
 }

@@ -15,6 +15,7 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
@@ -25,8 +26,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
             <Label Text="{Binding RoomStatus}" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"/>
-            <Label Text="Key:" Grid.Column="0" Grid.Row="2"/>
-            <Label Text="{Binding PrivateKey}" Grid.Column="0" Grid.Row="2"/>
+            <Label Text="Key:" Grid.Column="2" Grid.Row="0"/>
+            <Label Text="{Binding PrivateKey}" Grid.Column="3" Grid.Row="0" Grid.ColumnSpan="2"/>
             <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="4">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -42,11 +43,31 @@
                             <Image Source="{Binding Player.ProfilePic}" Grid.Column="0" Grid.Row="0"/>
                             <Label Text="{Binding Player.PlayerName}" Grid.Column="1" Grid.Row="0"/>
                             <Label Text="Color" Grid.Column="2" Grid.Row="0"/>
-                        </Grid> 
-                        
+                            </Grid>                        
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+                <Entry  Grid.Column="0" Grid.Row="3"/>
+                <CollectionView ItemsSource="{Binding ChatMessages}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="4">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="8" HorizontalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding From.Player.PlayerName}" Grid.Column="0" Grid.Row="0"/>
+                                <Label Text=": " Grid.Column="1" Grid.Row="0"/>
+                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                
             </Grid>
         </StackLayout>
     </ContentPage.Content>

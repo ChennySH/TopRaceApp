@@ -23,26 +23,26 @@ namespace TopRaceApp.ViewModels
         }
         public ICommand LoginCommand { get; set; }
         public ICommand SignUpCommand { get; set; }
-        public async void Login()
+        public void Login()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
                 LoginPage loginPage = new LoginPage();
-                await App.Current.MainPage.Navigation.PushAsync(loginPage);
+                App.Current.MainPage = loginPage;
             }
             catch(Exception e)
             {
                 Console.WriteLine(e.Message);
             }
         }
-        public async void SignUp()
+        public void SignUp()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
                 SignUpPage signUp = new SignUpPage();
-                await App.Current.MainPage.Navigation.PushAsync(signUp);
+                App.Current.MainPage = signUp;
             }
             catch (Exception e)
             {
