@@ -160,7 +160,7 @@ namespace TopRaceApp.ViewModels
                 ChatMessages.Add(m);
             }
         }
-        public async void Run()
+        public async Task Run()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             Device.StartTimer(new TimeSpan(0, 0, 3), () =>

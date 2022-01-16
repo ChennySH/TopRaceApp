@@ -154,7 +154,7 @@ namespace TopRaceApp.ViewModels
         {
             LobbyPage lobbyPage = new LobbyPage();
             lobbyPage.BindingContext = new LobbyPageViewModel();
-            ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
+            await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
             App.Current.MainPage = lobbyPage;
         }
 
