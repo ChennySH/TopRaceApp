@@ -46,7 +46,17 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-                <Entry  Grid.Column="0" Grid.Row="3"/>
+                <Grid Grid.Column="0" Grid.Row="3">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Entry  Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
+                    <Button Text="Enter" Grid.Column="1" Grid.Row="0"/>
+                </Grid>
                 <CollectionView ItemsSource="{Binding ChatMessages}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
@@ -68,8 +78,8 @@
                 </CollectionView>
                 <Button Text="Change Color" Grid.Row="5" Grid.Column="0"/>
                 <Button Text="Start Game" Grid.Row="5" Grid.Column="1" IsVisible="{Binding IsHost}"/>
-                <Button Text="Leave Game" Grid.Row="5" Grid.Column="2"/>
-
+                <Button Text="Leave Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsNotHost}"/>
+                <Button Text="Delete Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsHost}"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

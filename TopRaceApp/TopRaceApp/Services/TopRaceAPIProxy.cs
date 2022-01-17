@@ -247,6 +247,20 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
+        public async Task SendMessage(Message message)
+        {
+            try
+            {
+                string messageJson = JsonSerializer.Serialize(message);
+                StringContent messageJsonContent = new StringContent(messageJson, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/SendMessage", messageJsonContent);
+
+            }
+            catch()
+            {
+                Console.WriteLine
+            }
+        }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try

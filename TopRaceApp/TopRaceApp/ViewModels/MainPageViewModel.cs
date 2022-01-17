@@ -142,6 +142,7 @@ namespace TopRaceApp.ViewModels
                 else
                 {
                     ((App)App.Current).currentGame = fullGame;
+                    ((App)App.Current).currentPlayerInGame = fullGame.PlayersInGames.Where(p => p.PlayerId == ((App)App.Current).currentPlayer.Id).FirstOrDefault();
                     MoveToLobbyPage();
                 }
             }

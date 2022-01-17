@@ -30,6 +30,23 @@ namespace TopRaceApp.ViewModels
                 {
                     isHost = value;
                     OnPropertyChanged();
+                    IsNotHost = !IsHost;
+                }
+            }
+        }
+        private bool isNotHost;
+        public bool IsNotHost
+        {
+            get
+            {
+                return isNotHost;
+            }
+            set
+            {
+                if (isNotHost != value)
+                {
+                    isNotHost = value;
+                    OnPropertyChanged();
                 }
             }
         }
@@ -138,6 +155,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private string messageText;
+        public string MessageText
+        {
+            get
+            {
+                return messageText;
+            }
+            set
+            {
+                if (messageText != value)
+                {
+                    messageText = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public ObservableCollection<PlayersInGame> PlayersInGameList;
         public ObservableCollection<Message> ChatMessages;
         #endregion
@@ -149,6 +182,7 @@ namespace TopRaceApp.ViewModels
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;
             HostName = ((App)App.Current).currentGame.HostPlayer.PlayerName;
             HostProfilePic = ((App)App.Current).currentGame.HostPlayer.ProfilePic;
+            MessageText = "";
             PlayersInGameList = new ObservableCollection<PlayersInGame>();
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
@@ -169,6 +203,7 @@ namespace TopRaceApp.ViewModels
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     ((App)App.Current).currentGame = await proxy.GetGame(((App)App.Current).currentGame.Id);
+                    ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.PlayerId == ((App)App.Current).currentPlayer.Id).FirstOrDefault();
                     UpdatePlayersInGameList();
                     UpdateChatRoom();
                     // interact with UI elements
@@ -183,6 +218,7 @@ namespace TopRaceApp.ViewModels
                 if (!IsInChatMessages(m))
                     ChatMessages.Add(m);
             }
+            ChatMessages.OrderByDescending(m => m.TimeSent);
         }
         public bool IsInChatMessages(Message message)
         {
@@ -199,7 +235,8 @@ namespace TopRaceApp.ViewModels
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
                 PlayersInGameList.Add(p);
-            }            
+            }
+            PlayersInGameList.OrderBy(p => p.Number);
         }
     }
 }
