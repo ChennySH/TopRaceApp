@@ -220,11 +220,13 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
-        public async Task<Game> GetGame(int GameID)
+        public async Task<Game> GetGameAsync(int GameID, User currentUser)
         {
             try
             {
-                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGame?={GameID}");
+                string userJson = JsonSerializer.Serialize(currentUser);
+                StringContent userJsonContent = new StringContent(userJson, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/GetGame?={GameID}", userJsonContent);
                 if (response.IsSuccessStatusCode)
                 {
                     JsonSerializerOptions options = new JsonSerializerOptions
@@ -247,18 +249,33 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
-        public async Task SendMessage(Message message)
+        public async Task<bool> SendMessageAsync(Message message)
         {
             try
             {
                 string messageJson = JsonSerializer.Serialize(message);
                 StringContent messageJsonContent = new StringContent(messageJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/SendMessage", messageJsonContent);
-
+                if (response.IsSuccessStatusCode)
+                {
+                    JsonSerializerOptions options = new JsonSerializerOptions
+                    {
+                        ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                        PropertyNameCaseInsensitive = true
+                    };
+                    string content = await response.Content.ReadAsStringAsync();
+                    bool isSent = JsonSerializer.Deserialize<bool>(content, options);
+                    return isSent;
+                }
+                else
+                {
+                    return false;
+                }
             }
-            catch()
+            catch (Exception e)
             {
-                Console.WriteLine
+                Console.WriteLine(e.Message);
+                return false;
             }
         }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)

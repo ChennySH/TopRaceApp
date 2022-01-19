@@ -193,7 +193,23 @@ namespace TopRaceApp.ViewModels
             {
                 ChatMessages.Add(m);
             }
+            SendMessageCommand = new Command(SendMessage);
         }
+        public ICommand SendMessageCommand { get; set; }
+
+        private async void SendMessage()
+        {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            Message newMessage = new Message
+            {
+                Message1 = this.MessageText,
+                From = ((App)App.Current).currentPlayerInGame,
+                ChatRoom = ((App)App.Current).currentGame.ChatRoom,
+                TimeSent = DateTime.Now
+            };
+            await proxy.SendMessageAsync(newMessage);
+        }
+
         public async Task Run()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
@@ -202,7 +218,7 @@ namespace TopRaceApp.ViewModels
                 // do something every 3 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    ((App)App.Current).currentGame = await proxy.GetGame(((App)App.Current).currentGame.Id);
+                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id, ((App)App.Current).currentUser);
                     ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.PlayerId == ((App)App.Current).currentPlayer.Id).FirstOrDefault();
                     UpdatePlayersInGameList();
                     UpdateChatRoom();
@@ -238,5 +254,6 @@ namespace TopRaceApp.ViewModels
             }
             PlayersInGameList.OrderBy(p => p.Number);
         }
+
     }
 }
