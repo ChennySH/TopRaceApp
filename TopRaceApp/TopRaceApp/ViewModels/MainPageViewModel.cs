@@ -134,6 +134,7 @@ namespace TopRaceApp.ViewModels
                 {
                     GameName = $"{((App)App.Current).currentPlayer.PlayerName}'s Game",
                     IsPrivate = true,
+                    LastUpdateTime = DateTime.Now
                 };
                 newGame.HostPlayer = ((App)App.Current).currentPlayer;
                 Game fullGame = await proxy.HostGameAsync(newGame);
@@ -155,7 +156,7 @@ namespace TopRaceApp.ViewModels
         {
             LobbyPage lobbyPage = new LobbyPage();
             lobbyPage.BindingContext = new LobbyPageViewModel();
-            await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
+            // await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
             App.Current.MainPage = lobbyPage;
         }
 

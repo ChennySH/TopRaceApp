@@ -4,9 +4,7 @@
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
              x:Class="TopRaceApp.Views.LobbyPage"
              Title="{Binding GameName}">
-    <ContentPage.BindingContext>
-        <local:LobbyPageViewModel/>
-    </ContentPage.BindingContext>
+   
     
     <ContentPage.Content>
         <StackLayout>

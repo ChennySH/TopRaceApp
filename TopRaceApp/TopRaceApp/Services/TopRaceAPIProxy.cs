@@ -198,16 +198,17 @@ namespace TopRaceApp.Services
         {
             try
             {
-                string gameJson = JsonSerializer.Serialize(game);
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                string gameJson = JsonSerializer.Serialize(game, options);
                 StringContent gameJsonContent = new StringContent(gameJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/HostGame", gameJsonContent);
                 if (response.IsSuccessStatusCode)
                 {
-                    JsonSerializerOptions options = new JsonSerializerOptions
-                    {
-                        ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
-                        PropertyNameCaseInsensitive = true
-                    };
+                    
                     string content = await response.Content.ReadAsStringAsync();
                     Game gameAdded = JsonSerializer.Deserialize<Game>(content, options);
                     return gameAdded;
@@ -215,18 +216,16 @@ namespace TopRaceApp.Services
                 else
                     return null;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return null;
             }
         }
-        public async Task<Game> GetGameAsync(int GameID, User currentUser)
+        public async Task<Game> GetGameAsync(int GameID)
         {
             try
             {
-                string userJson = JsonSerializer.Serialize(currentUser);
-                StringContent userJsonContent = new StringContent(userJson, Encoding.UTF8, "application/json");
-                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/GetGame?={GameID}", userJsonContent);
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGame?GameID={GameID}");
                 if (response.IsSuccessStatusCode)
                 {
                     JsonSerializerOptions options = new JsonSerializerOptions
