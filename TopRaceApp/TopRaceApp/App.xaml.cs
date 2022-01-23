@@ -18,14 +18,12 @@ namespace TopRaceApp
 
         //The current logged in user
         public User currentUser { get; set; }
-        public Player currentPlayer { get; set; }
         public PlayersInGame currentPlayerInGame { get; set; }
         public Game currentGame { get; set; }
         public App()
         {
             InitializeComponent();
             this.currentUser = null;
-            this.currentPlayer = null;
             this.currentPlayerInGame = null;
             this.currentGame = null;
             MainPage = new StartPage();

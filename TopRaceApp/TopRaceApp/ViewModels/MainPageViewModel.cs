@@ -16,18 +16,18 @@ namespace TopRaceApp.ViewModels
     class MainPageViewModel:BaseViewModel
     {
         #region Properties
-        private string playerName;
-        public string PlayerName
+        private string userName;
+        public string UserName
         {
             get
             {
-                return playerName;
+                return userName;
             }
             set
             {
-                if (this.playerName != value)
+                if (this.userName != value)
                 {
-                    playerName = value;
+                    userName = value;
                     OnPropertyChanged();
                 }
             }
@@ -116,11 +116,11 @@ namespace TopRaceApp.ViewModels
         #endregion
         public MainPageViewModel()
         {
-            this.PlayerName = ((App)App.Current).currentPlayer.PlayerName;
-            this.ProfilePic = ((App)App.Current).currentPlayer.ProfilePic;
-            this.WinsCount = ((App)App.Current).currentPlayer.WinsNumber;
-            this.LosesCount = ((App)App.Current).currentPlayer.LosesNumber;
-            this.WinStreak = ((App)App.Current).currentPlayer.WinStreak;
+            this.UserName = ((App)App.Current).currentUser.UserName;
+            this.ProfilePic = ((App)App.Current).currentUser.ProfilePic;
+            this.WinsCount = ((App)App.Current).currentUser.WinsNumber;
+            this.LosesCount = ((App)App.Current).currentUser.LosesNumber;
+            this.WinStreak = ((App)App.Current).currentUser.WinsStreak;
             this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
             HostGameCommand = new Command(HostGame);
         }
@@ -132,18 +132,18 @@ namespace TopRaceApp.ViewModels
             {
                 Game newGame = new Game
                 {
-                    GameName = $"{((App)App.Current).currentPlayer.PlayerName}'s Game",
+                    GameName = $"{((App)App.Current).currentUser.UserName}'s Game",
                     IsPrivate = true,
                     LastUpdateTime = DateTime.Now
                 };
-                newGame.HostPlayer = ((App)App.Current).currentPlayer;
+                newGame.HostUser = ((App)App.Current).currentUser;
                 Game fullGame = await proxy.HostGameAsync(newGame);
                 if (fullGame == null)
                     await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
                 else
                 {
                     ((App)App.Current).currentGame = fullGame;
-                    ((App)App.Current).currentPlayerInGame = fullGame.PlayersInGames.Where(p => p.PlayerId == ((App)App.Current).currentPlayer.Id).FirstOrDefault();
+                    ((App)App.Current).currentPlayerInGame = fullGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
                     MoveToLobbyPage();
                 }
             }

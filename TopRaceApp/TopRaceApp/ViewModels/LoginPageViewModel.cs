@@ -38,7 +38,6 @@ namespace TopRaceApp.ViewModels
                     if (u != null)
                     {
                         ((App)App.Current).currentUser = u;
-                        ((App)App.Current).currentPlayer = u.Player;
                         MoveToHomePage();
                     }
                     else

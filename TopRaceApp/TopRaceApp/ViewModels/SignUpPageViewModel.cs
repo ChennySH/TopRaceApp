@@ -68,18 +68,12 @@ namespace TopRaceApp.ViewModels
                         User newUser = new User
                         {
                             UserName = this.UserName,
-                            //FirstName = this.FirstName,
-                            //LastName = this.LastName,
                             Email = this.Email,
                             Password = this.Password,
                             PhoneNumber = this.PhoneNumber,
-                        };
-                        newUser.Player = new Player()
-                        {
-                            PlayerName = newUser.UserName,
                             WinsNumber = 0,
                             LosesNumber = 0,
-                            WinStreak = 0,
+                            WinsStreak = 0,
                             ProfilePic = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
                         };
                         bool registered = await proxy.SignUpAsync(newUser);

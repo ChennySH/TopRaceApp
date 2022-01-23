@@ -13,6 +13,7 @@ namespace TopRaceApp.Models
 
         public int Id { get; set; }
         public string ColorName { get; set; }
+        public string ColorCode { get; set; }
         public string PicLink { get; set; }
 
         public virtual List<PlayersInGame> PlayersInGames { get; set; }
