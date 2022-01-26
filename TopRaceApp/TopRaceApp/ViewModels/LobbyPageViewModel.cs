@@ -171,8 +171,8 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
-        public ObservableCollection<PlayersInGame> PlayersInGameList;
-        public ObservableCollection<Message> ChatMessages;
+        public ObservableCollection<PlayersInGame> PlayersInGameList { get; set; }
+        public ObservableCollection<Message> ChatMessages { get; set; }
         #endregion
         public LobbyPageViewModel()
         {
@@ -208,7 +208,10 @@ namespace TopRaceApp.ViewModels
                 ChatRoom = ((App)App.Current).currentGame.ChatRoom,
                 TimeSent = DateTime.Now
             };
-            await proxy.SendMessageAsync(newMessage);
+            bool success=await proxy.SendMessageAsync(newMessage);
+            if (success)
+                this.MessageText = string.Empty;
+            
         }
 
         public async Task Run()
@@ -232,8 +235,9 @@ namespace TopRaceApp.ViewModels
         {
             foreach(Message m in ((App)App.Current).currentGame.ChatRoom.Messages)
             {
-                if (!ChatMessages.Contains(m))
-                {//if (!IsInChatMessages(m))
+                //if (!ChatMessages.Contains(m))
+                if (!IsInChatMessages(m))
+                { 
                     ChatMessages.Add(m);
                 }
             }

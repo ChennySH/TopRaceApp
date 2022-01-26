@@ -252,16 +252,16 @@ namespace TopRaceApp.Services
         {
             try
             {
-                string messageJson = JsonSerializer.Serialize(message);
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                string messageJson = JsonSerializer.Serialize(message, options);
                 StringContent messageJsonContent = new StringContent(messageJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/SendMessage", messageJsonContent);
                 if (response.IsSuccessStatusCode)
-                {
-                    JsonSerializerOptions options = new JsonSerializerOptions
-                    {
-                        ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
-                        PropertyNameCaseInsensitive = true
-                    };
+                {                   
                     string content = await response.Content.ReadAsStringAsync();
                     bool isSent = JsonSerializer.Deserialize<bool>(content, options);
                     return isSent;

@@ -28,19 +28,19 @@
             <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="4" HorizontalOptions="FillAndExpand">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                            <Grid Padding="4" HorizontalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="100"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ProfilePic}" Grid.Column="0" Grid.Row="0"/>
-                                <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0"/>
-                            <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/> 
-                            </Grid>                        
+                                <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="24"/>
+                                <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/>
+                            </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -55,7 +55,7 @@
                     <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
                     <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
                 </Grid>
-                <CollectionView ItemsSource="{Binding ChatMessages}" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid Padding="8" HorizontalOptions="FillAndExpand">
@@ -67,13 +67,13 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Text="{Binding From.Player.PlayerName}" Grid.Column="0" Grid.Row="0"/>
+                                <Label Text="{Binding From.User.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0"/>
                                 <Label Text=": " Grid.Column="1" Grid.Row="0"/>
                                 <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-                </CollectionView>
+                </CollectionView> 
                 <Button Text="Change Color" Grid.Row="5" Grid.Column="0"/>
                 <Button Text="Start Game" Grid.Row="5" Grid.Column="1" IsVisible="{Binding IsHost}"/>
                 <Button Text="Leave Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsNotHost}"/>
