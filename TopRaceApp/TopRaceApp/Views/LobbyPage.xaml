@@ -36,6 +36,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ProfilePic}" Grid.Column="0" Grid.Row="0"/>
                                 <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="24"/>
