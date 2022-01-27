@@ -71,7 +71,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Label Text="{Binding From.User.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0"/>
                                 <Label Text=": " Grid.Column="1" Grid.Row="0"/>
-                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0"/>
+                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

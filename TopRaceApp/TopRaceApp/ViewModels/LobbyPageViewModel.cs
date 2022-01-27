@@ -197,6 +197,8 @@ namespace TopRaceApp.ViewModels
             SendMessageCommand = new Command(SendMessage);
         }
         public ICommand SendMessageCommand { get; set; }
+        public ICommand OpenColorChangeViewCommand { get; set; }
+
 
         private async void SendMessage()
         {
@@ -213,7 +215,10 @@ namespace TopRaceApp.ViewModels
                 this.MessageText = string.Empty;
             
         }
-
+        public void OpenColorChangeView()
+        {
+           
+        }
         public async Task Run()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
@@ -224,8 +229,10 @@ namespace TopRaceApp.ViewModels
                 {
                     ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
                     ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                    UpdatePlayersInGameList();
                     UpdateChatRoom();
+                    UpdatePlayersInGameList();
+                    AddNewPlayers();
+                    PlayersInGameList.OrderBy(p => p.EnterTime);
                     //interact with UI elements
                 });
                 return true; // runs again, or false to stop
@@ -254,13 +261,50 @@ namespace TopRaceApp.ViewModels
         }
         public void UpdatePlayersInGameList()
         {
-            PlayersInGameList.Clear();
-            foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
+            // deleting players that are no longer in game
+            foreach (PlayersInGame p in this.PlayersInGameList)
             {
-                PlayersInGameList.Add(p);
+                if (!IsInGamesPlayerList(p))
+                {
+                    this.PlayersInGameList.Remove(p);
+                }
             }
-            PlayersInGameList.OrderBy(p => p.Number);
+            // Updating colors
+            foreach(PlayersInGame p in this.PlayersInGameList)
+            {
+                PlayersInGame player = ((App)App.Current).currentGame.PlayersInGames.Where(pl => pl.Id == p.Id).FirstOrDefault();
+                if(p.ColorId != player.ColorId)
+                {
+                    this.PlayersInGameList.Remove(p);
+                    this.PlayersInGameList.Add(player);
+                }
+            }
         }
-
+        public void AddNewPlayers()
+        {
+            foreach(PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
+            {
+                if (!IsInPlayersInGameList(p))
+                    this.PlayersInGameList.Add(p);
+            }
+        }
+        public bool IsInPlayersInGameList(PlayersInGame p)
+        {
+            foreach(PlayersInGame pl in this.PlayersInGameList)
+            {
+                if (p.Id == pl.Id)
+                    return true;
+            }
+            return false;
+        }
+        public bool IsInGamesPlayerList(PlayersInGame p)
+        {
+            foreach (PlayersInGame pl in ((App)App.Current).currentGame.PlayersInGames)
+            {
+                if (p.Id == pl.Id)
+                    return true;
+            }
+            return false;
+        }
     }
 }
