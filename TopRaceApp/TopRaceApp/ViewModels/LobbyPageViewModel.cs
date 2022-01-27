@@ -181,8 +181,6 @@ namespace TopRaceApp.ViewModels
             GameName = ((App)App.Current).currentGame.GameName;
             PrivateKey = ((App)App.Current).currentGame.PrivateKey;
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;
-            //HostName = ((App)App.Current).currentGame.HostUser.UserName;
-            //HostProfilePic = ((App)App.Current).currentGame.HostUser.ProfilePic;
             MessageText = "";
             PlayersInGameList = new ObservableCollection<PlayersInGame>();
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
