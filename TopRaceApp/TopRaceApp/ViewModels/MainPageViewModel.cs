@@ -112,10 +112,26 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
-
+        private string privateKey;
+        public string PrivateKey
+        {
+            get
+            {
+                return privateKey;
+            }
+            set
+            {
+                if(this.privateKey != value)
+                {
+                    this.privateKey = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion
         public MainPageViewModel()
         {
+            this.PrivateKey = string.Empty;
             this.UserName = ((App)App.Current).currentUser.UserName;
             this.ProfilePic = ((App)App.Current).currentUser.ProfilePic;
             this.WinsCount = ((App)App.Current).currentUser.WinsNumber;
@@ -123,6 +139,7 @@ namespace TopRaceApp.ViewModels
             this.WinStreak = ((App)App.Current).currentUser.WinsStreak;
             this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
             HostGameCommand = new Command(HostGame);
+            JoinGameWithPrivateKeyCommand = new Command(JoinGameWithPrivateKey);
         }
         public ICommand HostGameCommand { get; set; }
         public async void HostGame()
@@ -159,6 +176,22 @@ namespace TopRaceApp.ViewModels
             await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
             App.Current.MainPage = lobbyPage;
         }
+        public ICommand JoinGameWithPrivateKeyCommand { get; set; }
+        public async void JoinGameWithPrivateKey()
+        {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            try
+            {
+                Game game = await proxy.JoinGameWithPrivateCodeAsync(PrivateKey);
+                ((App)App.Current).currentGame = game;
+                ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                MoveToLobbyPage();
 
+            }
+            catch (Exception e)
+            {
+                await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
+            }
+        }
     }
 }

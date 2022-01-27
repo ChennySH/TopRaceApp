@@ -245,10 +245,10 @@ namespace TopRaceApp.ViewModels
                 //if (!ChatMessages.Contains(m))
                 if (!IsInChatMessages(m))
                 { 
-                    ChatMessages.Add(m);
+                    ChatMessages.Insert(0, m);
                 }
             }
-            ChatMessages.OrderByDescending(m => m.TimeSent);
+           // ChatMessages.OrderByDescending(m => m.TimeSent);
         }
         public bool IsInChatMessages(Message message)
         {

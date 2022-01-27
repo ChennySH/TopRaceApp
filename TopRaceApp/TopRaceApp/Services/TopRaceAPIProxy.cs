@@ -277,6 +277,33 @@ namespace TopRaceApp.Services
                 return false;
             }
         }
+        public async Task<Game> JoinGameWithPrivateCodeAsync(string privateKey)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/JoinPrivateGame?privateKey={privateKey}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    Game game = JsonSerializer.Deserialize<Game>(content, options);
+                    return game;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try
