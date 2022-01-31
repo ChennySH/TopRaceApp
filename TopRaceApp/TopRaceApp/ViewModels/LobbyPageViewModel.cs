@@ -30,7 +30,7 @@ namespace TopRaceApp.ViewModels
                 {
                     isHost = value;
                     OnPropertyChanged();
-                    IsNotHost = !IsHost;
+                    IsNotHost = !isHost;
                 }
             }
         }

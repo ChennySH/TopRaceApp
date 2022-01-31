@@ -4,8 +4,6 @@
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
              x:Class="TopRaceApp.Views.LobbyPage"
              Title="{Binding GameName}">
-   
-    
     <ContentPage.Content>
         <StackLayout>
             <Grid VerticalOptions="FillAndExpand">
@@ -15,7 +13,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -57,7 +55,7 @@
                     <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
                     <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
                 </Grid>
-                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3">
+                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" >
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid Padding="8" HorizontalOptions="FillAndExpand">
