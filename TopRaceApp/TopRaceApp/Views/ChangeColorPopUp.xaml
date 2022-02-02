@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TopRaceApp.Views.ChangeColorPopUp">
+    <ContentPage.Content>
+        <StackLayout>
+            <CollectionView SelectionMode="Single" SelectedItem="{Binding SelectedColor}" SelectionChangedCommand="{Binding ChangeColorCommand}"  ItemsSource="{Binding ColorsCollection}" ItemsLayout="VerticalGrid, 3">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="100"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Image Source="{Binding PicLink}" Grid.Row="0" Grid.Column="0"/>
+                            <Label Text="{Binding ColorName}" TextColor="{Binding ColorCode}" Grid.Row="1" Grid.Column="0"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <Button Text="Back" Command="{Binding CloseColorChangeViewCommand}" HorizontalOptions="EndAndExpand"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

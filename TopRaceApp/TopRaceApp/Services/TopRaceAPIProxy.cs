@@ -304,6 +304,53 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
+        public async Task<List<Models.Color>> GetAllColorsAsync()
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetAllColors");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    List<Models.Color> lst = JsonSerializer.Deserialize<List<Models.Color>>(content, options);
+                    return lst;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        public async Task<bool> UpdatePlayerAsync(PlayersInGame playersInGame)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                string playerJson = JsonSerializer.Serialize(playersInGame, options);
+                StringContent playerJsonContent = new StringContent(playerJson, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/UpdatePlayer", playerJsonContent);
+                return response.IsSuccessStatusCode;
+
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
+
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try
@@ -359,5 +406,5 @@ namespace TopRaceApp.Services
         //    }
         //}
     }
-        
+
 }

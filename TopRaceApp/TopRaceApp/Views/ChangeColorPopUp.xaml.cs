@@ -10,9 +10,9 @@ using Xamarin.Forms.Xaml;
 namespace TopRaceApp.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
-    public partial class ColorChangeView : ContentView
+    public partial class ChangeColorPopUp : ContentPage
     {
-        public ColorChangeView()
+        public ChangeColorPopUp()
         {
             InitializeComponent();
         }
