@@ -4,7 +4,7 @@
              x:Class="TopRaceApp.Views.ChangeColorPopUp">
     <ContentPage.Content>
         <StackLayout>
-            <CollectionView SelectionMode="Single" SelectedItem="{Binding SelectedColor}" SelectionChangedCommand="{Binding ChangeColorCommand}"  ItemsSource="{Binding ColorsCollection}" ItemsLayout="VerticalGrid, 3">
+            <CollectionView x:Name="ColorsColView" SelectionMode="Single" SelectionChangedCommand="{Binding ChangeColorCommand}" SelectionChangedCommandParameter="{Binding Source={x:Reference ColorsColView},Path=SelectedItem}"  ItemsSource="{Binding ColorsCollection}" ItemsLayout="VerticalGrid, 3">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="4">

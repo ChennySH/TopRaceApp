@@ -171,22 +171,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
-        private Models.Color selectedColor;
-        public Models.Color SelectedColor
-        {
-            get
-            {
-                return selectedColor;
-            }
-            set
-            {
-                if(selectedColor != value)
-                {
-                    selectedColor = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        //private Models.Color selectedColor;
+        //public Models.Color SelectedColor
+        //{
+        //    get
+        //    {
+        //        return selectedColor;
+        //    }
+        //    set
+        //    {
+        //        if(selectedColor != value)
+        //        {
+        //            selectedColor = value;
+        //            OnPropertyChanged();
+        //        }
+        //    }
+        //}
         public ObservableCollection<PlayersInGame> PlayersInGameList { get; set; }
         public ObservableCollection<Message> ChatMessages { get; set; }
         public ObservableCollection<Models.Color> ColorsCollection { get; set; }
@@ -201,7 +201,7 @@ namespace TopRaceApp.ViewModels
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;
             MessageText = "";
             //SelectedColor = ((App)App.Current).currentPlayerInGame.Color;
-            SelectedColor = null;
+            //SelectedColor = null;
             PlayersInGameList = new ObservableCollection<PlayersInGame>();
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
@@ -220,12 +220,14 @@ namespace TopRaceApp.ViewModels
             }
             OpenColorChangeViewCommand = new Command(OpenColorChangeView);
             CloseColorChangeViewCommand = new Command(CloseColorChangeView);
-            ChangeColorCommand = new Command(ChangeColor);
+            ChangeColorCommand = new Command<Models.Color>(ChangeColor);
         }
+
+
         public ICommand SendMessageCommand { get; set; }
         public ICommand OpenColorChangeViewCommand { get; set; }
         public ICommand CloseColorChangeViewCommand { get; set; }
-        public ICommand ChangeColorCommand { get; set; }
+        public ICommand ChangeColorCommand{ get; set; }
 
         private async void SendMessage()
         {
@@ -251,19 +253,20 @@ namespace TopRaceApp.ViewModels
             changeColorPage.BindingContext = this;
             App.Current.MainPage.Navigation.PushModalAsync(changeColorPage);
         }
-        public async void ChangeColor()
+        public async void ChangeColor(Models.Color color)
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-            ((App)App.Current).currentPlayerInGame.Color = SelectedColor;
+            ((App)App.Current).currentPlayerInGame.Color = color;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
 
             PlayersInGameList.Clear();
-            foreach(PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
+            foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
                 PlayersInGameList.Add(p);
+
             }
             //PlayersInGameList.Add(((App)App.Current).currentPlayerInGame);
-            SelectedColor = null;
+            //SelectedColor = null;
             CloseColorChangeView();
         }
         public async Task Run()
@@ -324,10 +327,10 @@ namespace TopRaceApp.ViewModels
                 {
                     this.PlayersInGameList.Remove(p);
                     this.PlayersInGameList.Add(player);
-                    //if (((App)App.Current).currentPlayerInGame.Id == p.Id)
-                    //{
-                    //    ((App)App.Current).currentPlayerInGame = player;
-                    //}
+                    if (((App)App.Current).currentPlayerInGame.Id == p.Id)
+                    {
+                        ((App)App.Current).currentPlayerInGame = player;
+                    }
                 }
             }
         }
