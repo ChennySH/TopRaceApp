@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using TopRaceApp.Services;
+
 
 
 namespace TopRaceApp.Models
@@ -9,6 +11,7 @@ namespace TopRaceApp.Models
         public Color()
         {
             PlayersInGames = new List<PlayersInGame>();
+            
         }
 
         public int Id { get; set; }

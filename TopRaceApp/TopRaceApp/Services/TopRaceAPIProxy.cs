@@ -211,6 +211,7 @@ namespace TopRaceApp.Services
                     
                     string content = await response.Content.ReadAsStringAsync();
                     Game gameAdded = JsonSerializer.Deserialize<Game>(content, options);
+
                     return gameAdded;
                 }
                 else
@@ -235,6 +236,10 @@ namespace TopRaceApp.Services
                     };
                     string content = await response.Content.ReadAsStringAsync();
                     Game game = JsonSerializer.Deserialize<Game>(content, options);
+                    foreach (PlayersInGame p in game.PlayersInGames)
+                    {
+                        p.Color.PicLink = this.basePhotosUri + p.Color.PicLink;
+                    }
                     return game;
                 }
                 else
@@ -318,6 +323,10 @@ namespace TopRaceApp.Services
                 {
                     string content = await response.Content.ReadAsStringAsync();
                     List<Models.Color> lst = JsonSerializer.Deserialize<List<Models.Color>>(content, options);
+                    foreach(Models.Color c in lst)
+                    {
+                        c.PicLink = this.basePhotosUri + c.PicLink;
+                    }
                     return lst;
                 }
                 else
