@@ -265,6 +265,7 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ((App)App.Current).currentPlayerInGame.Color = color;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
+            CloseColorChangeView();
             if (!isUpdated)
             {
                 var toastOptions = new ToastOptions
@@ -280,7 +281,6 @@ namespace TopRaceApp.ViewModels
                 };               
                 await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);                   
             }
-            CloseColorChangeView();
         }
         public async Task Run()
         {
