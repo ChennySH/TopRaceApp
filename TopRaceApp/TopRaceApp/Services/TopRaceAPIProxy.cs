@@ -351,7 +351,16 @@ namespace TopRaceApp.Services
                 string playerJson = JsonSerializer.Serialize(playersInGame, options);
                 StringContent playerJsonContent = new StringContent(playerJson, Encoding.UTF8, "application/json");
                 HttpResponseMessage response = await this.client.PostAsync($"{this.baseUri}/UpdatePlayer", playerJsonContent);
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    bool isUpdated = JsonSerializer.Deserialize<bool>(content, options);
+                    return isUpdated;
+                }
+                else
+                {
+                    return false;
+                }
 
             }
             catch(Exception e)

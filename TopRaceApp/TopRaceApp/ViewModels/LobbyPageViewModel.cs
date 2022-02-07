@@ -11,6 +11,9 @@ using TopRaceApp.Views;
 using Xamarin.Essentials;
 using System.Linq;
 using System.Collections.ObjectModel;
+using Xamarin.CommunityToolkit;
+using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.CommunityToolkit.UI.Views.Options;
 
 namespace TopRaceApp.ViewModels
 {
@@ -262,6 +265,21 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ((App)App.Current).currentPlayerInGame.Color = color;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
+            if (!isUpdated)
+            {
+                var toastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = "The Color is Already Taken",
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };               
+                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);                   
+            }
             CloseColorChangeView();
         }
         public async Task Run()
