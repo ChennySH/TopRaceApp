@@ -290,7 +290,7 @@ namespace TopRaceApp.ViewModels
                 // do something every 3 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
+                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);            
                     ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
                     UpdateChatRoom();
                     UpdatePlayersInGameList();
