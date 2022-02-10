@@ -12,6 +12,7 @@ using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.IO;
 using TopRaceApp.DTOs;
+
 namespace TopRaceApp.Services
 {
     class TopRaceAPIProxy
@@ -368,7 +369,32 @@ namespace TopRaceApp.Services
                 return false;
             }
         }
-
+        public async Task<bool> CloseGameAsync(int gameID)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/CloseGame?gameID={gameID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    bool isClosed = JsonSerializer.Deserialize<bool>(content, options);
+                    return isClosed;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+        }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try
@@ -424,5 +450,6 @@ namespace TopRaceApp.Services
         //    }
         //}
     }
+
 
 }
