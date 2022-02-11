@@ -10,6 +10,9 @@ using TopRaceApp.Models;
 using TopRaceApp.Views;
 using Xamarin.Essentials;
 using System.Linq;
+using Xamarin.CommunityToolkit;
+using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.CommunityToolkit.UI.Views.Options;
 
 namespace TopRaceApp.ViewModels
 {
@@ -183,9 +186,27 @@ namespace TopRaceApp.ViewModels
             try
             {
                 Game game = await proxy.JoinGameWithPrivateCodeAsync(PrivateKey);
-                ((App)App.Current).currentGame = game;
-                ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                MoveToLobbyPage();
+                if (game != null)
+                {
+                    ((App)App.Current).currentGame = game;
+                    ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                    MoveToLobbyPage();
+                }
+                else
+                {
+                    var toastOptions = new ToastOptions
+                    {
+                        BackgroundColor = Xamarin.Forms.Color.Black,
+                        MessageOptions = new MessageOptions
+                        {
+                            Message = "Could not find an active game with the inserted key",
+                            Foreground = Xamarin.Forms.Color.White,
+                        },
+                        CornerRadius = 5,
+                        Duration = System.TimeSpan.FromSeconds(3),
+                    };
+                    await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                }
 
             }
             catch (Exception e)

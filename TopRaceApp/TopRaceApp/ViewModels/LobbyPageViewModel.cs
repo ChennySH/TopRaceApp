@@ -288,6 +288,7 @@ namespace TopRaceApp.ViewModels
 
             if (isClosed)
             {
+                this.IsGameActive = false;
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
                 ((App)App.Current).MainPage = new MainPage();
@@ -350,13 +351,16 @@ namespace TopRaceApp.ViewModels
                 // do something every 3 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
-                    IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
-                    ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                    UpdateChatRoom();
-                    UpdatePlayersInGameList();
-                    AddNewPlayers();
-                    PlayersInGameList.OrderBy(p => p.EnterTime);
+                    if (IsGameActive)
+                    {
+                        ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
+                        IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
+                        ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                        UpdateChatRoom();
+                        UpdatePlayersInGameList();
+                        AddNewPlayers();
+                        PlayersInGameList.OrderBy(p => p.EnterTime);
+                    }
                     //interact with UI elements
                 });
                 if (!IsGameActive)
