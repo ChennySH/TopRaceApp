@@ -324,7 +324,7 @@ namespace TopRaceApp.ViewModels
         public async void ChangeColor(Models.Color color)
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-            ((App)App.Current).currentPlayerInGame.Color = color;
+            ((App)App.Current).currentPlayerInGame.ColorId = color.Id;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
             CloseColorChangeView();
             if (!isUpdated)
@@ -359,7 +359,7 @@ namespace TopRaceApp.ViewModels
                         UpdateChatRoom();
                         UpdatePlayersInGameList();
                         AddNewPlayers();
-                        PlayersInGameList.OrderBy(p => p.EnterTime);
+                        PlayersInGameList.OrderBy(p => p.Id);
                     }
                     //interact with UI elements
                 });

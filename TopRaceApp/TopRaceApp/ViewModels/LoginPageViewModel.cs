@@ -17,8 +17,8 @@ namespace TopRaceApp.ViewModels
     {
         public LoginPageViewModel()
         {
-            UserNameOrEmail = "";
-            Password = "";
+            UserNameOrEmail = "t@g";
+            Password = "12345678";
             SubmitCommand = new Command(Submit);
         }
 
