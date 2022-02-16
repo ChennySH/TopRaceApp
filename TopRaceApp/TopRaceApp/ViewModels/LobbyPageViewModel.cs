@@ -374,7 +374,7 @@ namespace TopRaceApp.ViewModels
             {
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
-                ((App)App.Current).MainPage = new MainPage();
+                ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
                 var closedToastOptions = new ToastOptions
                 {
                     BackgroundColor = Xamarin.Forms.Color.Black,
