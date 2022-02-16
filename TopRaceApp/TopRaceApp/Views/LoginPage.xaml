@@ -2,10 +2,18 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
-             x:Class="TopRaceApp.Views.LoginPage">
+             x:Class="TopRaceApp.Views.LoginPage"
+             Title="Login" NavigationPage.HasBackButton="False">
     <ContentPage.BindingContext>
         <local:LoginPageViewModel/>
     </ContentPage.BindingContext>
+   <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Back To Start Page"               
+                 Order="Default"
+                 Priority="0" 
+                 Command="{Binding GoBackToStartPageCommand}" 
+                     />
+    </ContentPage.ToolbarItems> 
     <ContentPage.Content>
         <StackLayout>
             <Label Text="UserName or Email:"></Label>

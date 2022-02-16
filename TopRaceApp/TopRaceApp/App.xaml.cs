@@ -4,6 +4,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using TopRaceApp.Views;
 using TopRaceApp.Models;
+using TopRaceApp.ViewModels;
 using TopRaceApp.Services;
 
 namespace TopRaceApp
@@ -29,7 +30,7 @@ namespace TopRaceApp
             this.currentUser = null;
             this.currentPlayerInGame = null;
             this.currentGame = null;
-            MainPage = new StartPage();
+            MainPage = new NavigationPage(new StartPage());
         }
 
         protected override async void OnStart()

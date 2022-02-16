@@ -2,8 +2,10 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
+             xmlns:models="clr-namespace:TopRaceApp.Models"
              x:Class="TopRaceApp.Views.LobbyPage"
-             Title="{Binding GameName}">
+             Title="{Binding GameName}" x:DataType="local:LobbyPageViewModel">
+
     <ContentPage.Content>
         <StackLayout>
             <Grid VerticalOptions="FillAndExpand">
@@ -25,7 +27,7 @@
             <Label Text="{Binding PrivateKey}" Grid.Column="2" Grid.Row="0"/>
             <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="models:PlayersInGame">
                             <Grid Padding="4" HorizontalOptions="FillAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="100"/>
@@ -57,7 +59,7 @@
                 </Grid>
                 <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" BackgroundColor="Gray">
                 <CollectionView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="models:Message">
                             <Grid Padding="8" HorizontalOptions="FillAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>

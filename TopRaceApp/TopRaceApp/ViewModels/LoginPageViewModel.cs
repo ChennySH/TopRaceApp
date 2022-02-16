@@ -20,6 +20,7 @@ namespace TopRaceApp.ViewModels
             UserNameOrEmail = "t@g";
             Password = "12345678";
             SubmitCommand = new Command(Submit);
+            GoBackToStartPageCommand = new Command(GoBackToStartPage);
         }
 
         private async void Submit()
@@ -52,7 +53,7 @@ namespace TopRaceApp.ViewModels
         public void MoveToHomePage()
         {
             MainPage mainPage = new MainPage();
-            App.Current.MainPage = mainPage;
+            App.Current.MainPage.Navigation.PushAsync(mainPage);
         }
         #region Properties
 
@@ -190,6 +191,13 @@ namespace TopRaceApp.ViewModels
         }
         #endregion
         public ICommand SubmitCommand { get; set; }
+        public ICommand GoBackToStartPageCommand { get; set; }
+        private void GoBackToStartPage()
+        {
+            //StartPage startPage = new StartPage();
+            //App.Current.MainPage = startPage;
+            App.Current.MainPage.Navigation.PopToRootAsync();
+        }
 
     }
 }

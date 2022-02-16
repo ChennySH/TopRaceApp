@@ -29,7 +29,7 @@ namespace TopRaceApp.ViewModels
             try
             {
                 LoginPage loginPage = new LoginPage();
-                App.Current.MainPage = loginPage;
+                App.Current.MainPage.Navigation.PushAsync(loginPage);
             }
             catch(Exception e)
             {
@@ -42,7 +42,7 @@ namespace TopRaceApp.ViewModels
             try
             {
                 SignUpPage signUp = new SignUpPage();
-                App.Current.MainPage = signUp;
+                App.Current.MainPage.Navigation.PushAsync(signUp);
             }
             catch (Exception e)
             {
