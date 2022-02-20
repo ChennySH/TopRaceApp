@@ -93,7 +93,7 @@ namespace TopRaceApp.ViewModels
         public  void Login()
         {
             LoginPage loginPage = new LoginPage();
-            App.Current.MainPage = loginPage;
+            App.Current.MainPage.Navigation.PushAsync(loginPage);
         }
         #region properties
 

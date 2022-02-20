@@ -16,6 +16,8 @@ namespace TopRaceApp.Models
         public string UserName { get; set; }
         public string ProfilePic { get; set; }
         public bool IsHost { get; set; }
+        public bool IsInGame { get; set; }
+        public bool DidPlayInGame { get; set; }
         public int ColorId { get; set; }
         public int ChatRoomId { get; set; }
         public int GameId { get; set; }

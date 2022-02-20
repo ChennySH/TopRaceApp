@@ -177,7 +177,7 @@ namespace TopRaceApp.ViewModels
             LobbyPage lobbyPage = new LobbyPage();
             lobbyPage.BindingContext = new LobbyPageViewModel();
             await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
-            App.Current.MainPage = lobbyPage;
+            await App.Current.MainPage.Navigation.PushAsync(lobbyPage);
         }
         public ICommand JoinGameWithPrivateKeyCommand { get; set; }
         public async void JoinGameWithPrivateKey()

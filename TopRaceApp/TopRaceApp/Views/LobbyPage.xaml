@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
              xmlns:models="clr-namespace:TopRaceApp.Models"
              x:Class="TopRaceApp.Views.LobbyPage"
-             Title="{Binding GameName}" x:DataType="local:LobbyPageViewModel">
+             Title="{Binding GameName}" NavigationPage.HasBackButton="False">
 
     <ContentPage.Content>
         <StackLayout>
@@ -25,9 +25,16 @@
             <Label Text="{Binding RoomStatus}" Grid.Column="0" Grid.Row="0"/>
             <Label Text="Key:" Grid.Column="1" Grid.Row="0"/>
             <Label Text="{Binding PrivateKey}" Grid.Column="2" Grid.Row="0"/>
-            <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:PlayersInGame">
+                <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate >
+                              <SwipeView IsVisible="{Binding IsHost}">
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem BackgroundColor="LightCoral"
+                                                   Text="Kick Out"/>
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
                             <Grid Padding="4" HorizontalOptions="FillAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="100"/>
@@ -43,7 +50,8 @@
                                 <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/>
                                 <Label Text="[Host]" IsVisible="{Binding IsHost}" Grid.Column="3" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                             </Grid>
-                    </DataTemplate>
+                            </SwipeView>
+                        </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
                 <Grid Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3">

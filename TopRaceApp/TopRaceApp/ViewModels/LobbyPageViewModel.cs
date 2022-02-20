@@ -36,6 +36,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private bool areYouInGame;
+        public bool AreYouInGame
+        {
+            get
+            {
+                return areYouInGame;
+            }
+            set
+            {
+                if (areYouInGame != value)
+                {
+                    areYouInGame = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private bool isHost;
         public bool IsHost
         {
@@ -213,6 +229,7 @@ namespace TopRaceApp.ViewModels
         public LobbyPageViewModel()
         {
             IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
+            AreYouInGame = ((App)App.Current).currentPlayerInGame.IsInGame;
             RoomStatus = string.Empty;
             IsHost = (((App)App.Current).currentGame.HostUserId == ((App)App.Current).currentUser.Id);
             IsNotHost = (((App)App.Current).currentGame.HostUserId != ((App)App.Current).currentUser.Id);
@@ -289,9 +306,10 @@ namespace TopRaceApp.ViewModels
             if (isClosed)
             {
                 this.IsGameActive = false;
+                this.AreYouInGame = false;
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
-                ((App)App.Current).MainPage = new MainPage();
+                await ((App)App.Current).MainPage.Navigation.PopAsync();
                 var closedToastOptions = new ToastOptions
                 {
                     BackgroundColor = Xamarin.Forms.Color.Black,
@@ -312,7 +330,7 @@ namespace TopRaceApp.ViewModels
                     BackgroundColor = Xamarin.Forms.Color.Black,
                     MessageOptions = new MessageOptions
                     {
-                        Message = "The Game Was Closed Succesfully!",
+                        Message = "Something went wrong",
                         Foreground = Xamarin.Forms.Color.White,
                     },
                     CornerRadius = 5,
@@ -352,19 +370,23 @@ namespace TopRaceApp.ViewModels
                 // do something every 3 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
-                    IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
-                    if (IsGameActive)
+                    if (IsGameActive && AreYouInGame)
                     {
+                        ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
+                        IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
                         ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                        UpdateChatRoom();
-                        UpdatePlayersInGameList();
-                        AddNewPlayers();
-                        PlayersInGameList.OrderBy(p => p.Id);
+                        AreYouInGame = ((App)App.Current).currentPlayerInGame.IsInGame;
+                        if (IsGameActive && AreYouInGame)
+                        {                            
+                            UpdateChatRoom();
+                            UpdatePlayersInGameList();
+                            AddNewPlayers();
+                            PlayersInGameList.OrderBy(p => p.Id);
+                        }
                     }
                     //interact with UI elements
                 });
-                if (!IsGameActive)
+                if (!IsGameActive || !AreYouInGame)
                 {
                     return false;
                 }
@@ -374,13 +396,31 @@ namespace TopRaceApp.ViewModels
             {
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
-                ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
+                await ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
                 var closedToastOptions = new ToastOptions
                 {
                     BackgroundColor = Xamarin.Forms.Color.Black,
                     MessageOptions = new MessageOptions
                     {
-                        Message = "The Game Was Closed by the host.",
+                        Message = "The Game Was Closed by the host",
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };
+                await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+            }
+            else
+            {
+                ((App)App.Current).currentGame = null;
+                ((App)App.Current).currentPlayerInGame = null;
+                await ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
+                var closedToastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = "You were kicked out by the host",
                         Foreground = Xamarin.Forms.Color.White,
                     },
                     CornerRadius = 5,
