@@ -392,7 +392,7 @@ namespace TopRaceApp.ViewModels
                 }
                 return true; // runs again, or false to stop
             });
-            if(((App)App.Current).currentGame.StatusId == 3)
+            if(!IsGameActive)
             {
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
@@ -410,7 +410,7 @@ namespace TopRaceApp.ViewModels
                 };
                 await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
             }
-            else
+            if(!AreYouInGame)
             {
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
