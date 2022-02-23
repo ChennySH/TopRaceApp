@@ -28,13 +28,13 @@
                 <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                     <CollectionView.ItemTemplate>
                         <DataTemplate >
-                              <SwipeView IsVisible="{Binding IsHost}">
+                        <!--      <SwipeView IsVisible="{Binding IsHost}">
                                 <SwipeView.RightItems>
                                     <SwipeItems>
                                         <SwipeItem BackgroundColor="LightCoral"
                                                    Text="Kick Out"/>
                                     </SwipeItems>
-                                </SwipeView.RightItems>
+                                </SwipeView.RightItems>-->
                             <Grid Padding="4" HorizontalOptions="FillAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="100"/>
@@ -50,7 +50,7 @@
                                 <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/>
                                 <Label Text="[Host]" IsVisible="{Binding IsHost}" Grid.Column="3" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                             </Grid>
-                            </SwipeView>
+                         <!--   </SwipeView>-->
                         </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
