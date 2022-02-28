@@ -16,6 +16,8 @@ namespace TopRaceApp.Views
         public LobbyPage()
         {
             InitializeComponent();
+            
         }
+
     }
 }

@@ -395,6 +395,32 @@ namespace TopRaceApp.Services
                 return false;
             }
         }
+        public async Task<bool> KickOutAsync(int gameID, int playerID)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/KickOutPlayer?gameID={gameID}&playerInGameID={playerID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    bool isKicked = JsonSerializer.Deserialize<bool>(content, options);
+                    return isKicked;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try

@@ -4,7 +4,8 @@
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
              xmlns:models="clr-namespace:TopRaceApp.Models"
              x:Class="TopRaceApp.Views.LobbyPage"
-             Title="{Binding GameName}" NavigationPage.HasBackButton="False">
+             x:DataType="local:LobbyPageViewModel"
+             Title="{Binding GameName}" NavigationPage.HasBackButton="False" x:Name="this">
 
     <ContentPage.Content>
         <StackLayout>
@@ -25,17 +26,21 @@
             <Label Text="{Binding RoomStatus}" Grid.Column="0" Grid.Row="0"/>
             <Label Text="Key:" Grid.Column="1" Grid.Row="0"/>
             <Label Text="{Binding PrivateKey}" Grid.Column="2" Grid.Row="0"/>
-                <CollectionView ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
+                <CollectionView x:Name="PlayersCollection" ItemsSource="{Binding PlayersInGameList}" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate >
-                        <!--      <SwipeView IsVisible="{Binding IsHost}">
+                        <DataTemplate x:DataType="models:PlayersInGame">
+                              <SwipeView>
                                 <SwipeView.RightItems>
                                     <SwipeItems>
-                                        <SwipeItem BackgroundColor="LightCoral"
-                                                   Text="Kick Out"/>
+                                        <SwipeItem IsVisible="{Binding Source={x:Reference this},Path=BindingContext.IsHost}"
+                                                   BackgroundColor="LightCoral"
+                                                   Text="Kick Out"
+                                                   Command="{Binding Source={x:Reference this},Path=BindingContext.KickOutPlayerCommand}"
+                                                   CommandParameter="{Binding}"
+                                                  />
                                     </SwipeItems>
-                                </SwipeView.RightItems>-->
-                            <Grid Padding="4" HorizontalOptions="FillAndExpand">
+                                </SwipeView.RightItems>
+                                <Grid Padding="4" HorizontalOptions="FillAndExpand">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="100"/>
                                 </Grid.RowDefinitions>
@@ -50,7 +55,7 @@
                                 <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/>
                                 <Label Text="[Host]" IsVisible="{Binding IsHost}" Grid.Column="3" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                             </Grid>
-                         <!--   </SwipeView>-->
+                            </SwipeView>
                         </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

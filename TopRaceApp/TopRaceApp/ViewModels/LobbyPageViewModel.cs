@@ -263,14 +263,14 @@ namespace TopRaceApp.ViewModels
             CloseColorChangeViewCommand = new Command(CloseColorChangeView);
             ChangeColorCommand = new Command<Models.Color>(ChangeColor);
             CloseGameCommand = new Command(CloseGame);
+            KickOutPlayerCommand = new Command<PlayersInGame>(KickOutPlayer);
         }
-
-
         public ICommand SendMessageCommand { get; set; }
         public ICommand OpenColorChangeViewCommand { get; set; }
         public ICommand CloseColorChangeViewCommand { get; set; }
         public ICommand ChangeColorCommand{ get; set; }
         public ICommand CloseGameCommand { get; set; }
+        public ICommand KickOutPlayerCommand { get; set; }
 
         private async void SendMessage()
         {
@@ -359,6 +359,62 @@ namespace TopRaceApp.ViewModels
                     Duration = System.TimeSpan.FromSeconds(3),
                 };               
                 await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);                   
+            }
+        }
+        public async void KickOutPlayer(PlayersInGame playerInGame)
+        {
+            try
+            {
+                if (IsHost)
+                {
+                    TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                    bool isKicked = await proxy.KickOutAsync(((App)App.Current).currentGame.Id, playerInGame.Id);
+                    if (isKicked)
+                    {
+                        var toastOptions = new ToastOptions
+                        {
+                            BackgroundColor = Xamarin.Forms.Color.Black,
+                            MessageOptions = new MessageOptions
+                            {
+                                Message = "The player was kicked out succesfully",
+                                Foreground = Xamarin.Forms.Color.White,
+                            },
+                            CornerRadius = 5,
+                            Duration = System.TimeSpan.FromSeconds(3),
+                        };
+                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                    }
+                    else
+                    {
+                        var toastOptions = new ToastOptions
+                        {
+                            BackgroundColor = Xamarin.Forms.Color.Black,
+                            MessageOptions = new MessageOptions
+                            {
+                                Message = "Something went wrong",
+                                Foreground = Xamarin.Forms.Color.White,
+                            },
+                            CornerRadius = 5,
+                            Duration = System.TimeSpan.FromSeconds(3),
+                        };
+                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                var toastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = e.Message,
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };
+                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
             }
         }
         public async Task Run()
@@ -493,7 +549,7 @@ namespace TopRaceApp.ViewModels
         {
             foreach(PlayersInGame pl in this.PlayersInGameList)
             {
-                if (p.Id == pl.Id)
+                if (p.Id == pl.Id && p.IsInGame)
                     return true;
             }
             return false;
