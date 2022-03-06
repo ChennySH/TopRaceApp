@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using Xamarin.CommunityToolkit;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.UI.Views.Options;
+using System.Collections.Concurrent;
 
 namespace TopRaceApp.ViewModels
 {
@@ -367,6 +368,22 @@ namespace TopRaceApp.ViewModels
             {
                 if (IsHost)
                 {
+                    if (playerInGame.IsHost)
+                    {
+                        var toastOptions = new ToastOptions
+                        {
+                            BackgroundColor = Xamarin.Forms.Color.Black,
+                            MessageOptions = new MessageOptions
+                            {
+                                Message = "You can not kick out yourself",
+                                Foreground = Xamarin.Forms.Color.White,
+                            },
+                            CornerRadius = 5,
+                            Duration = System.TimeSpan.FromSeconds(3),
+                        };
+                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        return;
+                    }
                     TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
                     bool isKicked = await proxy.KickOutAsync(((App)App.Current).currentGame.Id, playerInGame.Id);
                     if (isKicked)
@@ -520,6 +537,7 @@ namespace TopRaceApp.ViewModels
             // Updating colors
             if (this.PlayersInGameList.Count > 0)
             {
+               
                 foreach (PlayersInGame p in this.PlayersInGameList.ToList())
                 {
                     PlayersInGame player = ((App)App.Current).currentGame.PlayersInGames.Where(pl => pl.Id == p.Id).FirstOrDefault();
@@ -547,18 +565,19 @@ namespace TopRaceApp.ViewModels
         }
         public bool IsInPlayersInGameList(PlayersInGame p)
         {
-            foreach(PlayersInGame pl in this.PlayersInGameList)
+            foreach(PlayersInGame pl in this.PlayersInGameList.ToList())
             {
-                if (p.Id == pl.Id && p.IsInGame)
+                if (p.Id == pl.Id)
                     return true;
             }
             return false;
         }
         public bool IsInGamesPlayerList(PlayersInGame p)
         {
-            foreach (PlayersInGame pl in ((App)App.Current).currentGame.PlayersInGames)
+            ConcurrentBag<PlayersInGame> PlayersInGames = new ConcurrentBag<PlayersInGame>(((App)App.Current).currentGame.PlayersInGames);
+            foreach (PlayersInGame pl in PlayersInGames)
             {
-                if (p.Id == pl.Id)
+                if (p.Id == pl.Id && pl.IsInGame)
                     return true;
             }
             return false;
