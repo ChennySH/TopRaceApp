@@ -91,7 +91,7 @@
                 </CollectionView>
                 <Button Text="Change Color" Grid.Row="5" Grid.Column="0" Command="{Binding OpenColorChangeViewCommand}"/>
                 <Button Text="Start Game" Grid.Row="5" Grid.Column="1" IsVisible="{Binding IsHost}"/>
-                <Button Text="Leave Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsNotHost}"/>
+                <Button Text="Leave Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsNotHost}" Command="{Binding LeaveGameCommand}"/>
                 <Button Text="Delete Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsHost}" Command="{Binding CloseGameCommand}"/>
             </Grid>
         </StackLayout>
