@@ -143,6 +143,7 @@ namespace TopRaceApp.ViewModels
             this.Status = $"Wins: {this.WinsCount} Loses: {this.LosesCount}\n Current Streak: {this.WinStreak}";
             HostGameCommand = new Command(HostGame);
             JoinGameWithPrivateKeyCommand = new Command(JoinGameWithPrivateKey);
+            LogOutCommand = new Command(LogOut);
         }
         public ICommand HostGameCommand { get; set; }
         public async void HostGame()
@@ -212,6 +213,19 @@ namespace TopRaceApp.ViewModels
             catch (Exception e)
             {
                 await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
+            }
+        }
+        public ICommand LogOutCommand { get; set; }
+        private async void LogOut()
+        {
+            //StartPage startPage = new StartPage();
+            //App.Current.MainPage = startPage;
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            bool isLoggedOut = await proxy.LogOutAsync();
+            if (isLoggedOut)
+            {
+                ((App)App.Current).currentUser = null;
+                App.Current.MainPage.Navigation.PopToRootAsync();
             }
         }
     }

@@ -466,7 +466,7 @@ namespace TopRaceApp.ViewModels
                         DidLeaveTheGame = true;
                         ((App)App.Current).currentGame = null;
                         ((App)App.Current).currentPlayerInGame = null;
-                        await ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
+                        await ((App)App.Current).MainPage.Navigation.PopAsync();
                         //var toastOptions = new ToastOptions
                         //{
                         //    BackgroundColor = Xamarin.Forms.Color.Black,
@@ -539,7 +539,7 @@ namespace TopRaceApp.ViewModels
                         {
                             ((App)App.Current).currentGame = null;
                             ((App)App.Current).currentPlayerInGame = null;
-                            await ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
+                            await ((App)App.Current).MainPage.Navigation.PopAsync();
                             var closedToastOptions = new ToastOptions
                             {
                                 BackgroundColor = Xamarin.Forms.Color.Black,
@@ -557,7 +557,7 @@ namespace TopRaceApp.ViewModels
                         {
                             ((App)App.Current).currentGame = null;
                             ((App)App.Current).currentPlayerInGame = null;
-                            await ((App)App.Current).MainPage.Navigation.PushAsync(new MainPage());
+                            await ((App)App.Current).MainPage.Navigation.PopAsync();
                             var kickedToastOptions = new ToastOptions
                             {
                                 BackgroundColor = Xamarin.Forms.Color.Black,

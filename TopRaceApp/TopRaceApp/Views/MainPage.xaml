@@ -6,6 +6,13 @@
     <ContentPage.BindingContext>
         <local:MainPageViewModel/>
     </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="LogOut"               
+                 Order="Secondary"
+                 Priority="0" 
+                 Command="{Binding LogOutCommand}" 
+                     />
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
             <Grid VerticalOptions="FillAndExpand">

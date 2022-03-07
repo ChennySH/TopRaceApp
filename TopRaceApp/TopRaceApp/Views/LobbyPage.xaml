@@ -45,10 +45,10 @@
                                     <RowDefinition Height="100"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="80"/>
+                                    <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ProfilePic}" Grid.Column="0" Grid.Row="0"/>
                                 <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>

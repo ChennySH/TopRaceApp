@@ -421,6 +421,32 @@ namespace TopRaceApp.Services
                 return false;
             }
         }
+        public async Task<bool> LogOutAsync()
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/LogOut");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    bool isLoggedOut = JsonSerializer.Deserialize<bool>(content, options);
+                    return isLoggedOut;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+        }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)
         //{
         //    try
