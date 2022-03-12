@@ -8,7 +8,68 @@
     </ContentPage.BindingContext>
     <ContentPage.Content>
         <StackLayout>
-           
+            <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="300"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="160"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid BackgroundColor="LightCoral">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+
+                    </Grid.ColumnDefinitions>
+                    <Label Text="Turn: " Grid.Column="0" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Label Text="UserName" Grid.Column="1" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <!-- CrewMate Pic -->
+                    <Image Source="https://www.eekwi.org/sites/default/files/styles/original/public/2019-11/greysquirrel.jpg?itok=xGaAUTUj" Grid.Column="2" Grid.Row="0" HeightRequest="70"/>
+                    <Label Text="15" Grid.Column="3" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Button Text="Roll" Grid.Column="4" Grid.Row="0"/>
+                </Grid>
+                <Grid Grid.Column="0" Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
+                    <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
+                </Grid>
+                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="3" Grid.Column="0" BackgroundColor="Gray">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="8" HorizontalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Text="{Binding From.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0"/>
+                                <Label Text=": " Grid.Column="1" Grid.Row="0" TextColor="Black"/>
+                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Button Text="Quit" Grid.Row="4" Grid.Column="0"/>
+            </Grid>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

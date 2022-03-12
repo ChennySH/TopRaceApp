@@ -30,7 +30,7 @@ namespace TopRaceApp
             this.currentUser = null;
             this.currentPlayerInGame = null;
             this.currentGame = null;
-            MainPage = new NavigationPage(new StartPage());
+            MainPage = new NavigationPage(new GamePage());
         }
 
         protected override async void OnStart()
