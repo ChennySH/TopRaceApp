@@ -13,7 +13,7 @@ using System.Linq;
 using Xamarin.CommunityToolkit;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.UI.Views.Options;
-
+using TopRaceApp.DTOs;
 namespace TopRaceApp.ViewModels
 {
     class MainPageViewModel:BaseViewModel
@@ -151,14 +151,14 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
-                Game newGame = new Game
+                GameDTO newGame = new GameDTO
                 {
                     GameName = $"{((App)App.Current).currentUser.UserName}'s Game",
                     IsPrivate = true,
                     LastUpdateTime = DateTime.Now
                 };
                 newGame.HostUser = ((App)App.Current).currentUser;
-                Game fullGame = await proxy.HostGameAsync(newGame);
+                GameDTO fullGame = await proxy.HostGameAsync(newGame);
                 if (fullGame == null)
                     await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
                 else
@@ -186,7 +186,7 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
-                Game game = await proxy.JoinGameWithPrivateCodeAsync(PrivateKey);
+                GameDTO game = await proxy.JoinGameWithPrivateCodeAsync(PrivateKey);
                 if (game != null)
                 {
                     ((App)App.Current).currentGame = game;

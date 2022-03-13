@@ -195,7 +195,7 @@ namespace TopRaceApp.Services
                 return true;
             }
         }
-        public async Task<Game> HostGameAsync(Game game)
+        public async Task<GameDTO> HostGameAsync(GameDTO game)
         {
             try
             {
@@ -211,7 +211,7 @@ namespace TopRaceApp.Services
                 {
                     
                     string content = await response.Content.ReadAsStringAsync();
-                    Game gameAdded = JsonSerializer.Deserialize<Game>(content, options);
+                    GameDTO gameAdded = JsonSerializer.Deserialize<GameDTO>(content, options);
 
                     return gameAdded;
                 }
@@ -224,7 +224,7 @@ namespace TopRaceApp.Services
             }
         }
 
-        public async Task<Game> GetGameAsync(int GameID)
+        public async Task<GameDTO> GetGameAsync(int GameID)
         {
             try
             {
@@ -237,7 +237,7 @@ namespace TopRaceApp.Services
                         PropertyNameCaseInsensitive = true
                     };
                     string content = await response.Content.ReadAsStringAsync();
-                    Game game = JsonSerializer.Deserialize<Game>(content, options);
+                    GameDTO game = JsonSerializer.Deserialize<GameDTO>(content, options);
                     foreach (PlayersInGame p in game.PlayersInGames)
                     {
                         p.Color.PicLink = this.basePhotosUri + p.Color.PicLink;
@@ -284,7 +284,7 @@ namespace TopRaceApp.Services
                 return false;
             }
         }
-        public async Task<Game> JoinGameWithPrivateCodeAsync(string privateKey)
+        public async Task<GameDTO> JoinGameWithPrivateCodeAsync(string privateKey)
         {
             try
             {
@@ -297,7 +297,7 @@ namespace TopRaceApp.Services
                 if (response.IsSuccessStatusCode)
                 {
                     string content = await response.Content.ReadAsStringAsync();
-                    Game game = JsonSerializer.Deserialize<Game>(content, options);
+                    GameDTO game = JsonSerializer.Deserialize<GameDTO>(content, options);
                     return game;
                 }
                 else

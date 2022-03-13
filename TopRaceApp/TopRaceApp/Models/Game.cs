@@ -19,7 +19,7 @@ namespace TopRaceApp.Models
         public int HostUserId { get; set; }
         public int ChatRoomId { get; set; }
         public DateTime LastUpdateTime { get; set; }
-        public string Board { get; set; }
+        public MoversInGame [][] Board { get; set; }
         public int StatusId { get; set; }
         public int? WinnerId { get; set; }
         public int? CurrentPlayerInTurnId { get; set; }

@@ -6,6 +6,7 @@ using TopRaceApp.Views;
 using TopRaceApp.Models;
 using TopRaceApp.ViewModels;
 using TopRaceApp.Services;
+using TopRaceApp.DTOs;
 
 namespace TopRaceApp
 {
@@ -22,7 +23,7 @@ namespace TopRaceApp
         //The current logged in user
         public User currentUser { get; set; }
         public PlayersInGame currentPlayerInGame { get; set; }
-        public Game currentGame { get; set; }
+        public GameDTO currentGame { get; set; }
         public List<Models.Color> GameColors { get; set; }
         public App()
         {
