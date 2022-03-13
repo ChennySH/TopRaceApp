@@ -195,6 +195,7 @@ namespace TopRaceApp.Services
                 return true;
             }
         }
+
         public async Task<GameDTO> HostGameAsync(GameDTO game)
         {
             try
