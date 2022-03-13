@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 
 
+
 namespace TopRaceApp.Models
 {
     public partial class PlayersInGame
     {
         public PlayersInGame()
         {
+            GameCurrentPlayerInTurns = new List<Game>();
+            GamePreviousPlayers = new List<Game>();
+            GameWinners = new List<Game>();
             Messages = new List<Message>();
         }
 
@@ -22,14 +26,17 @@ namespace TopRaceApp.Models
         public int ChatRoomId { get; set; }
         public int GameId { get; set; }
         public int CurrentPosId { get; set; }
-        public DateTime LastMoveTime { get; set; }
         public DateTime EnterTime { get; set; }
+        public DateTime LastMoveTime { get; set; }
 
         public virtual ChatRoom ChatRoom { get; set; }
         public virtual Color Color { get; set; }
         public virtual Position CurrentPos { get; set; }
         public virtual Game Game { get; set; }
         public virtual User User { get; set; }
+        public virtual List<Game> GameCurrentPlayerInTurns { get; set; }
+        public virtual List<Game> GamePreviousPlayers { get; set; }
+        public virtual List<Game> GameWinners { get; set; }
         public virtual List<Message> Messages { get; set; }
     }
 }
