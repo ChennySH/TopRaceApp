@@ -12,7 +12,6 @@ namespace GameTester
         {
             Console.WriteLine("Hello World!");
 
-            
         }
         public static void PrintGame(Game game)
         {
