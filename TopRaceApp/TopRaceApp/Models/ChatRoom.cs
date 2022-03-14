@@ -8,6 +8,7 @@ namespace TopRaceApp.Models
     {
         public ChatRoom()
         {
+
             Games = new List<GameDTO>();
             Messages = new List<Message>();
             PlayersInGames = new List<PlayersInGame>();
