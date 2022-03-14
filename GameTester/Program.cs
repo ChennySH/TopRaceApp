@@ -2,6 +2,7 @@
 using TopRaceApp.Models;
 using TopRaceApp.Services;
 using TopRaceApp.DTOs;
+using System.IO;
 
 namespace GameTester
 {
@@ -10,6 +11,8 @@ namespace GameTester
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
+
+            
         }
         public static void PrintGame(Game game)
         {
