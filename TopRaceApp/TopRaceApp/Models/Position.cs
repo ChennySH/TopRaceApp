@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace TopRaceApp.Models
@@ -8,17 +10,11 @@ namespace TopRaceApp.Models
     {
         public Position()
         {
-            MoversInGameEndPos = new List<MoversInGame>();
-            MoversInGameStartPos = new List<MoversInGame>();
-            PlayersInGames = new List<PlayersInGame>();
         }
 
         public int Id { get; set; }
         public int X { get; set; }
         public int Y { get; set; }
 
-        public virtual List<MoversInGame> MoversInGameEndPos { get; set; }
-        public virtual List<MoversInGame> MoversInGameStartPos { get; set; }
-        public virtual List<PlayersInGame> PlayersInGames { get; set; }
     }
 }

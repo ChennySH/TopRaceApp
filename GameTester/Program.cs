@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using TopRaceApp.Models;
 using TopRaceApp.Services;
 using TopRaceApp.DTOs;
@@ -10,7 +12,7 @@ namespace GameTester
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
 
         }
         public static void PrintGame(Game game)
@@ -36,9 +38,8 @@ namespace GameTester
                     }
                     if(pl != null)
                     {
-
                         Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.Write($"[O] ");
+                        Console.Write($"[X] ");
                         Console.ForegroundColor = ConsoleColor.White;
                     }
                     else

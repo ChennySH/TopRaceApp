@@ -16,28 +16,87 @@ namespace TopRaceApp.DTOs
         public bool IsPrivate { get; set; }
         public string PrivateKey { get; set; }
         public int HostUserId { get; set; }
-        public int ChatRoomId { get; set; }
         public DateTime LastUpdateTime { get; set; }
         public int StatusId { get; set; }
         public int? WinnerId { get; set; }
         public int? CurrentPlayerInTurnId { get; set; }
         public int? PreviousPlayerId { get; set; }
         public int LastRollResult { get; set; }
-
-        public virtual ChatRoom ChatRoom { get; set; }
         public virtual PlayersInGame CurrentPlayerInTurn { get; set; }
         public virtual User HostUser { get; set; }
         public virtual PlayersInGame PreviousPlayer { get; set; }
         public virtual GameStatus Status { get; set; }
         public virtual PlayersInGame Winner { get; set; }
         public virtual ICollection<PlayersInGame> PlayersInGames { get; set; }
+        public virtual ICollection<Message> Messages { get; set; }
+
         //
-        public GameDTO() { }
+        public GameDTO()
+        {
+            this.Messages = new List<Message>();
+            this.PlayersInGames = new List<PlayersInGame>();
+        }
+        public Mover[][] Board { get; set; }
+        public GameDTO(Game game)
+        {
+            Messages = game.Messages?.ToList();
+            LastUpdateTime = game.LastUpdateTime;
+            HostUser = game.HostUser;
+            PlayersInGames = game.PlayersInGames?.ToList();
+            Winner = game.Winner;
+            CurrentPlayerInTurn = game.CurrentPlayerInTurn;
+            Id = game.Id;
+            PrivateKey = game.PrivateKey;
+            IsPrivate = game.IsPrivate;
+            HostUserId = game.HostUserId;
 
-        public MoversInGame[][] Board { get; set; }
-       
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                PropertyNameCaseInsensitive = true
+            };
 
-        
+            Board = JsonSerializer.Deserialize<Mover[][]>(game.Board, options);
+            StatusId = game.StatusId;
+            Status = game.Status;
+            WinnerId = game.WinnerId;
+            CurrentPlayerInTurnId = game.CurrentPlayerInTurnId;
+            PreviousPlayerId = game.PreviousPlayerId;
+            PreviousPlayer = game.PreviousPlayer;
+            LastRollResult = game.LastRollResult;
+        }
+
+        public Game ToGame()
+        {
+
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                PropertyNameCaseInsensitive = true
+            };
+            return new Game()
+            {
+                Messages = this.Messages?.ToList(),
+                LastUpdateTime = this.LastUpdateTime,
+                GameName = this.GameName,
+                HostUser = this.HostUser,
+                PlayersInGames = this.PlayersInGames?.ToList(),
+                Winner = this.Winner,
+                CurrentPlayerInTurn = this.CurrentPlayerInTurn,
+                Id = this.Id,
+                PrivateKey = this.PrivateKey,
+                IsPrivate = this.IsPrivate,
+                HostUserId = this.HostUserId,
+                Board = JsonSerializer.Serialize<Mover[][]>(Board, options),
+                StatusId = this.StatusId,
+                Status = this.Status,
+                WinnerId = this.WinnerId,
+                CurrentPlayerInTurnId = this.CurrentPlayerInTurnId,
+                PreviousPlayerId = this.PreviousPlayerId,
+                PreviousPlayer = this.PreviousPlayer,
+                LastRollResult = this.LastRollResult,
+            };
+        }
 
         private static T[][] ToJaggedArray<T>(T[,] twoDimensionalArray)
         {

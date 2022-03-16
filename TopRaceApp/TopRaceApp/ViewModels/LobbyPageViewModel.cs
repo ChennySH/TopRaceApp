@@ -267,7 +267,7 @@ namespace TopRaceApp.ViewModels
                 PlayersInGameList.Add(p);
             }
             ChatMessages = new ObservableCollection<Message>();
-            foreach(Message m in ((App)App.Current).currentGame.ChatRoom.Messages)
+            foreach(Message m in ((App)App.Current).currentGame.Messages)
             {
                 ChatMessages.Add(m);
             }
@@ -299,7 +299,7 @@ namespace TopRaceApp.ViewModels
             {
                 Message1 = this.MessageText,
                 From = ((App)App.Current).currentPlayerInGame,
-                ChatRoom = ((App)App.Current).currentGame.ChatRoom,
+                GameId = ((App)App.Current).currentGame.Id,
                 TimeSent = DateTime.Now
             };
             bool success=await proxy.SendMessageAsync(newMessage);
@@ -584,7 +584,7 @@ namespace TopRaceApp.ViewModels
         }
         public void UpdateChatRoom()
         {
-            foreach(Message m in ((App)App.Current).currentGame.ChatRoom.Messages)
+            foreach(Message m in ((App)App.Current).currentGame.Messages)
             {
                 //if (!ChatMessages.Contains(m))
                 if (!IsInChatMessages(m))

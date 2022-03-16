@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using TopRaceApp.DTOs;
-
-
 
 
 namespace TopRaceApp.Models
@@ -11,10 +8,6 @@ namespace TopRaceApp.Models
     {
         public PlayersInGame()
         {
-            GameCurrentPlayerInTurns = new List<GameDTO>();
-            GamePreviousPlayers = new List<GameDTO>();
-            GameWinners = new List<GameDTO>();
-            Messages = new List<Message>();
         }
 
         public int Id { get; set; }
@@ -31,14 +24,9 @@ namespace TopRaceApp.Models
         public DateTime EnterTime { get; set; }
         public DateTime LastMoveTime { get; set; }
 
-        public virtual ChatRoom ChatRoom { get; set; }
         public virtual Color Color { get; set; }
         public virtual Position CurrentPos { get; set; }
         public virtual Game Game { get; set; }
         public virtual User User { get; set; }
-        public virtual List<GameDTO> GameCurrentPlayerInTurns { get; set; }
-        public virtual List<GameDTO> GamePreviousPlayers { get; set; }
-        public virtual List<GameDTO> GameWinners { get; set; }
-        public virtual List<Message> Messages { get; set; }
     }
 }
