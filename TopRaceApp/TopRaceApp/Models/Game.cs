@@ -16,7 +16,6 @@ namespace TopRaceApp.Models
         public string GameName { get; set; }
         public bool IsPrivate { get; set; }
         public string PrivateKey { get; set; }
-        public int HostUserId { get; set; }
         public DateTime LastUpdateTime { get; set; }
         public string Board { get; set; }
         public int StatusId { get; set; }
@@ -26,7 +25,6 @@ namespace TopRaceApp.Models
         public int LastRollResult { get; set; }
 
         public virtual PlayersInGame CurrentPlayerInTurn { get; set; }
-        public virtual User HostUser { get; set; }
         public virtual PlayersInGame PreviousPlayer { get; set; }
         public virtual GameStatus Status { get; set; }
         public virtual PlayersInGame Winner { get; set; }

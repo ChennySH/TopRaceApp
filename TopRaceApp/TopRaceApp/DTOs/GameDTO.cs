@@ -23,7 +23,6 @@ namespace TopRaceApp.DTOs
         public int? PreviousPlayerId { get; set; }
         public int LastRollResult { get; set; }
         public virtual PlayersInGame CurrentPlayerInTurn { get; set; }
-        public virtual User HostUser { get; set; }
         public virtual PlayersInGame PreviousPlayer { get; set; }
         public virtual GameStatus Status { get; set; }
         public virtual PlayersInGame Winner { get; set; }
@@ -41,14 +40,12 @@ namespace TopRaceApp.DTOs
         {
             Messages = game.Messages?.ToList();
             LastUpdateTime = game.LastUpdateTime;
-            HostUser = game.HostUser;
             PlayersInGames = game.PlayersInGames?.ToList();
             Winner = game.Winner;
             CurrentPlayerInTurn = game.CurrentPlayerInTurn;
             Id = game.Id;
             PrivateKey = game.PrivateKey;
             IsPrivate = game.IsPrivate;
-            HostUserId = game.HostUserId;
 
             JsonSerializerOptions options = new JsonSerializerOptions
             {
@@ -79,14 +76,12 @@ namespace TopRaceApp.DTOs
                 Messages = this.Messages?.ToList(),
                 LastUpdateTime = this.LastUpdateTime,
                 GameName = this.GameName,
-                HostUser = this.HostUser,
                 PlayersInGames = this.PlayersInGames?.ToList(),
                 Winner = this.Winner,
                 CurrentPlayerInTurn = this.CurrentPlayerInTurn,
                 Id = this.Id,
                 PrivateKey = this.PrivateKey,
                 IsPrivate = this.IsPrivate,
-                HostUserId = this.HostUserId,
                 Board = JsonSerializer.Serialize<Mover[][]>(Board, options),
                 StatusId = this.StatusId,
                 Status = this.Status,

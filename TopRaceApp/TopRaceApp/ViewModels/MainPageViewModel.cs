@@ -157,7 +157,6 @@ namespace TopRaceApp.ViewModels
                     IsPrivate = true,
                     LastUpdateTime = DateTime.Now
                 };
-                newGame.HostUser = ((App)App.Current).currentUser;
                 GameDTO fullGame = await proxy.HostGameAsync(newGame);
                 if (fullGame == null)
                     await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");

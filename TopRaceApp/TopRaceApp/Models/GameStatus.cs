@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using TopRaceApp.DTOs;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace TopRaceApp.Models
 {
@@ -14,6 +16,7 @@ namespace TopRaceApp.Models
         public int Id { get; set; }
         public string StatusName { get; set; }
 
+        [JsonIgnore]
         public virtual List<GameDTO> Games { get; set; }
     }
 }

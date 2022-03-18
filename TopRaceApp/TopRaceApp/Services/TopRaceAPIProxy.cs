@@ -12,6 +12,8 @@ using Xamarin.Forms;
 using Xamarin.Essentials;
 using System.IO;
 using TopRaceApp.DTOs;
+using System.Linq;
+
 
 namespace TopRaceApp.Services
 {

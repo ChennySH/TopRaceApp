@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using TopRaceApp.DTOs;
+
 
 namespace TopRaceApp.Models
 {
@@ -8,7 +8,6 @@ namespace TopRaceApp.Models
     {
         public User()
         {
-            Games = new List<GameDTO>();
             PlayersInGames = new List<PlayersInGame>();
         }
 
@@ -22,7 +21,6 @@ namespace TopRaceApp.Models
         public int WinsStreak { get; set; }
         public string ProfilePic { get; set; }
 
-        public virtual List<GameDTO> Games { get; set; }
         public virtual List<PlayersInGame> PlayersInGames { get; set; }
     }
 }
