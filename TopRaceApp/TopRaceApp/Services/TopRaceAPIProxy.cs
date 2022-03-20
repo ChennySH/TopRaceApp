@@ -17,16 +17,16 @@ using System.Linq;
 
 namespace TopRaceApp.Services
 {
-    class TopRaceAPIProxy
+    public class TopRaceAPIProxy
     {
         private const string CLOUD_URL = "TBD"; //API url when going on the cloud
         private const string CLOUD_PHOTOS_URL = "TBD";
         private const string DEV_ANDROID_EMULATOR_URL = "http://10.0.2.2:20698/TopRaceAPI"; //API url when using emulator on android
         private const string DEV_ANDROID_PHYSICAL_URL = "http://192.168.1.106:20698/TopRaceAPI"; //API url when using physucal device on android
-        private const string DEV_WINDOWS_URL = "https://localhost:44330/TopRaceAPI"; //API url when using windoes on development
+        private const string DEV_WINDOWS_URL = "http://localhost:20698/TopRaceAPI"; //API url when using windoes on development
         private const string DEV_ANDROID_EMULATOR_PHOTOS_URL = "http://10.0.2.2:20698/Images/"; //API url when using emulator on android
         private const string DEV_ANDROID_PHYSICAL_PHOTOS_URL = "http://192.168.1.106:20698/Images/"; //API url when using physucal device on android
-        private const string DEV_WINDOWS_PHOTOS_URL = "https://localhost:44330/Images/"; //API url when using windoes on development
+        private const string DEV_WINDOWS_PHOTOS_URL = "http://localhost:20698/Images/"; //API url when using windoes on development
 
         private HttpClient client;
         private string baseUri;
@@ -68,7 +68,25 @@ namespace TopRaceApp.Services
                 proxy = new TopRaceAPIProxy(baseUri, basePhotosUri);
             return proxy;
         }
+        public static TopRaceAPIProxy CreateProxyForTester()
+        {
+            string baseUri;
+            string basePhotosUri;
+            if (App.IsDevEnv)
+            {
+                baseUri = DEV_WINDOWS_URL;
+                basePhotosUri = DEV_WINDOWS_PHOTOS_URL;                
+            }
+            else
+            {
+                baseUri = CLOUD_URL;
+                basePhotosUri = CLOUD_PHOTOS_URL;
+            }
 
+            if (proxy == null)
+                proxy = new TopRaceAPIProxy(baseUri, basePhotosUri);
+            return proxy;
+        }
 
         private TopRaceAPIProxy(string baseUri, string basePhotosUri)
         {
@@ -449,6 +467,58 @@ namespace TopRaceApp.Services
             catch (Exception e)
             {
                 return false;
+            }
+        }
+        public async Task<GameDTO> StartGameAsync(int gameID)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/StartGame?gameID={gameID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    GameDTO gameDTO = JsonSerializer.Deserialize<GameDTO>(content, options);
+                    return gameDTO;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        public async Task<GameDTO> PlayAsync(int gameID)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/Play?gameID={gameID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    GameDTO gameDTO = JsonSerializer.Deserialize<GameDTO>(content, options);
+                    return gameDTO;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
             }
         }
         //public async Task<GameStatus> GetGameStatusAsync(int statusID)

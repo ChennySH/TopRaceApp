@@ -249,8 +249,8 @@ namespace TopRaceApp.ViewModels
             AreYouInGame = ((App)App.Current).currentPlayerInGame.IsInGame;
             DidLeaveTheGame = false;
             RoomStatus = string.Empty;
-            IsHost = (((App)App.Current).currentGame.HostUserId == ((App)App.Current).currentUser.Id);
-            IsNotHost = (((App)App.Current).currentGame.HostUserId != ((App)App.Current).currentUser.Id);
+            IsHost = (((App)App.Current).currentPlayerInGame.IsHost);
+            IsNotHost = !(((App)App.Current).currentPlayerInGame.IsHost);
             GameName = ((App)App.Current).currentGame.GameName;
             PrivateKey = ((App)App.Current).currentGame.PrivateKey;
             IsPrivate = ((App)App.Current).currentGame.IsPrivate;

@@ -125,7 +125,7 @@ namespace TopRaceApp.DTOs
 
             for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < cols; i++)
+                for (int j = 0; j < cols; j++)
                 {
                     twoDimensionalArray[i, j] = jaggedArray[i][j];
                 }
