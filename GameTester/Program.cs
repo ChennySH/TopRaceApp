@@ -111,9 +111,96 @@ namespace GameTester
                 {
                     twoDimensionalArray[i, j] = jaggedArray[i][j];
                 }
+ 
             }
 
             return twoDimensionalArray;
+        }
+        static void SetBoard()
+        {
+            List<int> freePositions = new List<int>();
+            List<int> moversPosition = new List<int>();
+            List<int> group1 = new List<int>();
+            List<int> group2 = new List<int>();
+            List<int> group3 = new List<int>();
+            List<int> group4 = new List<int>();
+            for (int i = 2; i < 100; i++)
+            {
+                int decedes = i / 10;
+                int digits = i % 10;
+                if (i <= 50)
+                {
+                    if ((decedes % 2 == 0 && digits <= 5)||((decedes % 2 == 1 && digits > 5)))
+                    {
+                        group1.Add(i);
+                    }
+                    else
+                    {
+                        group2.Add(i);
+                    }
+                }
+                else
+                {
+                    if ((decedes % 2 == 0 && digits <= 5) || ((decedes % 2 == 1 && digits > 5)))
+                    {
+                        group4.Add(i);
+                    }
+                    else
+                    {
+                        group3.Add(i);
+                    }
+                }
+            }
+            Random rnd = new Random();
+            for (int i = 0; i < 16; i++)
+            {
+                int num = group1[rnd.Next(0, group1.Count)];
+                freePositions.Add(num);
+                group1.Remove(num);
+            }
+            for (int i = 0; i < 17; i++)
+            {
+                int num = group2[rnd.Next(0, group2.Count)];
+                freePositions.Add(num);
+                group2.Remove(num);
+            }
+            for (int i = 0; i < 17; i++)
+            {
+                int num = group3[rnd.Next(0, group3.Count)];
+                freePositions.Add(num);
+                group3.Remove(num);
+            }
+            int mustSnakePos = rnd.Next(97, 100);
+            for (int i = 0; i < 16; i++)
+            {
+                int num = group4[rnd.Next(0, group4.Count)];
+                if(num == mustSnakePos)
+                {
+                    while(num == mustSnakePos)
+                    {
+                        num = group4[rnd.Next(0, group4.Count)];
+                    }
+                }
+                freePositions.Add(num);
+                group4.Remove(num);
+            }
+            foreach(int n in group1)
+            {
+                moversPosition.Add(n);
+            }
+            foreach (int n in group2)
+            {
+                moversPosition.Add(n);
+            }
+            foreach (int n in group3)
+            {
+                moversPosition.Add(n);
+            }
+            foreach (int n in group4)
+            {
+                moversPosition.Add(n);
+            }
+
         }
     }
 }
