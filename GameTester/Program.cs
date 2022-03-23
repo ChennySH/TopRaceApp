@@ -28,6 +28,7 @@ namespace GameTester
                 IsPrivate = true,
                 LastUpdateTime = DateTime.Now
             };
+
             Task<GameDTO> gameDTOTask = proxy.HostGameAsync(newGame);
             GameDTO gameDTO = gameDTOTask.Result;
             gameDTOTask.Wait();
