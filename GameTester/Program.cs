@@ -31,7 +31,9 @@ namespace GameTester
             Task<GameDTO> gameDTOTask = proxy.HostGameAsync(newGame);
             GameDTO gameDTO = gameDTOTask.Result;
             gameDTOTask.Wait();
-            // run startgame
+            Task<GameDTO> startTask = proxy.StartGameAsync(gameDTO.Id);
+            gameDTO = startTask.Result;
+            startTask.Wait();
             PrintGame(gameDTO);
             while(gameDTO.Winner == null)
             {
