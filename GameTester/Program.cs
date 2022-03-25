@@ -6,6 +6,7 @@ using TopRaceApp.Services;
 using TopRaceApp.DTOs;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace GameTester
 {
@@ -28,10 +29,25 @@ namespace GameTester
                 IsPrivate = true,
                 LastUpdateTime = DateTime.Now
             };
-
             Task<GameDTO> gameDTOTask = proxy.HostGameAsync(newGame);
             GameDTO gameDTO = gameDTOTask.Result;
             gameDTOTask.Wait();
+            Task<User> task3 = proxy.LoginAsync("t@g3", "12345678");
+            User u3 = task3.Result;
+            task3.Wait();
+            Task<GameDTO> joinTask3 = proxy.JoinGameWithPrivateCodeAsync(gameDTO.PrivateKey);
+            GameDTO joinGameDTO3 = joinTask3.Result;
+            joinTask3.Wait();
+            int id3 = joinGameDTO3.PlayersInGames.Where(pl => pl.UserId == 3).FirstOrDefault().Id;
+            Task<bool> kickOutTask = proxy.KickOutAsync(gameDTO.Id, id3);
+            bool isKickedOut = kickOutTask.Result;
+            kickOutTask.Wait();
+            Task<User> task2 = proxy.LoginAsync("t@g2", "12345678");
+            User u2 = task2.Result;
+            task2.Wait();
+            Task<GameDTO> joinTask = proxy.JoinGameWithPrivateCodeAsync(gameDTO.PrivateKey);
+            GameDTO joinGameDTO = joinTask.Result;
+            joinTask.Wait();     
             Task<GameDTO> startTask = proxy.StartGameAsync(gameDTO.Id);
             gameDTO = startTask.Result;
             startTask.Wait();
@@ -39,10 +55,10 @@ namespace GameTester
             while(gameDTO.Winner == null)
             {
                 Console.ReadKey();
-                Console.Clear();
                 Task<GameDTO> taskGame = proxy.PlayAsync(gameDTO.Id);
                 gameDTO = taskGame.Result;
                 task.Wait();
+                Console.Clear(); 
                 PrintGame(gameDTO);
             }
             Console.WriteLine($"{gameDTO.Winner.UserName} is the winner!");
@@ -57,9 +73,18 @@ namespace GameTester
                     PlayersInGame pl = IsPlayerOnMover(gameDTO, board[j, i]);
                     if (pl != null)
                     {
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.Write($"[X] ");
-                        Console.ForegroundColor = ConsoleColor.White;
+                        if (pl.UserName == "User1")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.Write($"[X] ");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
+                        if (pl.UserName == "User2")
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.Write($"[X] ");
+                            Console.ForegroundColor = ConsoleColor.White;
+                        }
                     }
                     else if (board[j, i].IsLadder)
                     {
