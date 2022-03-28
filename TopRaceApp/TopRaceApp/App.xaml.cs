@@ -32,6 +32,7 @@ namespace TopRaceApp
             this.currentPlayerInGame = null;
             this.currentGame = null;
             MainPage = new NavigationPage(new StartPage());
+            
 
         }
 
