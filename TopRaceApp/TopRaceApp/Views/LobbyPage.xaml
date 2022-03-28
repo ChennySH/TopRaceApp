@@ -51,9 +51,9 @@
                                     <ColumnDefinition Width="80"/>
                                 </Grid.ColumnDefinitions>
                                 <Image Source="{Binding ProfilePic}" Grid.Column="0" Grid.Row="0"/>
-                                <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" TextColor="Black"/>
                                 <Image Source="{Binding Color.PicLink}" Grid.Column="2" Grid.Row="0"/>
-                                <Label Text="[Host]" IsVisible="{Binding IsHost}" Grid.Column="3" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="[Host]" IsVisible="{Binding IsHost}" Grid.Column="3" Grid.Row="0" FontSize="24" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" TextColor="Black"/>
                             </Grid>
                             </SwipeView>
                         </DataTemplate>
