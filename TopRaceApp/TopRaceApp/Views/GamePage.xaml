@@ -31,6 +31,7 @@
                         <ColumnDefinition Width="*"/>
 
                     </Grid.ColumnDefinitions>
+                    
                     <Label Text="Turn: " Grid.Column="0" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
                     <Label Text="UserName" Grid.Column="1" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
                     <!-- CrewMate Pic -->
@@ -49,6 +50,34 @@
                     <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
                     <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
                 </Grid>
+                <AbsoluteLayout Grid.Row="2">
+                    <Grid x:Name="BoardGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>                        
+                    </Grid>
+                </AbsoluteLayout>
                 <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="3" Grid.Column="0" BackgroundColor="Gray">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>

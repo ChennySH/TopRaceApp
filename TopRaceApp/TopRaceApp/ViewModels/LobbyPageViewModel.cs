@@ -261,10 +261,11 @@ namespace TopRaceApp.ViewModels
             foreach (PlayersInGame p in ((App)App.Current).currentGame.PlayersInGames)
             {
                 TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                if (p.IsInGame)
                 {
                     p.Color.PicLink = proxy.GetBasePhotoUri() + p.Color.PicLink;
+                    PlayersInGameList.Add(p);
                 }
-                PlayersInGameList.Add(p);
             }
             ChatMessages = new ObservableCollection<Message>();
             foreach(Message m in ((App)App.Current).currentGame.Messages)
@@ -294,17 +295,20 @@ namespace TopRaceApp.ViewModels
 
         private async void SendMessage()
         {
-            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-            Message newMessage = new Message
+            if (messageText != string.Empty)
             {
-                Message1 = this.MessageText,
-                From = ((App)App.Current).currentPlayerInGame,
-                GameId = ((App)App.Current).currentGame.Id,
-                TimeSent = DateTime.Now
-            };
-            bool success=await proxy.SendMessageAsync(newMessage);
-            if (success)
-                this.MessageText = string.Empty;           
+                TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                Message newMessage = new Message
+                {
+                    Message1 = this.MessageText,
+                    From = ((App)App.Current).currentPlayerInGame,
+                    GameId = ((App)App.Current).currentGame.Id,
+                    TimeSent = DateTime.Now
+                };
+                bool success = await proxy.SendMessageAsync(newMessage);
+                if (success)
+                    this.MessageText = string.Empty;
+            }        
         }
         public void CloseColorChangeView()
         {
@@ -364,6 +368,11 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ((App)App.Current).currentPlayerInGame.ColorId = color.Id;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
+            ((App)App.Current).currentPlayerInGame.Color = color;
+            PlayersInGame pl = this.PlayersInGameList.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
+            int index = this.PlayersInGameList.IndexOf(pl);
+            this.PlayersInGameList.Remove(pl);
+            this.PlayersInGameList.Insert(index, ((App)App.Current).currentPlayerInGame);
             CloseColorChangeView();
             if (!isUpdated)
             {
@@ -623,9 +632,9 @@ namespace TopRaceApp.ViewModels
                    
                     if (p.ColorId != player.ColorId)
                     {
-                        
+                        int index = PlayersInGameList.IndexOf(p);
                         this.PlayersInGameList.Remove(p);
-                        this.PlayersInGameList.Add(player);
+                        this.PlayersInGameList.Insert(index, player);
                         if (((App)App.Current).currentPlayerInGame.Id == p.Id)
                         {
                             ((App)App.Current).currentPlayerInGame = player;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace TopRaceApp.ViewModels
 {
-    class GamePageViewModels
+    class GamePageViewModels:BaseViewModel
     {
     }
 }

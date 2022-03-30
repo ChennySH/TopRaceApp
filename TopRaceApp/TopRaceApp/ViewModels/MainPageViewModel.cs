@@ -185,6 +185,7 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
+                privateKey = privateKey.ToUpper();
                 GameDTO game = await proxy.JoinGameWithPrivateCodeAsync(PrivateKey);
                 if (game != null)
                 {

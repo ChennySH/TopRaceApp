@@ -261,7 +261,10 @@ namespace TopRaceApp.Services
                     GameDTO game = JsonSerializer.Deserialize<GameDTO>(content, options);
                     foreach (PlayersInGame p in game.PlayersInGames)
                     {
-                        p.Color.PicLink = this.basePhotosUri + p.Color.PicLink;
+                        if (p.Color.PicLink.StartsWith(this.basePhotosUri) == false)
+                        { 
+                            p.Color.PicLink = this.basePhotosUri + p.Color.PicLink;
+                        }
                     }
                     return game;
                 }
