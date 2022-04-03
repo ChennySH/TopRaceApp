@@ -15,6 +15,7 @@ using Xamarin.CommunityToolkit;
 using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.CommunityToolkit.UI.Views.Options;
 using System.Collections.Concurrent;
+using TopRaceApp.DTOs;
 
 namespace TopRaceApp.ViewModels
 {
@@ -267,6 +268,7 @@ namespace TopRaceApp.ViewModels
                     PlayersInGameList.Add(p);
                 }
             }
+            
             ChatMessages = new ObservableCollection<Message>();
             foreach(Message m in ((App)App.Current).currentGame.Messages)
             {
