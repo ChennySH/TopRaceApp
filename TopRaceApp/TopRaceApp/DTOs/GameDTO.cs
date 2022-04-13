@@ -116,7 +116,7 @@ namespace TopRaceApp.DTOs
             return jaggedArray;
         }
 
-        static T[,] ToMatrix<T>(T[][] jaggedArray)
+        public static T[,] ToMatrix<T>(T[][] jaggedArray)
         {
             int rows = jaggedArray.Length;
             int cols = jaggedArray[0].Length;

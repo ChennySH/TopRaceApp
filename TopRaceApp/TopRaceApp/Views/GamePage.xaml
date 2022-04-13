@@ -2,43 +2,56 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"
+             xmlns:skia="clr-namespace:SkiaSharp;assembly=SkiaSharp"
+             xmlns:skiaforms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
+             xmlns:p="clr-namespace:TopRaceApp.ViewModels"
              x:Class="TopRaceApp.Views.GamePage">
-    <ContentPage.BindingContext>
-        <local:GamePageViewModels/>
-    </ContentPage.BindingContext>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Quit Game"               
+                 Order="Default"
+                 Priority="0"/>
+    </ContentPage.ToolbarItems>
     <ContentPage.Content>
+        
         <StackLayout>
             <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="300"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="160"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="110"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid BackgroundColor="LightCoral">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="50"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-
                     </Grid.ColumnDefinitions>
-                    
-                    <Label Text="Turn: " Grid.Column="0" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
-                    <Label Text="UserName" Grid.Column="1" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
-                    <!-- CrewMate Pic -->
-                    <Image Source="https://www.eekwi.org/sites/default/files/styles/original/public/2019-11/greysquirrel.jpg?itok=xGaAUTUj" Grid.Column="2" Grid.Row="0" HeightRequest="70"/>
-                    <Label Text="15" Grid.Column="3" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
-                    <Button Text="Roll" Grid.Column="4" Grid.Row="0"/>
+                    <Frame x:Name="Crewmate1Frame" Grid.Column="0"/>
+                    <Image x:Name="Crewmate1" Grid.Column="0" Source="{Binding CrewmatePic1}" HeightRequest="50"/>
+
+                    <Frame x:Name="Crewmate2Frame" Grid.Column="1"/>
+                    <Image x:Name="Crewmate2" Grid.Column="1" Source="{Binding CrewmatePic2}" HeightRequest="50"/>
+
+                    <Frame x:Name="Crewmate3Frame" Grid.Column="2"/>
+                    <Image x:Name="Crewmate3" Grid.Column="2" Source="{Binding CrewmatePic3}" HeightRequest="50"/>
+
+                    <Frame x:Name="Crewmate4Frame" Grid.Column="3"/>
+                    <Image x:Name="Crewmate4" Grid.Column="3" Source="{Binding CrewmatePic4}" HeightRequest="50"/>
+
+                    <Label Text="15" Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Button Text="Roll" Grid.Column="5" Grid.Row="0"/>
                 </Grid>
+                <skiaforms:SKCanvasView x:Name="BoardCanvas" PaintSurface="BoardCanvas_PaintSurface" Grid.Column="0" Grid.Row="1"/>
                 <Grid Grid.Column="0" Grid.Row="2">
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -97,7 +110,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                <Button Text="Quit" Grid.Row="4" Grid.Column="0"/>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

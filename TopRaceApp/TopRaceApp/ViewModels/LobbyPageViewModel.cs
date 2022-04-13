@@ -38,6 +38,38 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private bool isGameOn;
+        public bool IsGameOn
+        {
+            get
+            {
+                return isGameOn;
+            }
+            set
+            {
+                if (isGameOn != value)
+                {
+                    isGameOn = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private bool isInGamePage;
+        public bool IsInGamePage
+        {
+            get
+            {
+                return isInGamePage;
+            }
+            set
+            {
+                if (isInGamePage != value)
+                {
+                    isInGamePage = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private bool areYouInGame;
         public bool AreYouInGame
         {
@@ -224,28 +256,14 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
-        //private Models.Color selectedColor;
-        //public Models.Color SelectedColor
-        //{
-        //    get
-        //    {
-        //        return selectedColor;
-        //    }
-        //    set
-        //    {
-        //        if(selectedColor != value)
-        //        {
-        //            selectedColor = value;
-        //            OnPropertyChanged();
-        //        }
-        //    }
-        //}
+        
         public ObservableCollection<PlayersInGame> PlayersInGameList { get; set; }
         public ObservableCollection<Message> ChatMessages { get; set; }
         public ObservableCollection<Models.Color> ColorsCollection { get; set; }
         #endregion
         public LobbyPageViewModel()
         {
+            IsInGamePage = false;
             IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
             AreYouInGame = ((App)App.Current).currentPlayerInGame.IsInGame;
             DidLeaveTheGame = false;
@@ -286,6 +304,7 @@ namespace TopRaceApp.ViewModels
             CloseGameCommand = new Command(CloseGame);
             KickOutPlayerCommand = new Command<PlayersInGame>(KickOutPlayer);
             LeaveGameCommand = new Command(LeaveGame);
+            StartGameCommand = new Command(StartGame);
         }
         public ICommand SendMessageCommand { get; set; }
         public ICommand OpenColorChangeViewCommand { get; set; }
@@ -294,7 +313,7 @@ namespace TopRaceApp.ViewModels
         public ICommand CloseGameCommand { get; set; }
         public ICommand KickOutPlayerCommand { get; set; }
         public ICommand LeaveGameCommand { get; set; }
-
+        public ICommand StartGameCommand { get; set; }
         private async void SendMessage()
         {
             if (messageText != string.Empty)
@@ -464,6 +483,46 @@ namespace TopRaceApp.ViewModels
                 await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
             }
         }
+        public async void MoveToGamePage()
+        {
+            GamePage gamePage = new GamePage();
+            gamePage.BindingContext = new GamePageViewModel();
+            gamePage.SetBorder();
+            await ((App)App.Current).MainPage.Navigation.PushAsync(gamePage);
+        }
+        public async void StartGame()
+        {
+            try
+            {
+                if (isHost)
+                {
+                    IsInGamePage = true;
+                    TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                    GameDTO game = await proxy.StartGameAsync(((App)App.Current).currentGame.Id);
+                    ((App)App.Current).currentGame = game;
+                    ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
+                    GamePage gamePage = new GamePage();
+                    gamePage.BindingContext = new GamePageViewModel();
+                    gamePage.SetBorder();
+                    await ((App)App.Current).MainPage.Navigation.PushAsync(gamePage);
+                }
+            }
+            catch(Exception e)
+            {
+                var toastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = e.Message,
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };
+                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+            }
+        }
         public async void LeaveGame()
         {
             try
@@ -478,18 +537,6 @@ namespace TopRaceApp.ViewModels
                         ((App)App.Current).currentGame = null;
                         ((App)App.Current).currentPlayerInGame = null;
                         await ((App)App.Current).MainPage.Navigation.PopAsync();
-                        //var toastOptions = new ToastOptions
-                        //{
-                        //    BackgroundColor = Xamarin.Forms.Color.Black,
-                        //    MessageOptions = new MessageOptions
-                        //    {
-                        //        Message = "You Left the Game",
-                        //        Foreground = Xamarin.Forms.Color.White,
-                        //    },
-                        //    CornerRadius = 5,
-                        //    Duration = System.TimeSpan.FromSeconds(3),
-                        //};
-                        //await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
                     }
                     else
                     {
@@ -536,7 +583,8 @@ namespace TopRaceApp.ViewModels
                     if (IsGameActive && AreYouInGame && !DidLeaveTheGame)
                     {
                         ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
-                        IsGameActive = ((App)App.Current).currentGame.StatusId == 1;
+                        IsGameActive = ((App)App.Current).currentGame.StatusId != 3;
+                        IsGameOn = ((App)App.Current).currentGame.StatusId == 2;
                         ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
                         AreYouInGame = ((App)App.Current).currentPlayerInGame.IsInGame;
                         if (IsGameActive && AreYouInGame)
@@ -545,6 +593,11 @@ namespace TopRaceApp.ViewModels
                             UpdatePlayersInGameList();
                             AddNewPlayers();
                             PlayersInGameList.OrderBy(p => p.Id);
+                        }
+                        if (isGameOn && (IsInGamePage == false))
+                        {
+                            IsInGamePage = true;
+                            MoveToGamePage();
                         }
                         if (!IsGameActive && !IsHost)
                         {
