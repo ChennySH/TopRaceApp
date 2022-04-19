@@ -365,6 +365,32 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
+        public async Task<List<Position>> GetAllPositionssAsync()
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetAllPositions");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    List<Models.Position> lst = JsonSerializer.Deserialize<List<Models.Position>>(content, options);
+                    return lst;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
         public async Task<bool> UpdatePlayerAsync(PlayersInGame playersInGame)
         {
             try
@@ -524,60 +550,10 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
-        //public async Task<GameStatus> GetGameStatusAsync(int statusID)
-        //{
-        //    try
-        //    {
-        //        HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetGameStatus?statusId={statusID}");
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            JsonSerializerOptions options = new JsonSerializerOptions
-        //            {
-        //                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
-        //                PropertyNameCaseInsensitive = true
-        //            };
-        //            string content = await response.Content.ReadAsStringAsync();
-        //            GameStatus s = JsonSerializer.Deserialize<GameStatus>(content, options);
-        //            return s;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        return null;
-        //    }
-        //}
-        //public async Task<string> GetPrivateKeyAsync()
-        //{
-        //    try
-        //    {
-        //        HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/GetPrivateKey");
-        //        if (response.IsSuccessStatusCode)
-        //        {
-        //            JsonSerializerOptions options = new JsonSerializerOptions
-        //            {
-        //                ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
-        //                PropertyNameCaseInsensitive = true
-        //            };
-        //            string content = await response.Content.ReadAsStringAsync();
-        //            string key = JsonSerializer.Deserialize<string>(content, options);
-        //            return key;
-        //        }
-        //        else
-        //        {
-        //            return null;
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        return null;
-        //    }
-        //}
+        public async Task<Stream> GetCrewmateStream(string colorLink)
+        {
+            return await this.client.GetStreamAsync(colorLink);
+        }
     }
 
 

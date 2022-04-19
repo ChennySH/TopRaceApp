@@ -10,15 +10,47 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using SkiaSharp;
 using SkiaSharp.Views.Forms;
+using TopRaceApp.Services;
+using System.IO;
+using System.Threading;
 
 namespace TopRaceApp.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class GamePage : ContentPage
     {
+        public int infoWidth { get; set; }
+        public int infoHeight { get; set; }
+        public bool DidStart { get; set; }
+        public TopRaceAPIProxy Proxy { get; set; }
+        public SKBitmap Crewmate1BitMap { get; set; }
+        public SKBitmap Crewmate2BitMap { get; set; }
+        public SKBitmap Crewmate3BitMap { get; set; }
+        public SKBitmap Crewmate4BitMap { get; set; }
+        public List<SKBitmap> CrewmatesBitMaps { get; set; }
+        public List<SKPoint> CrewmatesSKPoints { get; set; }
+        //public Position Crewmate1pos { get; set; }
+        //public Position Crewmate2pos { get; set; }
+        //public Position Crewmate3pos { get; set; }
+        //public Position Crewmate4pos { get; set; }
+        public List<Position> PositionsList;
+        //public List<SKBitmap>[] BitmapListsArray;
         public GamePage()
         {
-            InitializeComponent();        
+            Proxy = TopRaceAPIProxy.CreateProxy();
+            InitializeComponent();
+            PositionsList = ((App)App.Current).Positions;
+            DidStart = false;
+            //PositionsArray = new Position[100];
+            //for (int i = 0; i < PositionsArray.Length; i++)
+            //{
+            //    PositionsArray[i] = ((App)App.Current).Positions.Where(p => p.Id == i).FirstOrDefault();
+            //}
+            //BitmapListsArray = new List<SKBitmap>[100];
+            //for (int i = 0; i < BitmapListsArray.Length; i++)
+            //{
+            //    BitmapListsArray[i] = new List<SKBitmap>();
+            //}
         }
         public void SetBorder()
         {
@@ -40,6 +72,74 @@ namespace TopRaceApp.Views
             {
                 Crewmate4Frame.BorderColor = Xamarin.Forms.Color.Red;
             }
+        }
+        public async Task SetBitMaps()
+        {
+            CrewmatesBitMaps = new List<SKBitmap>();
+            GamePageViewModel vm = (GamePageViewModel)this.BindingContext;
+            List<PlayersInGame> players = vm.Players;
+            try
+            {
+                using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic1))
+                using (MemoryStream memStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memStream);
+                    memStream.Seek(0, SeekOrigin.Begin);
+
+                    Crewmate1BitMap = SKBitmap.Decode(memStream);
+                    BoardCanvas.InvalidateSurface();
+                };
+                //Crewmate1pos = players[0].CurrentPos;
+                CrewmatesBitMaps.Add(Crewmate1BitMap);
+                //BitmapListsArray[Crewmate1pos.Id].Add(Crewmate1BitMap);
+                using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic2))
+                using (MemoryStream memStream = new MemoryStream())
+                {
+                    await stream.CopyToAsync(memStream);
+                    memStream.Seek(0, SeekOrigin.Begin);
+
+                    Crewmate2BitMap = SKBitmap.Decode(memStream);
+                    BoardCanvas.InvalidateSurface();
+                };
+                //Crewmate2pos = players[1].CurrentPos;
+                CrewmatesBitMaps.Add(Crewmate2BitMap);
+                //BitmapListsArray[Crewmate2pos.Id].Add(Crewmate2BitMap);
+                if (players.Count > 2)
+                {
+                    using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic3))
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(memStream);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        Crewmate3BitMap = SKBitmap.Decode(memStream);
+                        BoardCanvas.InvalidateSurface();
+                    };
+                    //Crewmate3pos = players[2].CurrentPos;
+                    CrewmatesBitMaps.Add(Crewmate3BitMap);
+                    //BitmapListsArray[Crewmate3pos.Id].Add(Crewmate3BitMap);
+                }
+                if(players.Count > 3)
+                {
+                    using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic4))
+                    using (MemoryStream memStream = new MemoryStream())
+                    {
+                        await stream.CopyToAsync(memStream);
+                        memStream.Seek(0, SeekOrigin.Begin);
+
+                        Crewmate4BitMap = SKBitmap.Decode(memStream);
+                        BoardCanvas.InvalidateSurface();
+                    };
+                    //Crewmate4pos = players[3].CurrentPos;
+                    CrewmatesBitMaps.Add(Crewmate4BitMap);
+                    //BitmapListsArray[Crewmate4pos.Id].Add(Crewmate4BitMap);
+                }
+               
+            }
+            catch(Exception e)
+            {
+            }
+
         }
         private void BoardCanvas_PaintSurface(object sender, SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
         {
@@ -155,9 +255,20 @@ namespace TopRaceApp.Views
                     snakeCounter++;
                 }
             }
-            
-            
-           
+            GamePageViewModel vm = (GamePageViewModel)this.BindingContext;
+            List<PlayersInGame> players = vm.Players;
+            if (!DidStart)
+            {
+                infoWidth = info.Width;
+                infoHeight = info.Height;
+                CrewmatesSKPoints = new List<SKPoint>();
+                for (int i = 0; i < players.Count; i++)
+                {
+                    CrewmatesSKPoints.Add(GetSKPoint(players[i].CurrentPos, info));
+                }
+                DidStart = true;
+            }
+            PrintAllCrewmates(e);
         }
         private void PrintLadder(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKPoint startPoint, SKPoint endPoint, SKPaint paint)
         {
@@ -233,7 +344,73 @@ namespace TopRaceApp.Views
             SKPointMode pointMode = SKPointMode.Lines;
             canvas.DrawPoints(pointMode, ladder, paint);
         }
-        
+        private void PrintAllCrewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
+        {
+            SKImageInfo info = e.Info;
+            SKSurface surface = e.Surface;
+            SKCanvas canvas = surface.Canvas;
+            GamePageViewModel vm = (GamePageViewModel)this.BindingContext;
+            List<PlayersInGame> Players = vm.Players;
+            foreach (SKPoint point in CrewmatesSKPoints)
+            {
+                List<int> indexes = new List<int>();
+
+                for (int i = 0; i < CrewmatesSKPoints.Count; i++)
+                {
+                    SKPoint sKPoint = CrewmatesSKPoints[i];
+                    if (sKPoint.Equals(point))
+                    {
+                        indexes.Add(i);
+                    }
+                }
+                if(indexes.Count == 1)
+                {
+                    SKBitmap crewmate = CrewmatesBitMaps[indexes[0]];
+                    PrintCrewmate(e, crewmate, point);
+                }
+                if(indexes.Count == 2)
+                {
+                    SKBitmap crewmate1 = CrewmatesBitMaps[indexes[0]]; 
+                    SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]];
+                    Print2Crewmates(e, crewmate1, crewmate2, point);
+                }
+                if(indexes.Count == 3)
+                {
+                    SKBitmap crewmate1 = CrewmatesBitMaps[indexes[0]];
+                    SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]]; 
+                    SKBitmap crewmate3 = CrewmatesBitMaps[indexes[2]];
+                    Print3Crewmates(e, crewmate1, crewmate2, crewmate3, point);
+                }
+                if(indexes.Count == 4)
+                {
+                    SKBitmap crewmate1 = CrewmatesBitMaps[indexes[0]];
+                    SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]]; 
+                    SKBitmap crewmate3 = CrewmatesBitMaps[indexes[2]];
+                    SKBitmap crewmate4 = CrewmatesBitMaps[indexes[3]];
+                    Print4Crewmates(e, crewmate1, crewmate2, crewmate3, crewmate4, point);
+                }
+            }
+            //for (int i = 0; i < PositionsArray.Length; i++)
+            //{
+            //    if(BitmapListsArray[i].Count == 4)
+            //    {                 
+            //        Print4Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], BitmapListsArray[i][2], BitmapListsArray[3][0], GetSKPoint(PositionsArray[i], info));
+            //    }
+            //    if(BitmapListsArray[i].Count == 3)
+            //    {
+            //        Print3Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], BitmapListsArray[i][2], GetSKPoint(PositionsArray[i], info));
+            //    }
+            //    if(BitmapListsArray[i].Count == 2)
+            //    {
+            //        Print2Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], GetSKPoint(PositionsArray[i], info));
+            //    }
+            //    if(BitmapListsArray[i].Count == 1)
+            //    {
+            //        PrintCrewmate(e, BitmapListsArray[i][0], GetSKPoint(PositionsArray[i], info));
+            //    }
+            //}
+            
+        }
         private void PrintSnake(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKPoint startPoint, SKPoint endPoint, SKColor color)
         {
             SKImageInfo info = e.Info;
@@ -309,6 +486,128 @@ namespace TopRaceApp.Views
             float x = (posX * 0.1f + 0.05f) * info.Width;
             float y = ((9 - posY) * 0.1f + 0.05f) * info.Height;
             return new SKPoint(x, y);
+        }
+        public SKPoint GetSKPoint(Models.Position pos, int infoWidth, int infoHeight)
+        {
+            int posX = pos.X;
+            int posY = pos.Y;
+            float x = (posX * 0.1f + 0.05f) * infoWidth;
+            float y = ((9 - posY) * 0.1f + 0.05f) * infoHeight;
+            return new SKPoint(x, y);
+        }
+        private void PrintCrewmate(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap bitmap, SKPoint point)
+        {
+            SKImageInfo info = e.Info;
+            SKSurface surface = e.Surface;
+            SKCanvas canvas = surface.Canvas;
+            float height = 0.095f * info.Height;
+            float scale = height / bitmap.Height;
+            float width = scale * bitmap.Width;
+            float x = point.X - (width / 2);
+            float y = point.Y - (height / 2);
+            SKRect rect = new SKRect(x, y, x + width, y + height);
+            canvas.DrawBitmap(bitmap, rect);
+        }
+        private void Print2Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKPoint point)
+        {
+            SKImageInfo info = e.Info;
+            SKSurface surface = e.Surface;
+            SKCanvas canvas = surface.Canvas;
+            float height = 0.045f * info.Height;
+            float scale = height / crewmate1.Height;
+            float width = scale * crewmate1.Width;
+            float x = point.X - (width / 2);
+            float y1 = point.Y - 0.025f * info.Height - (height / 2);
+            float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            SKRect rect1 = new SKRect(x, y1, x + width, y1 + height);
+            canvas.DrawBitmap(crewmate1, rect1);
+            SKRect rect2 = new SKRect(x, y2, x + width, y2 + height);
+            canvas.DrawBitmap(crewmate2, rect2);
+        }
+        private void Print3Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKPoint point)
+        {
+            SKImageInfo info = e.Info;
+            SKSurface surface = e.Surface;
+            SKCanvas canvas = surface.Canvas;
+            float height = 0.045f * info.Height;
+            float scale = height / crewmate1.Height;
+            float width = scale * crewmate1.Width;
+            float x1 = point.X - 0.025f * info.Width - (width / 2);
+            float x2 = point.X + 0.025f * info.Width - (width / 2);
+            float y1 = point.Y - 0.025f * info.Height - (height / 2);
+            float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            SKRect rect1 = new SKRect(x1, y1, x1 + width, y1 + height);
+            canvas.DrawBitmap(crewmate1, rect1);
+            SKRect rect2 = new SKRect(x2, y1, x2 + width, y1 + height);
+            canvas.DrawBitmap(crewmate2, rect2);
+            SKRect rect3 = new SKRect(x1, y2, x1 + width, y2 + height);
+            canvas.DrawBitmap(crewmate3, rect3);
+        }
+        private void Print4Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKBitmap crewmate4, SKPoint point)
+        {
+            SKImageInfo info = e.Info;
+            SKSurface surface = e.Surface;
+            SKCanvas canvas = surface.Canvas;
+            float height = 0.045f * info.Height;
+            float scale = height / crewmate1.Height;
+            float width = scale * crewmate1.Width;
+            float x1 = point.X - 0.025f * info.Width - (width / 2);
+            float x2 = point.X + 0.025f * info.Width - (width / 2);
+            float y1 = point.Y - 0.025f * info.Height - (height / 2);
+            float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            SKRect rect1 = new SKRect(x1, y1, x1 + width, y1 + height);
+            canvas.DrawBitmap(crewmate1, rect1);
+            SKRect rect2 = new SKRect(x2, y1, x2 + width, y1 + height);
+            canvas.DrawBitmap(crewmate2, rect2);
+            SKRect rect3 = new SKRect(x1, y2, x1 + width, y2 + height);
+            canvas.DrawBitmap(crewmate3, rect3);
+            SKRect rect4 = new SKRect(x2, y2, x2 + width, y2 + height);
+            canvas.DrawBitmap(crewmate4, rect4);
+        }
+        private int GetNewPosID(int previousPosID, int rollResult)
+        {
+            int newPosId = previousPosID + rollResult;
+            if (newPosId > 100)
+            {
+                newPosId = 100 - (newPosId - 100);
+            }
+            return newPosId;
+        }
+        public void MoveCrewmate(int index, Position startPos, int rollResult ,Position endPos)
+        {
+            SKPoint startPoint = GetSKPoint(startPos, infoWidth, infoHeight);
+            int nextPosID = GetNewPosID(startPos.Id, rollResult);
+            Position nextPos = this.PositionsList.Where(p => p.Id == nextPosID).FirstOrDefault();
+            SKPoint nextPoint = GetSKPoint(nextPos, infoWidth, infoHeight);
+            //Device.StartTimer(TimeSpan.FromSeconds(1f / 60), () =>
+            //{
+
+            //    return false;
+            //});
+            CrewmatesSKPoints[index] = nextPoint;
+            BoardCanvas.InvalidateSurface();
+            if(nextPos.Id > endPos.Id)
+            {
+                MoveCrewmateLadder(index, nextPos, endPos);
+            }
+            if(nextPos.Id < endPos.Id)
+            {
+                MoveCrewmateSnake(index, nextPos, endPos);
+            }
+        }
+        public void MoveCrewmateLadder(int index, Position startPos, Position endPos)
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(0.5));
+            SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
+            CrewmatesSKPoints[index] = endPoint;
+            BoardCanvas.InvalidateSurface();
+        }
+        public void MoveCrewmateSnake(int index, Position startPos, Position endPos)
+        {
+            Thread.Sleep(TimeSpan.FromSeconds(0.5));
+            SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
+            CrewmatesSKPoints[index] = endPoint;
+            BoardCanvas.InvalidateSurface();
         }
     }
 }

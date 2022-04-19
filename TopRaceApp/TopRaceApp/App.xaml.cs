@@ -25,6 +25,7 @@ namespace TopRaceApp
         public PlayersInGame currentPlayerInGame { get; set; }
         public GameDTO currentGame { get; set; }
         public List<Models.Color> GameColors { get; set; }
+        public List<Position> Positions { get; set; }
         public App()
         {
             InitializeComponent();
@@ -40,6 +41,7 @@ namespace TopRaceApp
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             this.GameColors = await proxy.GetAllColorsAsync();
+            this.Positions = await proxy.GetAllPositionssAsync();
         }
 
         protected override void OnSleep()

@@ -488,6 +488,8 @@ namespace TopRaceApp.ViewModels
             GamePage gamePage = new GamePage();
             gamePage.BindingContext = new GamePageViewModel();
             gamePage.SetBorder();
+            await gamePage.SetBitMaps();
+            await ((GamePageViewModel)gamePage.BindingContext).Run();
             await ((App)App.Current).MainPage.Navigation.PushAsync(gamePage);
         }
         public async void StartGame()
@@ -497,14 +499,12 @@ namespace TopRaceApp.ViewModels
                 if (isHost)
                 {
                     IsInGamePage = true;
+                    IsGameOn = true;
                     TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
                     GameDTO game = await proxy.StartGameAsync(((App)App.Current).currentGame.Id);
                     ((App)App.Current).currentGame = game;
                     ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
-                    GamePage gamePage = new GamePage();
-                    gamePage.BindingContext = new GamePageViewModel();
-                    gamePage.SetBorder();
-                    await ((App)App.Current).MainPage.Navigation.PushAsync(gamePage);
+                    MoveToGamePage();
                 }
             }
             catch(Exception e)
