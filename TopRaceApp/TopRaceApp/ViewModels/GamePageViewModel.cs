@@ -125,7 +125,7 @@ namespace TopRaceApp.ViewModels
             }
             set
             {
-                if(value != lastUpdateTime)
+                if (value != lastUpdateTime)
                 {
                     lastUpdateTime = value;
                     OnPropertyChanged();
@@ -141,7 +141,7 @@ namespace TopRaceApp.ViewModels
             }
             set
             {
-                if(isMyTurn != value)
+                if (isMyTurn != value)
                 {
                     isMyTurn = value;
                     OnPropertyChanged();
@@ -157,13 +157,14 @@ namespace TopRaceApp.ViewModels
             }
             set
             {
-                if(lastRoll != value)
+                if (lastRoll != value)
                 {
                     lastRoll = value;
                     OnPropertyChanged();
                 }
             }
         }
+        public int UpdatesCounter{ get; set; }
         public GamePage GamePage { get; set; }
         public Mover [,] Board { get; set; }
         public List<PlayersInGame> Players { get; set; }
@@ -175,6 +176,7 @@ namespace TopRaceApp.ViewModels
         #endregion
         public GamePageViewModel()
         {
+            UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
             LastRoll = 0;
             Timer = 15;
@@ -216,6 +218,8 @@ namespace TopRaceApp.ViewModels
             }
             Mover[][] jaggedArry = ((App)App.Current).currentGame.Board;
             Board = GameDTO.ToMatrix(jaggedArry);
+            CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
+            IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
         }
         public async Task Run()
         {
@@ -228,14 +232,17 @@ namespace TopRaceApp.ViewModels
                 {
                     ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
 
-                // interact with UI elements
-                if (DateTime.Equals(LastUpdateTime, ((App)App.Current).currentGame.LastUpdateTime) == false)
+                    // interact with UI elements
+                    TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
+                    TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
+                if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
                     {
                         DateTime t = LastUpdateTime;
                         ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
                         CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
                         PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
                         LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
+                        UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
                         int prevoiusID = PreviousPlayer.Id;
                         PlayersInGame unUpdatedPlayer = null;
                         int index = 0;
@@ -320,7 +327,8 @@ namespace TopRaceApp.ViewModels
                 LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
                 PlayersInGame unUpdatedPlayer = null;
                 int index = 0;
-                foreach (PlayersInGame pl in Players)
+                List<PlayersInGame> players = Players.ToList();
+                foreach (PlayersInGame pl in players)
                 {
                     if (pl.Id == ((App)App.Current).currentPlayerInGame.Id)
                     {
@@ -331,10 +339,13 @@ namespace TopRaceApp.ViewModels
                     }
                 }
                 LastRoll = ((App)App.Current).currentGame.LastRollResult;
+                UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
                 GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
+                IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
                 Winner = ((App)App.Current).currentGame.Winner;
                 if (Winner != null)
                 {
+                    IsMyTurn = false;
                     // pops up winner! back to lobby or homePage
                 }
             }

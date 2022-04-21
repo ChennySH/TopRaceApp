@@ -200,21 +200,6 @@ namespace TopRaceApp.Views
                 }
             }
             #endregion
-            SKPaint ladderPaint1 = new SKPaint
-            {
-                //Style = SKPaintStyle.Stroke,
-                Color = SKColors.DarkBlue,
-                StrokeWidth = 10,
-                StrokeCap = SKStrokeCap.Round,
-            }; 
-            SKPaint ladderPaint2 = new SKPaint
-            {
-                //Style = SKPaintStyle.Stroke,
-                Color = SKColors.Black,
-                StrokeWidth = 10,
-                StrokeCap = SKStrokeCap.Round,
-            };
-
             int ladderCounter = 0;
             int snakeCounter = 0;
             Mover[,] board = ((GamePageViewModel)this.BindingContext).Board;
@@ -226,11 +211,11 @@ namespace TopRaceApp.Views
                 {
                     if(ladderCounter % 2 == 0)
                     {
-                        PrintLadder(e, startPoint, endPoint, ladderPaint1);
+                        PrintLadder(e, startPoint, endPoint, SKColors.DarkBlue);
                     }
                     else
                     {
-                        PrintLadder(e, startPoint, endPoint, ladderPaint2);
+                        PrintLadder(e, startPoint, endPoint, SKColors.Black);
                     }
                     ladderCounter++;
                 }
@@ -270,7 +255,7 @@ namespace TopRaceApp.Views
             }
             PrintAllCrewmates(e);
         }
-        private void PrintLadder(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKPoint startPoint, SKPoint endPoint, SKPaint paint)
+        private void PrintLadder(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKPoint startPoint, SKPoint endPoint, SKColor color)
         {
             SKImageInfo info = e.Info;
             SKSurface surface = e.Surface;
@@ -342,6 +327,13 @@ namespace TopRaceApp.Views
             }
             SKPoint[] ladder = ladderList.ToArray();
             SKPointMode pointMode = SKPointMode.Lines;
+            SKPaint paint = new SKPaint
+            {
+                //Style = SKPaintStyle.Stroke,
+                Color = color,
+                StrokeWidth = 10,
+                StrokeCap = SKStrokeCap.Round,
+            };
             canvas.DrawPoints(pointMode, ladder, paint);
         }
         private void PrintAllCrewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e)
@@ -390,25 +382,6 @@ namespace TopRaceApp.Views
                     Print4Crewmates(e, crewmate1, crewmate2, crewmate3, crewmate4, point);
                 }
             }
-            //for (int i = 0; i < PositionsArray.Length; i++)
-            //{
-            //    if(BitmapListsArray[i].Count == 4)
-            //    {                 
-            //        Print4Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], BitmapListsArray[i][2], BitmapListsArray[3][0], GetSKPoint(PositionsArray[i], info));
-            //    }
-            //    if(BitmapListsArray[i].Count == 3)
-            //    {
-            //        Print3Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], BitmapListsArray[i][2], GetSKPoint(PositionsArray[i], info));
-            //    }
-            //    if(BitmapListsArray[i].Count == 2)
-            //    {
-            //        Print2Crewmates(e, BitmapListsArray[i][0], BitmapListsArray[i][1], GetSKPoint(PositionsArray[i], info));
-            //    }
-            //    if(BitmapListsArray[i].Count == 1)
-            //    {
-            //        PrintCrewmate(e, BitmapListsArray[i][0], GetSKPoint(PositionsArray[i], info));
-            //    }
-            //}
             
         }
         private void PrintSnake(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKPoint startPoint, SKPoint endPoint, SKColor color)
@@ -468,7 +441,7 @@ namespace TopRaceApp.Views
             {
                 Style = SKPaintStyle.Stroke,
                 Color = color,
-                StrokeWidth = 20,
+                StrokeWidth = 15,
                 StrokeCap = SKStrokeCap.Round,
             };
             SKPaint headPaint = new SKPaint
@@ -579,35 +552,207 @@ namespace TopRaceApp.Views
             int nextPosID = GetNewPosID(startPos.Id, rollResult);
             Position nextPos = this.PositionsList.Where(p => p.Id == nextPosID).FirstOrDefault();
             SKPoint nextPoint = GetSKPoint(nextPos, infoWidth, infoHeight);
-            //Device.StartTimer(TimeSpan.FromSeconds(1f / 60), () =>
-            //{
-
-            //    return false;
-            //});
-            CrewmatesSKPoints[index] = nextPoint;
-            BoardCanvas.InvalidateSurface();
-            if(nextPos.Id > endPos.Id)
+            int timesPerSpot = 50;
+            double secondsForSpot = 0.05;
+            if (nextPosID == endPos.Id)
+            {
+                if (nextPos.Y == startPos.Y + 1)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        float x1 = 0.95f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (9 - startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (9 - nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if(reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X - ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            return (reached1 && reached2 && reachedNext) == false;
+                        });
+                    }
+                    else
+                    {
+                        float x1 = 0.05f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if (reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X + ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            return (reached1 && reached2 && reachedNext) == false;
+                        });
+                    }
+                }
+                else if (startPoint.Y == nextPoint.Y)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        int timersToReach = timesPerSpot * (nextPos.X - startPos.X);
+                        int counter = 0;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            counter++;
+                            float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter; ;
+                            SKPoint point = new SKPoint(x, nextPoint.Y);
+                            CrewmatesSKPoints.RemoveAt(index);
+                            CrewmatesSKPoints.Insert(index, point);
+                            BoardCanvas.InvalidateSurface();
+                            return counter < timersToReach;
+                        });
+                    }
+                    else
+                    {
+                        int timersToReach = timesPerSpot * (startPos.X - nextPos.X);
+                        int counter = 0;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            counter++;
+                            float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter; ;
+                            SKPoint point = new SKPoint(x, nextPoint.Y);
+                            CrewmatesSKPoints.RemoveAt(index);
+                            CrewmatesSKPoints.Insert(index, point);
+                            BoardCanvas.InvalidateSurface();
+                            return counter < timersToReach;
+                        });
+                    }
+                }
+            }
+            else if(nextPos.Id > endPos.Id)
             {
                 MoveCrewmateLadder(index, nextPos, endPos);
             }
-            if(nextPos.Id < endPos.Id)
+            else if(nextPos.Id < endPos.Id)
             {
                 MoveCrewmateSnake(index, nextPos, endPos);
             }
         }
         public void MoveCrewmateLadder(int index, Position startPos, Position endPos)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(0.5));
+            SKPoint startPoint = GetSKPoint(startPos, infoWidth, infoHeight);
             SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
-            CrewmatesSKPoints[index] = endPoint;
-            BoardCanvas.InvalidateSurface();
+            Task<bool> t = new Task<bool>(() =>
+            {
+                int counter = 0;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Device.StartTimer(TimeSpan.FromSeconds(0.4 / 100), () =>
+                    {
+                        counter++;
+                        float x = startPoint.X + ((endPoint.X - startPoint.X) * ((float)counter / 100f));
+                        float y = startPoint.Y + ((endPoint.Y - startPoint.Y) * ((float)counter / 100f));
+                        SKPoint point = new SKPoint(x, y);
+                        CrewmatesSKPoints.RemoveAt(index);
+                        CrewmatesSKPoints.Insert(index, point);
+                        BoardCanvas.InvalidateSurface();
+                        return counter < 100;
+                    });
+                });
+                return true;
+            });
+            t.Start();
+            bool b = t.Result;
+            t.Wait();
         }
         public void MoveCrewmateSnake(int index, Position startPos, Position endPos)
         {
-            Thread.Sleep(TimeSpan.FromSeconds(0.5));
+            SKPoint startPoint = GetSKPoint(startPos, infoWidth, infoHeight);
             SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
-            CrewmatesSKPoints[index] = endPoint;
-            BoardCanvas.InvalidateSurface();
+            Task<bool> t = new Task<bool>(() =>
+            {
+                int counter = 0;
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    Device.StartTimer(TimeSpan.FromSeconds(0.4 / 100), () =>
+                    {
+                        counter++;
+                        float x = startPoint.X + ((endPoint.X - startPoint.X) * ((float)counter / 100f));
+                        float y = startPoint.Y + ((endPoint.Y - startPoint.Y) * ((float)counter / 100f));
+                        SKPoint point = new SKPoint(x, y);
+                        CrewmatesSKPoints.RemoveAt(index);
+                        CrewmatesSKPoints.Insert(index, point);
+                        BoardCanvas.InvalidateSurface();
+                        return counter < 100;
+                    });
+                });
+                return true;
+            });
+            t.Start();
+            bool b = t.Result;
+            t.Wait();
         }
     }
 }

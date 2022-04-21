@@ -14,7 +14,10 @@ namespace GameTester
     {
         static void Main(string[] args)
         {
-            Start();
+            //Start();
+            //float x = 1f;
+            //float y = 10f;
+            //float res = x / y;
             Console.ReadKey();
         }
         public static void Start()
