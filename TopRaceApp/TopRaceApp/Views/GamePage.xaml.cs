@@ -1,18 +1,14 @@
-﻿using System;
+﻿using SkiaSharp;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using TopRaceApp.Models;
-using TopRaceApp.DTOs;
+using TopRaceApp.Services;
 using TopRaceApp.ViewModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using SkiaSharp;
-using SkiaSharp.Views.Forms;
-using TopRaceApp.Services;
-using System.IO;
-using System.Threading;
 
 namespace TopRaceApp.Views
 {
@@ -553,7 +549,7 @@ namespace TopRaceApp.Views
             Position nextPos = this.PositionsList.Where(p => p.Id == nextPosID).FirstOrDefault();
             SKPoint nextPoint = GetSKPoint(nextPos, infoWidth, infoHeight);
             int timesPerSpot = 50;
-            double secondsForSpot = 0.05;
+            double secondsForSpot = 0.1;
             if (nextPosID == endPos.Id)
             {
                 if (nextPos.Y == startPos.Y + 1)
@@ -693,12 +689,413 @@ namespace TopRaceApp.Views
             }
             else if(nextPos.Id > endPos.Id)
             {
-                MoveCrewmateLadder(index, nextPos, endPos);
+                SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
+
+                double length = Math.Pow(Math.Pow(nextPos.X + endPos.X, 2) + Math.Pow(nextPos.Y + endPos.Y, 2), 0.5);
+                int timesForLadder = ((int)(Math.Round(length * 50, 0))) / 2;
+                if (nextPos.Y == startPos.Y + 1)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        float x1 = 0.95f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (9 - startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (9 - nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        int counterL = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        bool reachedL = counterL == timesForLadder;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if (reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X - ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            if(reached1 && reached2 && reachedNext && (!reachedL))
+                            {
+                                counterL++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedL = counterL == timesForLadder;
+                            }
+                            return (reached1 && reached2 && reachedNext && reachedL) == false;
+                        });
+                    }
+                    else
+                    {
+                        float x1 = 0.05f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        int counterL = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        bool reachedL = counterL == timesForLadder;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if (reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X + ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            if (reached1 && reached2 && reachedNext && (!reachedL))
+                            {
+                                counterL++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedL = counterL == timesForLadder;
+                            }
+                            return (reached1 && reached2 && reachedNext && reachedL) == false;
+                        });
+                    }
+                }
+                else if (startPoint.Y == nextPoint.Y)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        int timesToReach = timesPerSpot * (nextPos.X - startPos.X);
+                        int counter1 = 0;
+                        int counterL = 0;
+                        bool reachedL = counterL == timesForLadder;
+                        bool reached1 = counter1 == timesToReach;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter1; ;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timesToReach;
+                            }
+                            if(reached1 && (!reachedL))
+                            {
+                                counterL++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedL = counterL == timesForLadder;
+                            }
+                            return (reached1 && reachedL) == false;
+                        });
+                    }
+                    else
+                    {
+                        int timesToReach = timesPerSpot * (startPos.X - nextPos.X);
+                        int counter1 = 0;
+                        int counterL = 0;
+                        bool reached1 = counter1 == timesToReach;
+                        bool reachedL = counterL == timesForLadder;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter1; ;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timesToReach;
+                            }
+                            if (reached1 && (!reachedL))
+                            {
+                                counterL++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedL = counterL == timesForLadder;
+                            }
+                            return (reached1 && reachedL) == false;
+                        });
+                    }
+                }
             }
             else if(nextPos.Id < endPos.Id)
             {
-                MoveCrewmateSnake(index, nextPos, endPos);
+                SKPoint endPoint = GetSKPoint(endPos, infoWidth, infoHeight);
+                double length = Math.Pow(Math.Pow(nextPos.X + endPos.X, 2) + Math.Pow(nextPos.Y + endPos.Y, 2), 0.5);
+                int timesForSnake = ((int)(Math.Round(length * 50, 0)))/2;
+                if (nextPos.Y == startPos.Y + 1)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        float x1 = 0.95f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (9 - startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (9 - nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        int counterS = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        bool reachedS = counterS == timesForSnake;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if (reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X - ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            if (reached1 && reached2 && reachedNext && (!reachedS))
+                            {
+                                counterS++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedS = counterS == timesForSnake;
+                            }
+                            return (reached1 && reached2 && reachedNext && reachedS) == false;
+                        });
+                    }
+                    else
+                    {
+                        float x1 = 0.05f * infoWidth;
+                        SKPoint point1 = new SKPoint(x1, startPoint.Y);
+                        SKPoint point2 = new SKPoint(x1, nextPoint.Y);
+                        int timeToReachPoint1 = timesPerSpot * (startPos.X);
+                        int timeToReachPoint2 = timesPerSpot;
+                        int timeToReachNextPoint = timesPerSpot * (nextPos.X);
+                        int counter1 = 0;
+                        int counter2 = 0;
+                        int counter3 = 0;
+                        int counterS = 0;
+                        bool reached1 = counter1 == timeToReachPoint1;
+                        bool reached2 = counter2 == timeToReachPoint2;
+                        bool reachedNext = counter3 == timeToReachNextPoint;
+                        bool reachedS = counterS == timesForSnake;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter1;
+                                SKPoint point = new SKPoint(x, startPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timeToReachPoint1;
+                            }
+                            if (reached1 && (!reached2))
+                            {
+                                counter2++;
+                                float y = point1.Y - ((0.1f * infoHeight) / timesPerSpot) * counter2;
+                                SKPoint point = new SKPoint(point1.X, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached2 = counter2 == timeToReachPoint2;
+                            }
+                            if (reached1 && reached2 && (!reachedNext))
+                            {
+                                counter3++;
+                                float x = point2.X + ((0.1f * infoWidth) / timesPerSpot) * counter3;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedNext = counter3 == timeToReachNextPoint;
+                            }
+                            if (reached1 && reached2 && reachedNext && (!reachedS))
+                            {
+                                counterS++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedS = counterS == timesForSnake;
+                            }
+                            return (reached1 && reached2 && reachedNext && reachedS) == false;
+                        });
+                    }
+                }
+                else if (startPoint.Y == nextPoint.Y)
+                {
+                    if (startPos.Y % 2 == 0)
+                    {
+                        int timesToReach = timesPerSpot * (nextPos.X - startPos.X);
+                        int counter1 = 0;
+                        int counterS = 0;
+                        bool reachedS = counterS == timesForSnake;
+                        bool reached1 = counter1 == timesToReach;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X + ((0.1f * infoWidth) / timesPerSpot) * counter1; ;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timesToReach;
+                            }
+                            if (reached1 && (!reachedS))
+                            {
+                                counterS++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedS = counterS == timesForSnake;
+                            }
+                            return (reached1 && reachedS) == false;
+                        });
+                    }
+                    else
+                    {
+                        int timesToReach = timesPerSpot * (startPos.X - nextPos.X);
+                        int counter1 = 0;
+                        int counterS = 0;
+                        bool reached1 = counter1 == timesToReach;
+                        bool reachedS = counterS == timesForSnake;
+                        Device.StartTimer(TimeSpan.FromSeconds(secondsForSpot / timesPerSpot), () =>
+                        {
+                            if (!reached1)
+                            {
+                                counter1++;
+                                float x = startPoint.X - ((0.1f * infoWidth) / timesPerSpot) * counter1; ;
+                                SKPoint point = new SKPoint(x, nextPoint.Y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reached1 = counter1 == timesToReach;
+                            }
+                            if (reached1 && (!reachedS))
+                            {
+                                counterS++;
+                                float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
+                                float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
+                                SKPoint point = new SKPoint(x, y);
+                                CrewmatesSKPoints.RemoveAt(index);
+                                CrewmatesSKPoints.Insert(index, point);
+                                BoardCanvas.InvalidateSurface();
+                                reachedS = counterS == timesForSnake;
+                            }
+                            return (reached1 && reachedS) == false;
+                        });
+                    }
+                }
             }
+        }
+        public double GetLength(SKPoint point1, SKPoint point2)
+        {
+            return Math.Pow(Math.Pow(point1.X + point2.X, 2) + Math.Pow(point1.Y + point2.Y, 2), 0.5);
         }
         public void MoveCrewmateLadder(int index, Position startPos, Position endPos)
         {
