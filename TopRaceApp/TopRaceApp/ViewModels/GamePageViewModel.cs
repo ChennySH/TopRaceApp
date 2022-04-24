@@ -113,6 +113,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private string resultSetter;
+        public string ResultSetter
+        {
+            get
+            {
+                return resultSetter; 
+            }
+            set
+            {
+                if (resultSetter != value)
+                {
+                    resultSetter = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public PlayersInGame CurrentPlayerInTurn { get; set; }
         public PlayersInGame Winner { get; set; }
         public PlayersInGame PreviousPlayer { get; set; }
@@ -173,15 +189,18 @@ namespace TopRaceApp.ViewModels
         public Position CurrentPos { get; set; }
         public Position PreviousPos { get; set; }
         public ICommand RollCommand { get; set; }
+        public ICommand RollTestCommand { get; set; }
         #endregion
         public GamePageViewModel()
         {
+            ResultSetter = "0";
             UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
             LastRoll = 0;
             Timer = 15;
             SendMessageCommand = new Command(SendMessage);
             RollCommand = new Command(Roll);
+            RollTestCommand = new Command(RollTest);
             ChatMessages = new ObservableCollection<Message>();
             List<Message> messages = ((App)App.Current).currentGame.Messages.ToList();
             for (int i = messages.Count - 1 ; i > -1; i--)
@@ -235,7 +254,7 @@ namespace TopRaceApp.ViewModels
                     // interact with UI elements
                     TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
                     TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
-                if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
+                if  (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
                     {
                         DateTime t = LastUpdateTime;
                         ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
@@ -265,7 +284,7 @@ namespace TopRaceApp.ViewModels
                         {
                             // pops up winner! back to lobby or homePage
                         }
-                        IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
+                        IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
                         if (IsMyTurn)
                         {
                             //start timer
@@ -350,6 +369,53 @@ namespace TopRaceApp.ViewModels
                 }
             }
             
+        }
+        private async void RollTest()
+        {
+            if (IsMyTurn)
+            {
+                int result = 0;
+                try
+                {
+                    result = int.Parse(ResultSetter);
+                }
+                catch
+                {
+                    Roll();
+                    return;
+                }               
+                TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                ((App)App.Current).currentGame = await proxy.PlayTestAsync(((App)App.Current).currentGame.Id, result);
+                ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
+                CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
+                PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
+                LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
+                PlayersInGame unUpdatedPlayer = null;
+                int index = 0;
+                List<PlayersInGame> players = Players.ToList();
+                foreach (PlayersInGame pl in players)
+                {
+                    if (pl.Id == ((App)App.Current).currentPlayerInGame.Id)
+                    {
+                        unUpdatedPlayer = pl;
+                        index = Players.IndexOf(pl);
+                        Players.Remove(pl);
+                        Players.Insert(index, ((App)App.Current).currentPlayerInGame);
+                    }
+                }
+                LastRoll = ((App)App.Current).currentGame.LastRollResult;
+                UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+                GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
+                IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
+                Winner = ((App)App.Current).currentGame.Winner;
+                if (Winner != null)
+                {
+                    IsMyTurn = false;
+                    // pops up winner! back to lobby or homePage
+                }
+            }
+
         }
     }
 }

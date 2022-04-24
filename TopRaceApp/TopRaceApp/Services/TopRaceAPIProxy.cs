@@ -554,6 +554,32 @@ namespace TopRaceApp.Services
         {
             return await this.client.GetStreamAsync(colorLink);
         }
+        public async Task<GameDTO> PlayTestAsync(int gameID, int wantedResult)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/PlayTest?gameID={gameID}&wantedResult={wantedResult}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    GameDTO gameDTO = JsonSerializer.Deserialize<GameDTO>(content, options);
+                    return gameDTO;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
     }
 
 
