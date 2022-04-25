@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using TopRaceApp.Views;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.UI.Views;
+using Xamarin.CommunityToolkit.Extensions;
 
 namespace TopRaceApp.ViewModels
 {
@@ -180,6 +182,87 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private string winnerCrewmate;
+        public string WinnerCrewmate
+        {
+            get
+            {
+                return winnerCrewmate;
+            }
+            set
+            {
+                if(winnerCrewmate != value)
+                {
+                    winnerCrewmate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string winnerName;
+        public string WinnerName
+        {
+            get
+            {
+                return winnerName;
+            }
+            set
+            {
+                if(winnerName != value)
+                {
+                    winnerName = value;
+                    OnPropertyChanged();
+                        
+                }
+            }
+        }
+        private string winnerProfilePic;
+        public string WinnerProfilePic
+        {
+            get
+            {
+                return winnerProfilePic;
+            }
+            set
+            {
+                if (winnerProfilePic != value)
+                {
+                    winnerProfilePic = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private bool didShowWinner;
+        public bool DidShowWinner
+        {
+            get
+            {
+                return didShowWinner;
+            }
+            set
+            {
+                if(didShowWinner != value)
+                {
+                    didShowWinner = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private string winnerOrLoser;
+        public string WinnerOrLoser
+        {
+            get
+            {
+                return winnerOrLoser;
+            }
+            set
+            {
+                if(winnerOrLoser != value)
+                {
+                    winnerOrLoser = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public int UpdatesCounter{ get; set; }
         public GamePage GamePage { get; set; }
         public Mover [,] Board { get; set; }
@@ -283,6 +366,11 @@ namespace TopRaceApp.ViewModels
                         if (Winner != null)
                         {
                             // pops up winner! back to lobby or homePage
+                            if (!DidShowWinner)
+                            {
+                                ShowWinner();
+                                DidShowWinner = true;
+                            }
                         }
                         IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
                         if (IsMyTurn)
@@ -365,7 +453,8 @@ namespace TopRaceApp.ViewModels
                 if (Winner != null)
                 {
                     IsMyTurn = false;
-                    // pops up winner! back to lobby or homePage
+                    ShowWinner();
+                    DidShowWinner = true;
                 }
             }
             
@@ -412,10 +501,30 @@ namespace TopRaceApp.ViewModels
                 if (Winner != null)
                 {
                     IsMyTurn = false;
-                    // pops up winner! back to lobby or homePage
+                    ShowWinner();
+                    DidShowWinner = true;
                 }
             }
 
         }
+        public void ShowWinner()
+        {
+            ContentPage winnerPopUp = new WinnerPopUp();
+            winnerPopUp.BindingContext = this;
+
+            WinnerCrewmate = Winner.Color.PicLink;
+            WinnerName = Winner.UserName;
+            WinnerProfilePic = Winner.ProfilePic;
+            if(Winner.Id == ((App)App.Current).currentPlayerInGame.Id)
+            {
+                WinnerOrLoser = "Winner!";
+            }
+            else
+            {
+                WinnerOrLoser = "You Lose";
+            }
+            ((App)App.Current).MainPage.Navigation.PushModalAsync(winnerPopUp);
+        }
+
     }
 }

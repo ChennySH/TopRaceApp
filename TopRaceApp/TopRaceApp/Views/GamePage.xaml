@@ -5,7 +5,8 @@
              xmlns:skia="clr-namespace:SkiaSharp;assembly=SkiaSharp"
              xmlns:skiaforms="clr-namespace:SkiaSharp.Views.Forms;assembly=SkiaSharp.Views.Forms"
              xmlns:p="clr-namespace:TopRaceApp.ViewModels"
-             x:Class="TopRaceApp.Views.GamePage">
+             x:Class="TopRaceApp.Views.GamePage"
+             NavigationPage.HasBackButton="False">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Quit Game"               
                  Order="Default"

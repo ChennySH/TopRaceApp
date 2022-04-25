@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="TopRaceApp.Views.WinnerPopUp"
+             >
+    <ContentPage.Content>
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Image x:Name="WinnerCrewmate" Source="{Binding WinnerCrewmate}" Grid.Row="0" Grid.Column="0"/>
+        <Label x:Name="UserName" Text="{Binding WinnerName}" Grid.Row="0" Grid.Column="1"/>
+        <Label Text="Wins!" Grid.Column="2" Grid.Row="0"/>
+        <Image x:Name="WinnerPic" Source="{Binding WinnerProfilePic}" Grid.Row="0" Grid.Column="3"/>
+        <Label x:Name="WinnerOrLoser" Text="{Binding WinnerOrLoser}"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"/>
+        <Button Text="Quit" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+        <Button Text="Rematch" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+    </Grid>
+        </ContentPage.Content>
+</ContentPage>
