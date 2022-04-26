@@ -21,8 +21,8 @@
         <Label Text="Wins!" Grid.Column="2" Grid.Row="0"/>
         <Image x:Name="WinnerPic" Source="{Binding WinnerProfilePic}" Grid.Row="0" Grid.Column="3"/>
         <Label x:Name="WinnerOrLoser" Text="{Binding WinnerOrLoser}"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"/>
-        <Button Text="Quit" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
-        <Button Text="Rematch" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+            <Button Text="Quit" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding QuitGameAfterGameIsOver}"/>
+            <Button Text="Rematch" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding BackToLobbyPageCommand}"/>
     </Grid>
         </ContentPage.Content>
 </ContentPage>

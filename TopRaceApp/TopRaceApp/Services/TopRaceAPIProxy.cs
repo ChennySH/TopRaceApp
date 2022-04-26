@@ -580,6 +580,32 @@ namespace TopRaceApp.Services
                 return null;
             }
         }
+        public async Task<GameDTO> ResetGameAsync(int gameID)
+        {
+            try
+            {
+                JsonSerializerOptions options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
+                    PropertyNameCaseInsensitive = true
+                };
+                HttpResponseMessage response = await this.client.GetAsync($"{this.baseUri}/ResetGame?gameID={gameID}");
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    GameDTO gameDTO = JsonSerializer.Deserialize<GameDTO>(content, options);
+                    return gameDTO;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch(Exception e)
+            {
+                return null;
+            }
+        }
     }
 
 

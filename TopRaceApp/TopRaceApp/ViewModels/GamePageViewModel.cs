@@ -18,6 +18,22 @@ namespace TopRaceApp.ViewModels
     class GamePageViewModel : BaseViewModel
     {
         #region Properties
+        private bool isHost;
+        public bool IsHost
+        {
+            get
+            {
+                return isHost;
+            }
+            set
+            {
+                if (isHost != value)
+                {
+                    isHost = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private string crewmatePic1;
         public string CrewmatePic1
         {
@@ -273,9 +289,12 @@ namespace TopRaceApp.ViewModels
         public Position PreviousPos { get; set; }
         public ICommand RollCommand { get; set; }
         public ICommand RollTestCommand { get; set; }
+        public ICommand BackToLobbyPageCommand { get; set; }
+        public ICommand QuitGameAfterGameIsOverCommand { get; set; }
         #endregion
         public GamePageViewModel()
         {
+            IsHost = ((App)App.Current).currentPlayerInGame.IsHost;
             ResultSetter = "0";
             UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
@@ -284,6 +303,8 @@ namespace TopRaceApp.ViewModels
             SendMessageCommand = new Command(SendMessage);
             RollCommand = new Command(Roll);
             RollTestCommand = new Command(RollTest);
+            BackToLobbyPageCommand = new Command(BackToLobbyPage);
+            QuitGameAfterGameIsOverCommand = new Command(QuitGameAfterGameIsOver);
             ChatMessages = new ObservableCollection<Message>();
             List<Message> messages = ((App)App.Current).currentGame.Messages.ToList();
             for (int i = messages.Count - 1 ; i > -1; i--)
@@ -524,7 +545,40 @@ namespace TopRaceApp.ViewModels
                 WinnerOrLoser = "You Lose";
             }
             ((App)App.Current).MainPage.Navigation.PushModalAsync(winnerPopUp);
+           
         }
+        private async void ResetGame()
+        {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            ((App)App.Current).currentGame = await proxy.ResetGameAsync(((App)App.Current).currentGame.Id);
+            ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
 
+        }
+        private async void BackToLobbyPage()
+        {
+            if (IsHost)
+            {
+                ResetGame();
+            }
+            await ((App)App.Current).MainPage.Navigation.PopModalAsync();
+            await ((App)App.Current).MainPage.Navigation.PopAsync();
+        }
+        private async void QuitGameAfterGameIsOver()
+        {
+            if (IsHost)
+            {
+                ResetGame();
+                await ((App)App.Current).MainPage.Navigation.PopModalAsync();
+                await ((App)App.Current).MainPage.Navigation.PopAsync();
+                ((LobbyPageViewModel)((App)App.Current).MainPage.BindingContext).CloseGame();
+            }
+            else
+            {
+                await ((App)App.Current).MainPage.Navigation.PopModalAsync();
+                await ((App)App.Current).MainPage.Navigation.PopAsync();
+                ((LobbyPageViewModel)((App)App.Current).MainPage.BindingContext).LeaveGame();
+
+            }
+        }
     }
 }

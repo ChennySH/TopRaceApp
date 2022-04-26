@@ -347,7 +347,6 @@ namespace TopRaceApp.ViewModels
                 return;
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             bool isClosed = await proxy.CloseGameAsync(((App)App.Current).currentGame.Id);
-
             if (isClosed)
             {
                 this.IsGameActive = false;
@@ -366,7 +365,14 @@ namespace TopRaceApp.ViewModels
                     CornerRadius = 5,
                     Duration = System.TimeSpan.FromSeconds(3),
                 };
-                await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+                try
+                {
+                    await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+                }
+                catch (Exception e)
+                {
+
+                }
             }
             else
             {
@@ -407,8 +413,15 @@ namespace TopRaceApp.ViewModels
                     },
                     CornerRadius = 5,
                     Duration = System.TimeSpan.FromSeconds(3),
-                };               
-                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);                   
+                };
+                try
+                {
+                    await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                }
+                catch(Exception e)
+                {
+
+                }
             }
         }
         public async void KickOutPlayer(PlayersInGame playerInGame)
@@ -430,7 +443,11 @@ namespace TopRaceApp.ViewModels
                             CornerRadius = 5,
                             Duration = System.TimeSpan.FromSeconds(3),
                         };
-                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        try
+                        { 
+                            await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions); 
+                        }
+                        catch(Exception e) { }
                         return;
                     }
                     TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
@@ -448,7 +465,11 @@ namespace TopRaceApp.ViewModels
                             CornerRadius = 5,
                             Duration = System.TimeSpan.FromSeconds(3),
                         };
-                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        try
+                        {
+                            await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        }
+                        catch(Exception e) { }
                     }
                     else
                     {
@@ -463,7 +484,9 @@ namespace TopRaceApp.ViewModels
                             CornerRadius = 5,
                             Duration = System.TimeSpan.FromSeconds(3),
                         };
-                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        try
+                        { await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions); }
+                        catch(Exception e) { }
                     }
                 }
             }
@@ -595,46 +618,60 @@ namespace TopRaceApp.ViewModels
                             AddNewPlayers();
                             PlayersInGameList.OrderBy(p => p.Id);
                         }
-                        if (isGameOn && (IsInGamePage == false))
+                        if (IsGameOn && (IsInGamePage == false))
                         {
                             IsInGamePage = true;
                             MoveToGamePage();
                         }
-                        if (!IsGameActive && !IsHost)
+                        if(IsGameOn && IsInGamePage)
                         {
-                            ((App)App.Current).currentGame = null;
-                            ((App)App.Current).currentPlayerInGame = null;
-                            await ((App)App.Current).MainPage.Navigation.PopAsync();
-                            var closedToastOptions = new ToastOptions
+                            if (((App)App.Current).MainPage.BindingContext != null)
                             {
-                                BackgroundColor = Xamarin.Forms.Color.Black,
-                                MessageOptions = new MessageOptions
+                                if (((App)App.Current).MainPage.BindingContext.Equals(this))
                                 {
-                                    Message = "The Game Was Closed by the host",
-                                    Foreground = Xamarin.Forms.Color.White,
-                                },
-                                CornerRadius = 5,
-                                Duration = System.TimeSpan.FromSeconds(3),
-                            };
-                            await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+                                    IsInGamePage = false;
+                                    IsGameOn = false;
+                                }
+                            }
                         }
-                        if (!AreYouInGame && IsGameActive && !IsHost)
+                        if (!IsGameOn)
                         {
-                            ((App)App.Current).currentGame = null;
-                            ((App)App.Current).currentPlayerInGame = null;
-                            await ((App)App.Current).MainPage.Navigation.PopAsync();
-                            var kickedToastOptions = new ToastOptions
+                            if (!IsGameActive && !IsHost)
                             {
-                                BackgroundColor = Xamarin.Forms.Color.Black,
-                                MessageOptions = new MessageOptions
+                                ((App)App.Current).currentGame = null;
+                                ((App)App.Current).currentPlayerInGame = null;
+                                await ((App)App.Current).MainPage.Navigation.PopAsync();
+                                var closedToastOptions = new ToastOptions
                                 {
-                                    Message = "You were kicked out by the host",
-                                    Foreground = Xamarin.Forms.Color.White,
-                                },
-                                CornerRadius = 5,
-                                Duration = System.TimeSpan.FromSeconds(3),
-                            };
-                            await ((App)App.Current).MainPage.DisplayToastAsync(kickedToastOptions);
+                                    BackgroundColor = Xamarin.Forms.Color.Black,
+                                    MessageOptions = new MessageOptions
+                                    {
+                                        Message = "The Game Was Closed by the host",
+                                        Foreground = Xamarin.Forms.Color.White,
+                                    },
+                                    CornerRadius = 5,
+                                    Duration = System.TimeSpan.FromSeconds(3),
+                                };
+                                await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+                            }
+                            if (!AreYouInGame && IsGameActive && !IsHost)
+                            {
+                                ((App)App.Current).currentGame = null;
+                                ((App)App.Current).currentPlayerInGame = null;
+                                await ((App)App.Current).MainPage.Navigation.PopAsync();
+                                var kickedToastOptions = new ToastOptions
+                                {
+                                    BackgroundColor = Xamarin.Forms.Color.Black,
+                                    MessageOptions = new MessageOptions
+                                    {
+                                        Message = "You were kicked out by the host",
+                                        Foreground = Xamarin.Forms.Color.White,
+                                    },
+                                    CornerRadius = 5,
+                                    Duration = System.TimeSpan.FromSeconds(3),
+                                };
+                                await ((App)App.Current).MainPage.DisplayToastAsync(kickedToastOptions);
+                            }
                         }
                     }
                     //interact with UI elements
