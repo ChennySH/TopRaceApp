@@ -354,7 +354,17 @@ namespace TopRaceApp.ViewModels
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
-
+                    List<Mover> lst = new List<Mover>();
+                    foreach(Mover[] arr in ((App)App.Current).currentGame.Board)
+                    {
+                        foreach(Mover m in arr)
+                        {
+                            if(m.IsLadder || m.IsSnake)
+                            {
+                                lst.Add(m);
+                            }
+                        }
+                    }
                     // interact with UI elements
                     TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
                     TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
@@ -547,7 +557,7 @@ namespace TopRaceApp.ViewModels
             ((App)App.Current).MainPage.Navigation.PushModalAsync(winnerPopUp);
            
         }
-        private async void ResetGame()
+        private async Task ResetGame()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ((App)App.Current).currentGame = await proxy.ResetGameAsync(((App)App.Current).currentGame.Id);
@@ -558,7 +568,11 @@ namespace TopRaceApp.ViewModels
         {
             if (IsHost)
             {
-                ResetGame();
+                await ResetGame();
+            }
+            if (((App)App.Current).currentGame.StatusId == 2)
+            {
+                return;
             }
             await ((App)App.Current).MainPage.Navigation.PopModalAsync();
             await ((App)App.Current).MainPage.Navigation.PopAsync();
@@ -571,7 +585,7 @@ namespace TopRaceApp.ViewModels
         {
             if (IsHost)
             {
-                ResetGame();
+                await ResetGame();
                 await ((App)App.Current).MainPage.Navigation.PopModalAsync();
                 await ((App)App.Current).MainPage.Navigation.PopAsync();
                 ((LobbyPageViewModel)((App)App.Current).MainPage.BindingContext).CloseGame();
