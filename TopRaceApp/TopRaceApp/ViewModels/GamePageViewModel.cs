@@ -583,6 +583,7 @@ namespace TopRaceApp.ViewModels
         }
         private async void QuitGameAfterGameIsOver()
         {
+
             if (IsHost)
             {
                 await ResetGame();
