@@ -623,17 +623,17 @@ namespace TopRaceApp.ViewModels
                             IsInGamePage = true;
                             MoveToGamePage();
                         }
-                        if(IsGameOn && IsInGamePage)
-                        {
-                            if (((App)App.Current).MainPage.BindingContext != null)
-                            {
-                                if (((App)App.Current).MainPage.BindingContext.Equals(this))
-                                {
-                                    IsInGamePage = false;
-                                    IsGameOn = false;
-                                }
-                            }
-                        }
+                        //if(IsGameOn && IsInGamePage)
+                        //{
+                        //    if (((App)App.Current).MainPage.BindingContext != null)
+                        //    {
+                        //        if (((App)App.Current).MainPage.BindingContext.Equals(this))
+                        //        {
+                        //            IsInGamePage = false;
+                        //            IsGameOn = false;
+                        //        }
+                        //    }
+                        //}
                         if (!IsGameOn)
                         {
                             if (!IsGameActive && !IsHost)

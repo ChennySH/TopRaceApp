@@ -562,6 +562,10 @@ namespace TopRaceApp.ViewModels
             }
             await ((App)App.Current).MainPage.Navigation.PopModalAsync();
             await ((App)App.Current).MainPage.Navigation.PopAsync();
+            NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
+            LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
+            vm.IsGameOn = false;
+            vm.IsInGamePage = false;
         }
         private async void QuitGameAfterGameIsOver()
         {
