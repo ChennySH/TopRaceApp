@@ -12,6 +12,7 @@ using TopRaceApp.Views;
 using System.Windows.Input;
 using Xamarin.CommunityToolkit.UI.Views;
 using Xamarin.CommunityToolkit.Extensions;
+using Xamarin.CommunityToolkit.UI.Views.Options;
 
 namespace TopRaceApp.ViewModels
 {
@@ -279,6 +280,22 @@ namespace TopRaceApp.ViewModels
                 }
             }
         }
+        private bool didQuit;
+        public bool DidQuit
+        {
+            get 
+            { 
+                return didQuit;
+            }
+            set
+            {
+                if(didQuit != value)
+                {
+                    didQuit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public int UpdatesCounter{ get; set; }
         public GamePage GamePage { get; set; }
         public Mover [,] Board { get; set; }
@@ -291,9 +308,11 @@ namespace TopRaceApp.ViewModels
         public ICommand RollTestCommand { get; set; }
         public ICommand BackToLobbyPageCommand { get; set; }
         public ICommand QuitGameAfterGameIsOverCommand { get; set; }
+        public ICommand QuitDuringGameCommand { get; set; }
         #endregion
         public GamePageViewModel()
         {
+            DidQuit = false;
             IsHost = ((App)App.Current).currentPlayerInGame.IsHost;
             ResultSetter = "0";
             UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
@@ -305,6 +324,7 @@ namespace TopRaceApp.ViewModels
             RollTestCommand = new Command(RollTest);
             BackToLobbyPageCommand = new Command(BackToLobbyPage);
             QuitGameAfterGameIsOverCommand = new Command(QuitGameAfterGameIsOver);
+            QuitDuringGameCommand = new Command(QuitDuringGame);
             ChatMessages = new ObservableCollection<Message>();
             List<Message> messages = ((App)App.Current).currentGame.Messages.ToList();
             for (int i = messages.Count - 1 ; i > -1; i--)
@@ -353,66 +373,98 @@ namespace TopRaceApp.ViewModels
                 // do something every 2 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
-                    ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
-                    List<Mover> lst = new List<Mover>();
-                    foreach(Mover[] arr in ((App)App.Current).currentGame.Board)
+                    if (!DidQuit)
                     {
-                        foreach(Mover m in arr)
+                        ((App)App.Current).currentGame = await proxy.GetGameAsync(((App)App.Current).currentGame.Id);
+                        // interact with UI elements
+                        //TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
+                        //TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
+                        if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
                         {
-                            if(m.IsLadder || m.IsSnake)
+                            //DateTime t = LastUpdateTime;
+                            ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                            CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
+                            PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
+                            LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
+                            UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+                            List<PlayersInGame> playersList = ((App)App.Current).currentGame.PlayersInGames.Where(pl => pl.IsInGame).ToList();
+                            while (playersList.Count < Players.Count)
                             {
-                                lst.Add(m);
+                                int removedIndex = 0;
+                                for (int i = 0; i < Players.Count; i++)
+                                {
+                                    PlayersInGame player = Players[0];
+                                    bool isInGame = false;
+                                    foreach (PlayersInGame pl in playersList)
+                                    {
+                                        if (pl.Id == player.Id)
+                                        {
+                                            isInGame = true;
+                                        }
+                                    }
+                                    if (!isInGame)
+                                    {
+                                        removedIndex = i;
+                                    }
+                                }
+                                Players.RemoveAt(removedIndex);
+                                this.GamePage.RemoveFromLists(removedIndex);
+                            }
+                            int prevoiusID = PreviousPlayer.Id;
+                            PlayersInGame unUpdatedPlayer = null;
+                            int index = 0;
+                            for (int i = 0; i < Players.Count; i++)
+                            {
+                                PlayersInGame pl = Players[i];
+                                if (pl.Id == prevoiusID)
+                                {
+                                    unUpdatedPlayer = pl;
+                                    Players[i] = PreviousPlayer;
+                                    index = i;
+                                }
+                            }
+                            IsMovingList[index] = true;
+                            LastRoll = ((App)App.Current).currentGame.LastRollResult;
+                            GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
+                            IsMovingList[index] = false;
+                            Winner = ((App)App.Current).currentGame.Winner;
+                            if (Winner != null)
+                            {
+                                // pops up winner! back to lobby or homePage
+                                if (!DidShowWinner)
+                                {
+                                    ShowWinner();
+                                    DidShowWinner = true;
+                                }
+                            }
+                            IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
+                            if (IsMyTurn)
+                            {
+                                //start timer
                             }
                         }
+                        UpdateChatRoom();
                     }
-                    // interact with UI elements
-                    TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
-                    TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
-                if  (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
-                    {
-                        DateTime t = LastUpdateTime;
-                        ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                        CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
-                        PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
-                        LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
-                        UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
-                        int prevoiusID = PreviousPlayer.Id;
-                        PlayersInGame unUpdatedPlayer = null;
-                        int index = 0;
-                        for (int i = 0; i < Players.Count; i++)
-                        {
-                            PlayersInGame pl = Players[i];
-                            if(pl.Id == prevoiusID)
-                            {
-                                unUpdatedPlayer = pl;
-                                Players[i] = PreviousPlayer;
-                                index = i;
-                            }
-                        }
-                        IsMovingList[index] = true;
-                        LastRoll = ((App)App.Current).currentGame.LastRollResult;
-                        GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
-                        IsMovingList[index] = false;
-                        Winner = ((App)App.Current).currentGame.Winner;
-                        if (Winner != null)
-                        {
-                            // pops up winner! back to lobby or homePage
-                            if (!DidShowWinner)
-                            {
-                                ShowWinner();
-                                DidShowWinner = true;
-                            }
-                        }
-                        IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
-                        if (IsMyTurn)
-                        {
-                            //start timer
-                        }
-                    }
-                    UpdateChatRoom();
                 });
-                return Winner == null; // runs again, or false to stop
+                return ((Winner == null) && !DidQuit); // runs again, or false to stop
             });
+        }
+        public async void QuitDuringGame()
+        {           
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            if (!isHost)
+            {
+                bool isKicked = await proxy.KickOutAsync(((App)App.Current).currentGame.Id, ((App)App.Current).currentPlayerInGame.Id);
+                if (isKicked)
+                {
+                    DidQuit = true;
+                    await App.Current.MainPage.Navigation.PopAsync();
+                    NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
+                    LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
+                    vm.AreYouInGame = false;
+                    await App.Current.MainPage.Navigation.PopAsync();
+                }
+            }
         }
         public void UpdateChatRoom()
         {
@@ -540,10 +592,14 @@ namespace TopRaceApp.ViewModels
         }
         public void ShowWinner()
         {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ContentPage winnerPopUp = new WinnerPopUp();
             winnerPopUp.BindingContext = this;
-
             WinnerCrewmate = Winner.Color.PicLink;
+            if (!WinnerCrewmate.StartsWith(proxy.GetBasePhotoUri()))
+            {
+                WinnerCrewmate = proxy.GetBasePhotoUri() + WinnerCrewmate;
+            }
             WinnerName = Winner.UserName;
             WinnerProfilePic = Winner.ProfilePic;
             if(Winner.Id == ((App)App.Current).currentPlayerInGame.Id)
@@ -578,8 +634,18 @@ namespace TopRaceApp.ViewModels
             await ((App)App.Current).MainPage.Navigation.PopAsync();
             NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
             LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
-            vm.IsGameOn = false;
-            vm.IsInGamePage = false;
+            if (((App)App.Current).currentGame.StatusId != 3)
+            {
+                vm.IsGameOn = false;
+                vm.IsInGamePage = false;
+            }
+            else
+            {
+                ((App)App.Current).currentGame = null;
+                ((App)App.Current).currentPlayerInGame = null;
+                await ((App)App.Current).MainPage.Navigation.PopAsync();
+                ShowMessage("The game was closed", "The game was closed by the host");
+            }
         }
         private async void QuitGameAfterGameIsOver()
         {
@@ -589,14 +655,48 @@ namespace TopRaceApp.ViewModels
                 await ResetGame();
                 await ((App)App.Current).MainPage.Navigation.PopModalAsync();
                 await ((App)App.Current).MainPage.Navigation.PopAsync();
-                ((LobbyPageViewModel)((App)App.Current).MainPage.BindingContext).CloseGame();
+                NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
+                LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
+                vm.CloseGame();
             }
             else
             {
                 await ((App)App.Current).MainPage.Navigation.PopModalAsync();
                 await ((App)App.Current).MainPage.Navigation.PopAsync();
-                ((LobbyPageViewModel)((App)App.Current).MainPage.BindingContext).LeaveGame();
-
+                NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
+                LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
+                if (((App)App.Current).currentGame.StatusId != 3)
+                {
+                    vm.LeaveGame();
+                }
+                else
+                {
+                    ((App)App.Current).currentGame = null;
+                    ((App)App.Current).currentPlayerInGame = null;
+                    await ((App)App.Current).MainPage.Navigation.PopAsync();
+                }
+            }
+        }
+        public async void ShowMessage(string title, string text)
+        {
+            if (Device.RuntimePlatform == Device.Android || Device.RuntimePlatform == Device.iOS)
+            {
+                var kickedToastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = text,
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };
+                await ((App)App.Current).MainPage.DisplayToastAsync(kickedToastOptions);
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert(title, text, "OK");
             }
         }
     }

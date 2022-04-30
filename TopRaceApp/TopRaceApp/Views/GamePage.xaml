@@ -10,7 +10,8 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Quit Game"               
                  Order="Default"
-                 Priority="0"/>
+                 Priority="0"
+                 Command="{Binding QuitDuringGameCommand}"/>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         

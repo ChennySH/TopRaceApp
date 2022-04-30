@@ -354,6 +354,8 @@ namespace TopRaceApp.ViewModels
                 ((App)App.Current).currentGame = null;
                 ((App)App.Current).currentPlayerInGame = null;
                 await ((App)App.Current).MainPage.Navigation.PopAsync();
+                if (Device.RuntimePlatform == Device.Android || Device.RuntimePlatform == Device.iOS) 
+                {               
                 var closedToastOptions = new ToastOptions
                 {
                     BackgroundColor = Xamarin.Forms.Color.Black,
@@ -365,29 +367,12 @@ namespace TopRaceApp.ViewModels
                     CornerRadius = 5,
                     Duration = System.TimeSpan.FromSeconds(3),
                 };
-                try
-                {
-                    await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
-                }
-                catch (Exception e)
-                {
-
+                await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
                 }
             }
             else
             {
-                var notClosedToastOptions = new ToastOptions
-                {
-                    BackgroundColor = Xamarin.Forms.Color.Black,
-                    MessageOptions = new MessageOptions
-                    {
-                        Message = "Something went wrong",
-                        Foreground = Xamarin.Forms.Color.White,
-                    },
-                    CornerRadius = 5,
-                    Duration = System.TimeSpan.FromSeconds(3),
-                };
-                await ((App)App.Current).MainPage.DisplayToastAsync(notClosedToastOptions);
+                ShowMessage("Action failed", "Something went wrong");
             }
         }
         public async void ChangeColor(Models.Color color)
@@ -395,33 +380,18 @@ namespace TopRaceApp.ViewModels
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             ((App)App.Current).currentPlayerInGame.ColorId = color.Id;
             bool isUpdated = await proxy.UpdatePlayerAsync(((App)App.Current).currentPlayerInGame);
-            ((App)App.Current).currentPlayerInGame.Color = color;
-            PlayersInGame pl = this.PlayersInGameList.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
-            int index = this.PlayersInGameList.IndexOf(pl);
-            this.PlayersInGameList.Remove(pl);
-            this.PlayersInGameList.Insert(index, ((App)App.Current).currentPlayerInGame);
+            if (isUpdated)
+            {
+                ((App)App.Current).currentPlayerInGame.Color = color;
+                PlayersInGame pl = this.PlayersInGameList.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
+                int index = this.PlayersInGameList.IndexOf(pl);
+                this.PlayersInGameList.Remove(pl);
+                this.PlayersInGameList.Insert(index, ((App)App.Current).currentPlayerInGame);
+            }
             CloseColorChangeView();
             if (!isUpdated)
             {
-                var toastOptions = new ToastOptions
-                {
-                    BackgroundColor = Xamarin.Forms.Color.Black,
-                    MessageOptions = new MessageOptions
-                    {
-                        Message = "The Color is Already Taken",
-                        Foreground = Xamarin.Forms.Color.White,
-                    },
-                    CornerRadius = 5,
-                    Duration = System.TimeSpan.FromSeconds(3),
-                };
-                try
-                {
-                    await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
-                }
-                catch(Exception e)
-                {
-
-                }
+                ShowMessage("Action failed", "The color is already taken");
             }
         }
         public async void KickOutPlayer(PlayersInGame playerInGame)
@@ -432,78 +402,39 @@ namespace TopRaceApp.ViewModels
                 {
                     if (playerInGame.IsHost)
                     {
-                        var toastOptions = new ToastOptions
-                        {
-                            BackgroundColor = Xamarin.Forms.Color.Black,
-                            MessageOptions = new MessageOptions
-                            {
-                                Message = "You can not kick out yourself",
-                                Foreground = Xamarin.Forms.Color.White,
-                            },
-                            CornerRadius = 5,
-                            Duration = System.TimeSpan.FromSeconds(3),
-                        };
-                        try
-                        { 
-                            await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions); 
-                        }
-                        catch(Exception e) { }
+                        ShowMessage("Action failed", "You cannot kick out yourself");
                         return;
                     }
                     TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
                     bool isKicked = await proxy.KickOutAsync(((App)App.Current).currentGame.Id, playerInGame.Id);
                     if (isKicked)
                     {
-                        var toastOptions = new ToastOptions
+                        if (Device.RuntimePlatform == Device.Android || Device.RuntimePlatform == Device.iOS)
                         {
-                            BackgroundColor = Xamarin.Forms.Color.Black,
-                            MessageOptions = new MessageOptions
+                            var toastOptions = new ToastOptions
                             {
-                                Message = "The player was kicked out succesfully",
-                                Foreground = Xamarin.Forms.Color.White,
-                            },
-                            CornerRadius = 5,
-                            Duration = System.TimeSpan.FromSeconds(3),
-                        };
-                        try
-                        {
+                                BackgroundColor = Xamarin.Forms.Color.Black,
+                                MessageOptions = new MessageOptions
+                                {
+                                    Message = "The player was kicked out succesfully",
+                                    Foreground = Xamarin.Forms.Color.White,
+                                },
+                                CornerRadius = 5,
+                                Duration = System.TimeSpan.FromSeconds(3),
+                            };
                             await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
                         }
-                        catch(Exception e) { }
                     }
                     else
                     {
-                        var toastOptions = new ToastOptions
-                        {
-                            BackgroundColor = Xamarin.Forms.Color.Black,
-                            MessageOptions = new MessageOptions
-                            {
-                                Message = "Something went wrong",
-                                Foreground = Xamarin.Forms.Color.White,
-                            },
-                            CornerRadius = 5,
-                            Duration = System.TimeSpan.FromSeconds(3),
-                        };
-                        try
-                        { await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions); }
-                        catch(Exception e) { }
+                        ShowMessage("Action failed", "Something went wrong");
+
                     }
                 }
             }
             catch(Exception e)
             {
-                var toastOptions = new ToastOptions
-                {
-                    BackgroundColor = Xamarin.Forms.Color.Black,
-                    MessageOptions = new MessageOptions
-                    {
-                        Message = e.Message,
-                        Foreground = Xamarin.Forms.Color.White,
-                    },
-                    CornerRadius = 5,
-                    Duration = System.TimeSpan.FromSeconds(3),
-                };
-                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                ShowMessage("Action failed", e.Message);
             }
         }
         public async void MoveToGamePage()
@@ -533,18 +464,8 @@ namespace TopRaceApp.ViewModels
             }
             catch(Exception e)
             {
-                var toastOptions = new ToastOptions
-                {
-                    BackgroundColor = Xamarin.Forms.Color.Black,
-                    MessageOptions = new MessageOptions
-                    {
-                        Message = e.Message,
-                        Foreground = Xamarin.Forms.Color.White,
-                    },
-                    CornerRadius = 5,
-                    Duration = System.TimeSpan.FromSeconds(3),
-                };
-                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                ShowMessage("Action failed", e.Message);
+
             }
         }
         public async void LeaveGame()
@@ -564,35 +485,14 @@ namespace TopRaceApp.ViewModels
                     }
                     else
                     {
-                        var toastOptions = new ToastOptions
-                        {
-                            BackgroundColor = Xamarin.Forms.Color.Black,
-                            MessageOptions = new MessageOptions
-                            {
-                                Message = "Something went wrong",
-                                Foreground = Xamarin.Forms.Color.White,
-                            },
-                            CornerRadius = 5,
-                            Duration = System.TimeSpan.FromSeconds(3),
-                        };
-                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                        ShowMessage("Action failed", "Something went wrong");
                     }
                 }
             }
             catch (Exception e)
             {
-                var toastOptions = new ToastOptions
-                {
-                    BackgroundColor = Xamarin.Forms.Color.Black,
-                    MessageOptions = new MessageOptions
-                    {
-                        Message = e.Message,
-                        Foreground = Xamarin.Forms.Color.White,
-                    },
-                    CornerRadius = 5,
-                    Duration = System.TimeSpan.FromSeconds(3),
-                };
-                await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                ShowMessage("Action failed", e.Message);
+
             }
         }
         public async Task Run()
@@ -623,54 +523,21 @@ namespace TopRaceApp.ViewModels
                             IsInGamePage = true;
                             MoveToGamePage();
                         }
-                        //if(IsGameOn && IsInGamePage)
-                        //{
-                        //    if (((App)App.Current).MainPage.BindingContext != null)
-                        //    {
-                        //        if (((App)App.Current).MainPage.BindingContext.Equals(this))
-                        //        {
-                        //            IsInGamePage = false;
-                        //            IsGameOn = false;
-                        //        }
-                        //    }
-                        //}
-                        if (!IsGameOn)
+                        if (!IsInGamePage)
                         {
                             if (!IsGameActive && !IsHost)
                             {
                                 ((App)App.Current).currentGame = null;
                                 ((App)App.Current).currentPlayerInGame = null;
                                 await ((App)App.Current).MainPage.Navigation.PopAsync();
-                                var closedToastOptions = new ToastOptions
-                                {
-                                    BackgroundColor = Xamarin.Forms.Color.Black,
-                                    MessageOptions = new MessageOptions
-                                    {
-                                        Message = "The Game Was Closed by the host",
-                                        Foreground = Xamarin.Forms.Color.White,
-                                    },
-                                    CornerRadius = 5,
-                                    Duration = System.TimeSpan.FromSeconds(3),
-                                };
-                                await ((App)App.Current).MainPage.DisplayToastAsync(closedToastOptions);
+                                ShowMessage("The game was closed", "The Game Was Closed by the host");
                             }
                             if (!AreYouInGame && IsGameActive && !IsHost)
                             {
                                 ((App)App.Current).currentGame = null;
                                 ((App)App.Current).currentPlayerInGame = null;
                                 await ((App)App.Current).MainPage.Navigation.PopAsync();
-                                var kickedToastOptions = new ToastOptions
-                                {
-                                    BackgroundColor = Xamarin.Forms.Color.Black,
-                                    MessageOptions = new MessageOptions
-                                    {
-                                        Message = "You were kicked out by the host",
-                                        Foreground = Xamarin.Forms.Color.White,
-                                    },
-                                    CornerRadius = 5,
-                                    Duration = System.TimeSpan.FromSeconds(3),
-                                };
-                                await ((App)App.Current).MainPage.DisplayToastAsync(kickedToastOptions);
+                                ShowMessage("You were kicked out", "You were kicked out by the host");
                             }
                         }
                     }
@@ -678,6 +545,8 @@ namespace TopRaceApp.ViewModels
                 });
                 if (!IsGameActive || !AreYouInGame || DidLeaveTheGame) 
                 {
+                    ((App)App.Current).currentGame = null;
+                    ((App)App.Current).currentPlayerInGame = null;
                     return false;
                 }
                 return true; // runs again, or false to stop
@@ -763,6 +632,27 @@ namespace TopRaceApp.ViewModels
             }
             return false;
         }
-        
+        public async void ShowMessage(string title, string text)
+        {
+            if (Device.RuntimePlatform == Device.Android || Device.RuntimePlatform == Device.iOS)
+            {
+                var kickedToastOptions = new ToastOptions
+                {
+                    BackgroundColor = Xamarin.Forms.Color.Black,
+                    MessageOptions = new MessageOptions
+                    {
+                        Message = text,
+                        Foreground = Xamarin.Forms.Color.White,
+                    },
+                    CornerRadius = 5,
+                    Duration = System.TimeSpan.FromSeconds(3),
+                };
+                await ((App)App.Current).MainPage.DisplayToastAsync(kickedToastOptions);
+            }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert(title, text, "OK");
+            }
+        }
     }
 }

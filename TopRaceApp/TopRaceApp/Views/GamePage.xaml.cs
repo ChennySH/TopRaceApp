@@ -48,6 +48,12 @@ namespace TopRaceApp.Views
             //    BitmapListsArray[i] = new List<SKBitmap>();
             //}
         }
+        public void RemoveFromLists(int removedIndex)
+        {
+            CrewmatesBitMaps.RemoveAt(removedIndex);
+            CrewmatesSKPoints.RemoveAt(removedIndex);
+            BoardCanvas.InvalidateSurface();
+        }
         public void SetBorder()
         {
             GamePageViewModel vm = (GamePageViewModel)this.BindingContext;

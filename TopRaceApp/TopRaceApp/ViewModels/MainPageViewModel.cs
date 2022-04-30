@@ -195,18 +195,26 @@ namespace TopRaceApp.ViewModels
                 }
                 else
                 {
-                    var toastOptions = new ToastOptions
+                    if (Device.RuntimePlatform == Device.Android || Device.RuntimePlatform == Device.iOS)
                     {
-                        BackgroundColor = Xamarin.Forms.Color.Black,
-                        MessageOptions = new MessageOptions
+                        var toastOptions = new ToastOptions
                         {
-                            Message = "Could not find an active game with the inserted key",
-                            Foreground = Xamarin.Forms.Color.White,
-                        },
-                        CornerRadius = 5,
-                        Duration = System.TimeSpan.FromSeconds(3),
-                    };
-                    await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                            BackgroundColor = Xamarin.Forms.Color.Black,
+                            MessageOptions = new MessageOptions
+                            {
+                                Message = "Could not find an active game with the inserted key",
+                                Foreground = Xamarin.Forms.Color.White,
+                            },
+                            CornerRadius = 5,
+                            Duration = System.TimeSpan.FromSeconds(3),
+                        };
+                        await ((App)App.Current).MainPage.DisplayToastAsync(toastOptions);
+                    }
+                    else
+                    {
+                        await App.Current.MainPage.DisplayAlert("Game could not be found", "Could not find an active game with the inserted key", "OK");
+                    }
+
                 }
 
             }
