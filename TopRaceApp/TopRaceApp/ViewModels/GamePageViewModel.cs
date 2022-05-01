@@ -349,6 +349,7 @@ namespace TopRaceApp.ViewModels
             {
                 IsMovingList.Add(false);
             }
+
             CrewmatePic1 = Players[0].Color.PicLink;
             CrewmatePic2 = Players[1].Color.PicLink;
             if (Players.Count > 2)
