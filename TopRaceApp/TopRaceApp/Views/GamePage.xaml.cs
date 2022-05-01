@@ -25,6 +25,7 @@ namespace TopRaceApp.Views
         public SKBitmap Crewmate4BitMap { get; set; }
         public List<SKBitmap> CrewmatesBitMaps { get; set; }
         public List<SKPoint> CrewmatesSKPoints { get; set; }
+        public List<bool> CrewmatesFacingLeft { get; set; }
         //public Position Crewmate1pos { get; set; }
         //public Position Crewmate2pos { get; set; }
         //public Position Crewmate3pos { get; set; }
@@ -52,6 +53,7 @@ namespace TopRaceApp.Views
         {
             CrewmatesBitMaps.RemoveAt(removedIndex);
             CrewmatesSKPoints.RemoveAt(removedIndex);
+            CrewmatesFacingLeft.RemoveAt(removedIndex);
             BoardCanvas.InvalidateSurface();
         }
         public void SetBorder()
@@ -78,6 +80,7 @@ namespace TopRaceApp.Views
         public async Task SetBitMaps()
         {
             CrewmatesBitMaps = new List<SKBitmap>();
+            CrewmatesFacingLeft = new List<bool>();
             GamePageViewModel vm = (GamePageViewModel)this.BindingContext;
             List<PlayersInGame> players = vm.Players;
             try
@@ -93,6 +96,7 @@ namespace TopRaceApp.Views
                 };
                 //Crewmate1pos = players[0].CurrentPos;
                 CrewmatesBitMaps.Add(Crewmate1BitMap);
+                CrewmatesFacingLeft.Add(false);
                 //BitmapListsArray[Crewmate1pos.Id].Add(Crewmate1BitMap);
                 using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic2))
                 using (MemoryStream memStream = new MemoryStream())
@@ -105,6 +109,7 @@ namespace TopRaceApp.Views
                 };
                 //Crewmate2pos = players[1].CurrentPos;
                 CrewmatesBitMaps.Add(Crewmate2BitMap);
+                CrewmatesFacingLeft.Add(false);
                 //BitmapListsArray[Crewmate2pos.Id].Add(Crewmate2BitMap);
                 if (players.Count > 2)
                 {
@@ -119,9 +124,11 @@ namespace TopRaceApp.Views
                     };
                     //Crewmate3pos = players[2].CurrentPos;
                     CrewmatesBitMaps.Add(Crewmate3BitMap);
+                    CrewmatesFacingLeft.Add(false);
+
                     //BitmapListsArray[Crewmate3pos.Id].Add(Crewmate3BitMap);
                 }
-                if(players.Count > 3)
+                if (players.Count > 3)
                 {
                     using (Stream stream = await Proxy.GetCrewmateStream(vm.CrewmatePic4))
                     using (MemoryStream memStream = new MemoryStream())
@@ -134,9 +141,10 @@ namespace TopRaceApp.Views
                     };
                     //Crewmate4pos = players[3].CurrentPos;
                     CrewmatesBitMaps.Add(Crewmate4BitMap);
+                    CrewmatesFacingLeft.Add(false);
                     //BitmapListsArray[Crewmate4pos.Id].Add(Crewmate4BitMap);
                 }
-               
+
             }
             catch(Exception e)
             {
@@ -360,20 +368,20 @@ namespace TopRaceApp.Views
                 if(indexes.Count == 1)
                 {
                     SKBitmap crewmate = CrewmatesBitMaps[indexes[0]];
-                    PrintCrewmate(e, crewmate, point);
+                    PrintCrewmate(e, crewmate, point, CrewmatesFacingLeft[indexes[0]]);
                 }
                 if(indexes.Count == 2)
                 {
                     SKBitmap crewmate1 = CrewmatesBitMaps[indexes[0]]; 
                     SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]];
-                    Print2Crewmates(e, crewmate1, crewmate2, point);
+                    Print2Crewmates(e, crewmate1, crewmate2, point, CrewmatesFacingLeft[indexes[0]], CrewmatesFacingLeft[indexes[1]]);
                 }
                 if(indexes.Count == 3)
                 {
                     SKBitmap crewmate1 = CrewmatesBitMaps[indexes[0]];
                     SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]]; 
                     SKBitmap crewmate3 = CrewmatesBitMaps[indexes[2]];
-                    Print3Crewmates(e, crewmate1, crewmate2, crewmate3, point);
+                    Print3Crewmates(e, crewmate1, crewmate2, crewmate3, point, CrewmatesFacingLeft[indexes[0]], CrewmatesFacingLeft[indexes[1]], CrewmatesFacingLeft[indexes[2]]);
                 }
                 if(indexes.Count == 4)
                 {
@@ -381,7 +389,7 @@ namespace TopRaceApp.Views
                     SKBitmap crewmate2 = CrewmatesBitMaps[indexes[1]]; 
                     SKBitmap crewmate3 = CrewmatesBitMaps[indexes[2]];
                     SKBitmap crewmate4 = CrewmatesBitMaps[indexes[3]];
-                    Print4Crewmates(e, crewmate1, crewmate2, crewmate3, crewmate4, point);
+                    Print4Crewmates(e, crewmate1, crewmate2, crewmate3, crewmate4, point, CrewmatesFacingLeft[indexes[0]], CrewmatesFacingLeft[indexes[1]], CrewmatesFacingLeft[indexes[2]], CrewmatesFacingLeft[indexes[3]]);
                 }
             }
             
@@ -470,7 +478,7 @@ namespace TopRaceApp.Views
             float y = ((9 - posY) * 0.1f + 0.05f) * infoHeight;
             return new SKPoint(x, y);
         }
-        private void PrintCrewmate(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap bitmap, SKPoint point)
+        private void PrintCrewmate(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap bitmap, SKPoint point, bool isFacingLeft)
         {
             SKImageInfo info = e.Info;
             SKSurface surface = e.Surface;
@@ -481,9 +489,20 @@ namespace TopRaceApp.Views
             float x = point.X - (width / 2);
             float y = point.Y - (height / 2);
             SKRect rect = new SKRect(x, y, x + width, y + height);
+            if (isFacingLeft)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(bitmap.Width, bitmap.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, bitmap.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(bitmap, new SKPoint());
+                }            
+                bitmap = flippedBitmap;
+            }
             canvas.DrawBitmap(bitmap, rect);
         }
-        private void Print2Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKPoint point)
+        private void Print2Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKPoint point, bool isFacingLeft1, bool isFacingLeft2)
         {
             SKImageInfo info = e.Info;
             SKSurface surface = e.Surface;
@@ -494,12 +513,34 @@ namespace TopRaceApp.Views
             float x = point.X - (width / 2);
             float y1 = point.Y - 0.025f * info.Height - (height / 2);
             float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            if (isFacingLeft1)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate1.Width, crewmate1.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate1.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate1, new SKPoint());
+                }
+                crewmate1 = flippedBitmap;
+            }
+            if (isFacingLeft2)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate2.Width, crewmate2.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate2.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate2, new SKPoint());
+                }
+                crewmate2 = flippedBitmap;
+            }
             SKRect rect1 = new SKRect(x, y1, x + width, y1 + height);
             canvas.DrawBitmap(crewmate1, rect1);
             SKRect rect2 = new SKRect(x, y2, x + width, y2 + height);
             canvas.DrawBitmap(crewmate2, rect2);
         }
-        private void Print3Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKPoint point)
+        private void Print3Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKPoint point, bool isFacingLeft1, bool isFacingLeft2, bool isFacingLeft3)
         {
             SKImageInfo info = e.Info;
             SKSurface surface = e.Surface;
@@ -511,6 +552,39 @@ namespace TopRaceApp.Views
             float x2 = point.X + 0.025f * info.Width - (width / 2);
             float y1 = point.Y - 0.025f * info.Height - (height / 2);
             float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            if (isFacingLeft1)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate1.Width, crewmate1.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate1.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate1, new SKPoint());
+                }
+                crewmate1 = flippedBitmap;
+            }
+            if (isFacingLeft2)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate2.Width, crewmate2.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate2.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate2, new SKPoint());
+                }
+                crewmate2 = flippedBitmap;
+            }
+            if (isFacingLeft3)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate3.Width, crewmate3.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate3.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate3, new SKPoint());
+                }
+                crewmate3 = flippedBitmap;
+            }
             SKRect rect1 = new SKRect(x1, y1, x1 + width, y1 + height);
             canvas.DrawBitmap(crewmate1, rect1);
             SKRect rect2 = new SKRect(x2, y1, x2 + width, y1 + height);
@@ -518,7 +592,7 @@ namespace TopRaceApp.Views
             SKRect rect3 = new SKRect(x1, y2, x1 + width, y2 + height);
             canvas.DrawBitmap(crewmate3, rect3);
         }
-        private void Print4Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKBitmap crewmate4, SKPoint point)
+        private void Print4Crewmates(SkiaSharp.Views.Forms.SKPaintSurfaceEventArgs e, SKBitmap crewmate1, SKBitmap crewmate2, SKBitmap crewmate3, SKBitmap crewmate4, SKPoint point, bool isFacingLeft1, bool isFacingLeft2, bool isFacingLeft3, bool isFacingLeft4)
         {
             SKImageInfo info = e.Info;
             SKSurface surface = e.Surface;
@@ -530,6 +604,50 @@ namespace TopRaceApp.Views
             float x2 = point.X + 0.025f * info.Width - (width / 2);
             float y1 = point.Y - 0.025f * info.Height - (height / 2);
             float y2 = point.Y + 0.025f * info.Height - (height / 2);
+            if (isFacingLeft1)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate1.Width, crewmate1.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate1.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate1, new SKPoint());
+                }
+                crewmate1 = flippedBitmap;
+            }
+            if (isFacingLeft2)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate2.Width, crewmate2.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate2.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate2, new SKPoint());
+                }
+                crewmate2 = flippedBitmap;
+            }
+            if (isFacingLeft3)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate3.Width, crewmate3.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate3.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate3, new SKPoint());
+                }
+                crewmate3 = flippedBitmap;
+            }
+            if (isFacingLeft4)
+            {
+                SKBitmap flippedBitmap = new SKBitmap(crewmate4.Width, crewmate4.Height);
+                using (SKCanvas crewmateCanvas = new SKCanvas(flippedBitmap))
+                {
+                    crewmateCanvas.Clear();
+                    crewmateCanvas.Scale(-1, 1, crewmate4.Width / 2, 0);
+                    crewmateCanvas.DrawBitmap(crewmate4, new SKPoint());
+                }
+                crewmate4 = flippedBitmap;
+            }
             SKRect rect1 = new SKRect(x1, y1, x1 + width, y1 + height);
             canvas.DrawBitmap(crewmate1, rect1);
             SKRect rect2 = new SKRect(x2, y1, x2 + width, y1 + height);
@@ -596,6 +714,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = true;
+                                }
                             }
                             if(reached1 && reached2 && (!reachedNext))
                             {
@@ -651,6 +773,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = false;
+                                }
                             }
                             if (reached1 && reached2 && (!reachedNext))
                             {
@@ -718,6 +844,10 @@ namespace TopRaceApp.Views
                                     CrewmatesSKPoints.Insert(index, point);
                                     BoardCanvas.InvalidateSurface();
                                     reached1 = counter1 == timesToReach1;
+                                    if (reached1)
+                                    {
+                                        CrewmatesFacingLeft[index] = false;
+                                    }
                                 }
                                 if (reached1 && (!reached2))
                                 {
@@ -733,6 +863,7 @@ namespace TopRaceApp.Views
                                 {
                                     CrewmatesSKPoints.RemoveAt(index);
                                     CrewmatesSKPoints.Insert(index, endPoint);
+                                    CrewmatesFacingLeft[index] = true;
                                     BoardCanvas.InvalidateSurface();
                                 }
                                 return (reached1 && reached2) == false;
@@ -806,6 +937,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = true;
+                                }
                             }
                             if (reached1 && reached2 && (!reachedNext))
                             {
@@ -819,6 +954,10 @@ namespace TopRaceApp.Views
                             }
                             if(reached1 && reached2 && reachedNext && (!reachedL))
                             {
+                                if(counterL == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterL++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
@@ -830,6 +969,7 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reached2 && reachedNext && reachedL)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -874,6 +1014,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = false;
+                                }
                             }
                             if (reached1 && reached2 && (!reachedNext))
                             {
@@ -887,6 +1031,10 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reached2 && reachedNext && (!reachedL))
                             {
+                                if (counterL == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterL++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
@@ -898,6 +1046,7 @@ namespace TopRaceApp.Views
                             }
                             if(reached1 && reached2 && reachedNext && reachedL)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -929,6 +1078,10 @@ namespace TopRaceApp.Views
                             }
                             if(reached1 && (!reachedL))
                             {
+                                if (counterL == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterL++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
@@ -940,6 +1093,7 @@ namespace TopRaceApp.Views
                             }
                             if(reached1 && reachedL)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -972,6 +1126,10 @@ namespace TopRaceApp.Views
                                     CrewmatesSKPoints.Insert(index, point);
                                     BoardCanvas.InvalidateSurface();
                                     reached1 = counter1 == timesToReach1;
+                                    if (reached1)
+                                    {
+                                        CrewmatesFacingLeft[index] = false;
+                                    }
                                 }
                                 if (reached1 && (!reached2))
                                 {
@@ -985,6 +1143,10 @@ namespace TopRaceApp.Views
                                 }
                                 if(reached1 && reached2 && (!reachedL))
                                 {
+                                    if (counterL == 0)
+                                    {
+                                        CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                    }
                                     counterL++;
                                     float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
                                     float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
@@ -996,6 +1158,7 @@ namespace TopRaceApp.Views
                                 }
                                 if(reached1 && reached2 && reachedL)
                                 {
+                                    CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                     CrewmatesSKPoints.RemoveAt(index);
                                     CrewmatesSKPoints.Insert(index, endPoint);
                                     BoardCanvas.InvalidateSurface();
@@ -1024,6 +1187,10 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && (!reachedL))
                                 {
+                                    if (counterL == 0)
+                                    {
+                                        CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                    }
                                     counterL++;
                                     float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterL / timesForLadder));
                                     float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterL / timesForLadder));
@@ -1035,6 +1202,7 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && reachedL)
                                 {
+                                    CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                     CrewmatesSKPoints.RemoveAt(index);
                                     CrewmatesSKPoints.Insert(index, endPoint);
                                     BoardCanvas.InvalidateSurface();
@@ -1089,6 +1257,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = true;
+                                }
                             }
                             if (reached1 && reached2 && (!reachedNext))
                             {
@@ -1102,6 +1274,10 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reached2 && reachedNext && (!reachedS))
                             {
+                                if(counterS == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterS++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
@@ -1113,6 +1289,7 @@ namespace TopRaceApp.Views
                             }
                             if(reached1 && reached2 && reachedNext && reachedS)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -1157,6 +1334,10 @@ namespace TopRaceApp.Views
                                 CrewmatesSKPoints.Insert(index, point);
                                 BoardCanvas.InvalidateSurface();
                                 reached2 = counter2 == timeToReachPoint2;
+                                if (reached2)
+                                {
+                                    CrewmatesFacingLeft[index] = false;
+                                }
                             }
                             if (reached1 && reached2 && (!reachedNext))
                             {
@@ -1170,6 +1351,10 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reached2 && reachedNext && (!reachedS))
                             {
+                                if (counterS == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterS++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
@@ -1181,6 +1366,7 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reached2 && reachedNext && reachedS)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -1212,6 +1398,10 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && (!reachedS))
                             {
+                                if (counterS == 0)
+                                {
+                                    CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                }
                                 counterS++;
                                 float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
                                 float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
@@ -1223,6 +1413,7 @@ namespace TopRaceApp.Views
                             }
                             if (reached1 && reachedS)
                             {
+                                CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                 CrewmatesSKPoints.RemoveAt(index);
                                 CrewmatesSKPoints.Insert(index, endPoint);
                                 BoardCanvas.InvalidateSurface();
@@ -1255,6 +1446,10 @@ namespace TopRaceApp.Views
                                     CrewmatesSKPoints.Insert(index, point);
                                     BoardCanvas.InvalidateSurface();
                                     reached1 = counter1 == timesToReach1;
+                                    if (reached1)
+                                    {
+                                        CrewmatesFacingLeft[index] = false;
+                                    }
                                 }
                                 if (reached1 && (!reached2))
                                 {
@@ -1268,6 +1463,10 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && reached2 && (!reachedS))
                                 {
+                                    if (counterS == 0)
+                                    {
+                                        CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                    }
                                     counterS++;
                                     float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
                                     float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
@@ -1279,6 +1478,7 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && reached2 && reachedS)
                                 {
+                                    CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
                                     CrewmatesSKPoints.RemoveAt(index);
                                     CrewmatesSKPoints.Insert(index, endPoint);
                                     BoardCanvas.InvalidateSurface();
@@ -1307,6 +1507,10 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && (!reachedS))
                                 {
+                                    if (counterS == 0)
+                                    {
+                                        CrewmatesFacingLeft[index] = endPos.X < nextPos.X;
+                                    }
                                     counterS++;
                                     float x = nextPoint.X + ((endPoint.X - nextPoint.X) * ((float)counterS / timesForSnake));
                                     float y = nextPoint.Y + ((endPoint.Y - nextPoint.Y) * ((float)counterS / timesForSnake));
@@ -1318,6 +1522,8 @@ namespace TopRaceApp.Views
                                 }
                                 if (reached1 && reachedS)
                                 {
+                                    CrewmatesFacingLeft[index] = endPos.Y % 2 != 0;
+
                                     CrewmatesSKPoints.RemoveAt(index);
                                     CrewmatesSKPoints.Insert(index, endPoint);
                                     BoardCanvas.InvalidateSurface();
