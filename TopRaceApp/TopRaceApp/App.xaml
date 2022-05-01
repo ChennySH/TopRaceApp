@@ -4,21 +4,7 @@
              x:Class="TopRaceApp.App">
     <Application.Resources>
         <ResourceDictionary>
-          <!--  <Style TargetType="Shell">
-                <Setter Property="BackgroundColor" Value="DarkBlue"/>
-            </Style>
-            <Style TargetType="NavigationPage">
-                <Setter Property="BackgroundColor" Value="Goldenrod" />
-            </Style>
-            <Style TargetType="Label">
-                <Setter Property="FontSize" Value="20"/>
-            </Style>
-            <Style TargetType="Label" x:Key="TitleLabel">
-                <Setter Property="FontSize" Value="30"/>
-            </Style>
-            <Style TargetType="Button">
-                <Setter Property="BackgroundColor" Value="Purple"/>
-            </Style> -->
+         
         </ResourceDictionary>
     </Application.Resources>
 </Application>

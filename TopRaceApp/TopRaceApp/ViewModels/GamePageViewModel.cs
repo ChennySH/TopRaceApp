@@ -381,52 +381,55 @@ namespace TopRaceApp.ViewModels
                         //TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
                         if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
                         {
-                            //DateTime t = LastUpdateTime;
-                            ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                            CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
-                            PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
-                            LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
-                            UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
                             List<PlayersInGame> playersList = ((App)App.Current).currentGame.PlayersInGames.Where(pl => pl.IsInGame).ToList();
-                            while (playersList.Count < Players.Count)
+                            if (playersList.Count > 1)
                             {
-                                int removedIndex = 0;
-                                for (int i = 0; i < Players.Count; i++)
+                                //DateTime t = LastUpdateTime;
+                                ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
+                                CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
+                                PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
+                                LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
+                                UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+                                while (playersList.Count < Players.Count)
                                 {
-                                    PlayersInGame player = Players[0];
-                                    bool isInGame = false;
-                                    foreach (PlayersInGame pl in playersList)
+                                    int removedIndex = 0;
+                                    for (int i = 0; i < Players.Count; i++)
                                     {
-                                        if (pl.Id == player.Id)
+                                        PlayersInGame player = Players[0];
+                                        bool isInGame = false;
+                                        foreach (PlayersInGame pl in playersList)
                                         {
-                                            isInGame = true;
+                                            if (pl.Id == player.Id)
+                                            {
+                                                isInGame = true;
+                                            }
+                                        }
+                                        if (!isInGame)
+                                        {
+                                            removedIndex = i;
                                         }
                                     }
-                                    if (!isInGame)
+                                    Players.RemoveAt(removedIndex);
+                                    this.GamePage.RemoveFromLists(removedIndex);
+                                }
+                                int prevoiusID = PreviousPlayer.Id;
+                                PlayersInGame unUpdatedPlayer = null;
+                                int index = 0;
+                                for (int i = 0; i < Players.Count; i++)
+                                {
+                                    PlayersInGame pl = Players[i];
+                                    if (pl.Id == prevoiusID)
                                     {
-                                        removedIndex = i;
+                                        unUpdatedPlayer = pl;
+                                        Players[i] = PreviousPlayer;
+                                        index = i;
                                     }
                                 }
-                                Players.RemoveAt(removedIndex);
-                                this.GamePage.RemoveFromLists(removedIndex);
+                                IsMovingList[index] = true;
+                                LastRoll = ((App)App.Current).currentGame.LastRollResult;
+                                GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
+                                IsMovingList[index] = false;
                             }
-                            int prevoiusID = PreviousPlayer.Id;
-                            PlayersInGame unUpdatedPlayer = null;
-                            int index = 0;
-                            for (int i = 0; i < Players.Count; i++)
-                            {
-                                PlayersInGame pl = Players[i];
-                                if (pl.Id == prevoiusID)
-                                {
-                                    unUpdatedPlayer = pl;
-                                    Players[i] = PreviousPlayer;
-                                    index = i;
-                                }
-                            }
-                            IsMovingList[index] = true;
-                            LastRoll = ((App)App.Current).currentGame.LastRollResult;
-                            GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
-                            IsMovingList[index] = false;
                             Winner = ((App)App.Current).currentGame.Winner;
                             if (Winner != null)
                             {
