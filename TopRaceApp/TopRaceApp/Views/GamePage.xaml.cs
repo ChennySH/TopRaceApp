@@ -52,6 +52,26 @@ namespace TopRaceApp.Views
         public void RemoveFromLists(int removedIndex)
         {
             CrewmatesBitMaps.RemoveAt(removedIndex);
+            if(removedIndex == 0)
+            {
+                Crewmate1.Source = null;
+                Crewmate1BitMap = null;
+            }
+            if(removedIndex == 1)
+            {
+                Crewmate2.Source = null;
+                Crewmate2BitMap = null;
+            }
+            if(removedIndex == 2)
+            {
+                Crewmate3.Source = null;
+                Crewmate3BitMap = null;
+            }
+            if(removedIndex == 3)
+            {
+                Crewmate4.Source = null;
+                Crewmate4BitMap = null;
+            }
             CrewmatesSKPoints.RemoveAt(removedIndex);
             CrewmatesFacingLeft.RemoveAt(removedIndex);
             BoardCanvas.InvalidateSurface();
@@ -1539,6 +1559,37 @@ namespace TopRaceApp.Views
         public double GetLength(SKPoint point1, SKPoint point2)
         {
             return Math.Pow(Math.Pow(point1.X + point2.X, 2) + Math.Pow(point1.Y + point2.Y, 2), 0.5);
+        }
+        public void SetFramesBackground(int index)
+        {
+            if(index == 0)
+            {
+                Crewmate1Frame.BackgroundColor = Xamarin.Forms.Color.LightSalmon;
+                Crewmate2Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate3Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate4Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+            }
+            if (index == 1)
+            {
+                Crewmate2Frame.BackgroundColor = Xamarin.Forms.Color.LightSalmon;
+                Crewmate1Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate3Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate4Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+            }
+            if (index == 2)
+            {
+                Crewmate3Frame.BackgroundColor = Xamarin.Forms.Color.LightSalmon;
+                Crewmate2Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate1Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate4Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+            }
+            if (index == 3)
+            {
+                Crewmate4Frame.BackgroundColor = Xamarin.Forms.Color.LightSalmon;
+                Crewmate2Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate3Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+                Crewmate1Frame.BackgroundColor = Xamarin.Forms.Color.Default;
+            }
         }
         
     }

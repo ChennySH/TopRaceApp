@@ -443,6 +443,8 @@ namespace TopRaceApp.ViewModels
             gamePage.BindingContext = new GamePageViewModel();
             gamePage.SetBorder();
             await gamePage.SetBitMaps();
+            int currentIndex = ((GamePageViewModel)gamePage.BindingContext).GetCurrentIndex();
+            gamePage.SetFramesBackground(currentIndex);
             ((GamePageViewModel)gamePage.BindingContext).GamePage = gamePage;
             await ((GamePageViewModel)gamePage.BindingContext).Run();
             await ((App)App.Current).MainPage.Navigation.PushAsync(gamePage);
