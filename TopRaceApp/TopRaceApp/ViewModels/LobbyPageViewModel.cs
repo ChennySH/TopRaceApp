@@ -500,10 +500,10 @@ namespace TopRaceApp.ViewModels
         public async Task Run()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-            Device.StartTimer(new TimeSpan(0, 0, 3), () =>
+            Device.StartTimer(TimeSpan.FromSeconds(0.5), () =>
             {
 
-                // do something every 3 seconds
+                // do something every 0.1 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     if (IsGameActive && AreYouInGame && !DidLeaveTheGame)

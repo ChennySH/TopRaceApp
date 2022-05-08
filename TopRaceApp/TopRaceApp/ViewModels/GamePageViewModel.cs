@@ -371,10 +371,18 @@ namespace TopRaceApp.ViewModels
         public async Task Run()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-
-            Device.StartTimer(new TimeSpan(0, 0, 2), () =>
+            if (IsMyTurn)
             {
-                // do something every 2 seconds
+                //start timer
+                StartYourTimer();
+            }
+            else
+            {
+                StartRivalTimer();
+            }
+            Device.StartTimer(TimeSpan.FromSeconds(0.5), () =>
+            {
+                // do something every 0.1 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     if (!DidQuit)
@@ -383,15 +391,14 @@ namespace TopRaceApp.ViewModels
                         // interact with UI elements
                         //TimeSpan minimum = new TimeSpan(0, 0, 0, 0, 500);
                         //TimeSpan diff = ((App)App.Current).currentGame.LastUpdateTime - LastUpdateTime;
-                        if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)
+                        if (UpdatesCounter < ((App)App.Current).currentGame.UpdatesCounter)                        
                         {
                             List<PlayersInGame> playersList = ((App)App.Current).currentGame.PlayersInGames.Where(pl => pl.IsInGame).ToList();
                             if (playersList.Count > 1)
                             {
                                 //DateTime t = LastUpdateTime;
                                 ((App)App.Current).currentPlayerInGame = ((App)App.Current).currentGame.PlayersInGames.Where(p => p.UserId == ((App)App.Current).currentUser.Id).FirstOrDefault();
-                                CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
-                                PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
+                                
                                 LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
                                 UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
                                 while (playersList.Count < Players.Count)
@@ -415,6 +422,25 @@ namespace TopRaceApp.ViewModels
                                     }
                                     Players.RemoveAt(removedIndex);
                                     this.GamePage.RemoveFromLists(removedIndex);
+                                }
+                                int oldCurrentPlayerID = CurrentPlayerInTurn.Id;
+                                CurrentPlayerInTurn = ((App)App.Current).currentGame.CurrentPlayerInTurn;
+                                PreviousPlayer = ((App)App.Current).currentGame.PreviousPlayer;
+                                IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
+                                // restartTimer if the currentPlayerQuited, if there was also a move it would restart only there 
+                                if (MovesCounter == ((App)App.Current).currentGame.MovesCounter)
+                                {
+                                    if (oldCurrentPlayerID != CurrentPlayerInTurn.Id)
+                                    {
+                                        if (IsMyTurn)
+                                        {
+                                            StartYourTimer();
+                                        }
+                                        else
+                                        {
+                                            StartRivalTimer();
+                                        }
+                                    }
                                 }
                                 if (MovesCounter < ((App)App.Current).currentGame.MovesCounter)
                                 {
@@ -443,6 +469,14 @@ namespace TopRaceApp.ViewModels
 
                                     }
                                     MovesCounter = ((App)App.Current).currentGame.MovesCounter;
+                                    if (IsMyTurn)
+                                    {
+                                        StartYourTimer();
+                                    }
+                                    else
+                                    {
+                                        StartRivalTimer();
+                                    }
                                 }
                                 int currentIndex = GetCurrentIndex();
                                 this.GamePage.SetFramesBackground(currentIndex);
@@ -457,11 +491,7 @@ namespace TopRaceApp.ViewModels
                                     DidShowWinner = true;
                                 }
                             }
-                            IsMyTurn = (CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id) && (Winner == null);
-                            if (IsMyTurn)
-                            {
-                                //start timer
-                            }
+
                         }
                         UpdateChatRoom();
                     }
@@ -526,7 +556,7 @@ namespace TopRaceApp.ViewModels
         }
         private async void Roll()
         {
-            if(IsMyTurn)
+            if (IsMyTurn)
             {
                 TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
                 ((App)App.Current).currentGame = await proxy.PlayAsync(((App)App.Current).currentGame.Id);
@@ -561,6 +591,15 @@ namespace TopRaceApp.ViewModels
                     IsMyTurn = false;
                     ShowWinner();
                     DidShowWinner = true;
+                }
+                if(IsMyTurn)
+                { 
+                    //start timer
+                    StartYourTimer();
+                }
+                else
+                {
+                    StartRivalTimer();
                 }
             }
             
@@ -613,6 +652,16 @@ namespace TopRaceApp.ViewModels
                     ShowWinner();
                     DidShowWinner = true;
                 }
+                if (IsMyTurn)
+                {
+                    //start timer
+                    StartYourTimer();
+                }
+                else
+                {
+                    StartRivalTimer();
+                }
+
             }
 
         }
@@ -736,6 +785,65 @@ namespace TopRaceApp.ViewModels
                 }
             }
             return index;
+        }
+        public void StartYourTimer()
+        {
+            int currentMovesCounter = this.MovesCounter;
+            bool didTimerEnd = false;
+            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                if (!DidQuit)
+                {
+                    if (Winner == null)
+                    {
+                        if (currentMovesCounter == this.MovesCounter)
+                        {
+                            this.Timer -= 1;
+                            if (this.Timer == 0)
+                            {
+                                didTimerEnd = true;
+                                Roll();
+                            }
+                        }
+                    }
+                }
+                if ((currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null) == false)
+                {
+                    this.Timer = 15;
+                }
+                return currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null;
+            });
+        }
+        public void StartRivalTimer()
+        {
+            int currentMovesCounter = this.MovesCounter;
+            bool didTimerEnd = false;
+            int playerInTurnID = CurrentPlayerInTurn.Id;
+            Device.StartTimer(TimeSpan.FromSeconds(1), () =>
+            {
+                if (!DidQuit)
+                {
+                    if (Winner == null)
+                    {
+                        if (playerInTurnID == CurrentPlayerInTurn.Id)
+                        {
+                            if (currentMovesCounter == this.MovesCounter)
+                            {
+                                this.Timer -= 1;
+                                if (this.Timer == 0)
+                                {
+                                    didTimerEnd = true;
+                                }
+                            }
+                        }
+                    }
+                }
+                if ((currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null && playerInTurnID == CurrentPlayerInTurn.Id) == false)
+                {
+                    this.Timer = 15;
+                }
+                return currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null && playerInTurnID == CurrentPlayerInTurn.Id;
+            });
         }
     }
 }

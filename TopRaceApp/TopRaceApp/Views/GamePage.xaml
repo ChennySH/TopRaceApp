@@ -54,7 +54,7 @@
                     <!--<Label Text="15" Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>-->
                     <Entry Text="{Binding ResultSetter}"  Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
                     <Button Text="Roll" Grid.Column="5" Grid.Row="0" Command="{Binding RollTestCommand}" IsEnabled="{Binding IsMyTurn}"/>
-                    <Label Text="{Binding LastRoll}" Grid.Column="6" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Label Text="{Binding Timer}" Grid.Column="6" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
                 </Grid>
                 
                 <skiaforms:SKCanvasView x:Name="BoardCanvas" PaintSurface="BoardCanvas_PaintSurface" Grid.Column="0" Grid.Row="1"/>
