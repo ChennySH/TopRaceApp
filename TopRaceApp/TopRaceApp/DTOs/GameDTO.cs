@@ -19,6 +19,7 @@ namespace TopRaceApp.DTOs
         public DateTime LastUpdateTime { get; set; }
         public int StatusId { get; set; }
         public int UpdatesCounter { get; set; }
+        public int MovesCounter { get; set; }
         public int? WinnerId { get; set; }
         public int? CurrentPlayerInTurnId { get; set; }
         public int? PreviousPlayerId { get; set; }
@@ -48,6 +49,7 @@ namespace TopRaceApp.DTOs
             PrivateKey = game.PrivateKey;
             IsPrivate = game.IsPrivate;
             UpdatesCounter = game.UpdatesCounter;
+            MovesCounter = game.MovesCounter;
             JsonSerializerOptions options = new JsonSerializerOptions
             {
                 ReferenceHandler = ReferenceHandler.Preserve, //avoid reference loops!
@@ -92,6 +94,7 @@ namespace TopRaceApp.DTOs
                 PreviousPlayer = this.PreviousPlayer,
                 LastRollResult = this.LastRollResult,
                 UpdatesCounter = this.UpdatesCounter,
+                MovesCounter = this.MovesCounter,
             };
         }
 

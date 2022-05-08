@@ -297,6 +297,7 @@ namespace TopRaceApp.ViewModels
             }
         }
         public int UpdatesCounter{ get; set; }
+        public int MovesCounter { get; set; }
         public GamePage GamePage { get; set; }
         public Mover [,] Board { get; set; }
         public List<PlayersInGame> Players { get; set; }
@@ -316,9 +317,11 @@ namespace TopRaceApp.ViewModels
             IsHost = ((App)App.Current).currentPlayerInGame.IsHost;
             ResultSetter = "0";
             UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+            MovesCounter = ((App)App.Current).currentGame.MovesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
             LastRoll = 0;
             Timer = 15;
+            MessageText = "";
             SendMessageCommand = new Command(SendMessage);
             RollCommand = new Command(Roll);
             RollTestCommand = new Command(RollTest);
@@ -413,29 +416,33 @@ namespace TopRaceApp.ViewModels
                                     Players.RemoveAt(removedIndex);
                                     this.GamePage.RemoveFromLists(removedIndex);
                                 }
-                                if (PreviousPlayer != null)
+                                if (MovesCounter < ((App)App.Current).currentGame.MovesCounter)
                                 {
-                                    int prevoiusID = PreviousPlayer.Id;
-                                    PlayersInGame unUpdatedPlayer = null;
-                                    int index = -1;
-                                    for (int i = 0; i < Players.Count; i++)
+                                    if (PreviousPlayer != null)
                                     {
-                                        PlayersInGame pl = Players[i];
-                                        if (pl.Id == prevoiusID)
+                                        int prevoiusID = PreviousPlayer.Id;
+                                        PlayersInGame unUpdatedPlayer = null;
+                                        int index = -1;
+                                        for (int i = 0; i < Players.Count; i++)
                                         {
-                                            unUpdatedPlayer = pl;
-                                            Players[i] = PreviousPlayer;
-                                            index = i;
+                                            PlayersInGame pl = Players[i];
+                                            if (pl.Id == prevoiusID)
+                                            {
+                                                unUpdatedPlayer = pl;
+                                                Players[i] = PreviousPlayer;
+                                                index = i;
+                                            }
                                         }
+                                        if (index != -1)
+                                        {
+                                            IsMovingList[index] = true;
+                                            LastRoll = ((App)App.Current).currentGame.LastRollResult;
+                                            GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
+                                            IsMovingList[index] = false;
+                                        }
+
                                     }
-                                    if (index != -1)
-                                    {
-                                        IsMovingList[index] = true;
-                                        LastRoll = ((App)App.Current).currentGame.LastRollResult;
-                                        GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
-                                        IsMovingList[index] = false;
-                                    }
-                                    
+                                    MovesCounter = ((App)App.Current).currentGame.MovesCounter;
                                 }
                                 int currentIndex = GetCurrentIndex();
                                 this.GamePage.SetFramesBackground(currentIndex);
@@ -543,6 +550,7 @@ namespace TopRaceApp.ViewModels
                 }
                 LastRoll = ((App)App.Current).currentGame.LastRollResult;
                 UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+                MovesCounter = ((App)App.Current).currentGame.MovesCounter;
                 GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
                 IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
                 int currentIndex = GetCurrentIndex();
@@ -593,6 +601,7 @@ namespace TopRaceApp.ViewModels
                 }
                 LastRoll = ((App)App.Current).currentGame.LastRollResult;
                 UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
+                MovesCounter = ((App)App.Current).currentGame.MovesCounter;
                 GamePage.MoveCrewmate(index, unUpdatedPlayer.CurrentPos, ((App)App.Current).currentGame.LastRollResult, PreviousPlayer.CurrentPos);
                 IsMyTurn = CurrentPlayerInTurn.Id == ((App)App.Current).currentPlayerInGame.Id;
                 int currentIndex = GetCurrentIndex();

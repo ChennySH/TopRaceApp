@@ -19,9 +19,9 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="130"/>
-                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="35*"/>
+                    <ColumnDefinition Width="30*"/>
+                    <ColumnDefinition Width="35*"/>
                 </Grid.ColumnDefinitions>
             <Label Text="{Binding RoomStatus}" Grid.Column="0" Grid.Row="0"/>
             <Label Text="Key:" Grid.Column="1" Grid.Row="0"/>
