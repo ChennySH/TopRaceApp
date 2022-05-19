@@ -8,8 +8,19 @@
              Title="{Binding GameName}" NavigationPage.HasBackButton="False" x:Name="this">
 
     <ContentPage.Content>
-        <StackLayout>
-            <Grid VerticalOptions="FillAndExpand">
+        <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="96*"/>
+                <RowDefinition Height="2*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="96*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <Frame BackgroundColor="White" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Grid.Column="1" Grid.Row="1"/>
+            <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Grid.Column="1" Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
@@ -94,6 +105,6 @@
                 <Button Text="Leave Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsNotHost}" Command="{Binding LeaveGameCommand}"/>
                 <Button Text="Delete Game" Grid.Row="5" Grid.Column="2" IsVisible="{Binding IsHost}" Command="{Binding CloseGameCommand}"/>
             </Grid>
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

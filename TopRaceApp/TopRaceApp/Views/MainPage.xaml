@@ -15,29 +15,37 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
-            <Grid VerticalOptions="FillAndExpand">
+            <Grid VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="10*"/>
+                    <RowDefinition Height="80*"/>
+                    <RowDefinition Height="10*"/>
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10*"/>
+                    <ColumnDefinition Width="80*"/>
+                    <ColumnDefinition Width="10*"/>
                 </Grid.ColumnDefinitions>
-                <Image Source="{Binding ProfilePic}" WidthRequest="100" HeightRequest="100" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2"/>
-                <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="0" FontSize="Large" VerticalOptions="FillAndExpand"/>
-                <Label Text="{Binding Status}" Grid.Column="1" Grid.Row="1" FontSize="Large" VerticalOptions="FillAndExpand"/>
-                <Label Text="Join Game:" FontSize="Large" VerticalOptions="FillAndExpand" Grid.Row="2" Grid.Column="0"/>
-                <Button Text="Join Public Game" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2"/>
-                <Button Text="Join Private Game" Grid.Row="4" Grid.Column="0" Command="{Binding JoinGameWithPrivateKeyCommand}"/>
-                <Entry Text="{Binding PrivateKey}" Grid.Row="4" Grid.Column="1"/>
-                <Label Text="Host Game:" FontSize="Large" VerticalOptions="FillAndExpand" Grid.Row="5" Grid.Column="0"/>
-                <Button Text="Host Game" Grid.Row="6" Grid.Column="0" Command="{Binding HostGameCommand}" Grid.ColumnSpan="2"/>
+                <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                <Grid Grid.Row="1" Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="2*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Frame BackgroundColor="LightBlue" Grid.Row="0" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
+                    <Image Source="{Binding ProfilePic}" Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" VerticalOptions="Start"  x:Name="ProfilePic"/>
+                <Label Text="{Binding UserName}" Grid.Column="0" Grid.Row="2" FontSize="Large" VerticalOptions="FillAndExpand" HorizontalOptions="CenterAndExpand"/>
+                <Button Text="Join Private Game" Grid.Row="3" Grid.Column="0" Command="{Binding JoinGameWithPrivateKeyCommand}"/>
+                <Entry Text="{Binding PrivateKey}" Grid.Row="4" Grid.Column="0" Placeholder="Private Game Key"/>
+                <Button Text="Host Game" Grid.Row="5" Grid.Column="0" Command="{Binding HostGameCommand}"/>
+                </Grid>
             </Grid>
         </StackLayout>
     </ContentPage.Content>

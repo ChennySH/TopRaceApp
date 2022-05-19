@@ -7,21 +7,23 @@
         <local:SignUpPageViewModel/>
     </ContentPage.BindingContext>
     <ContentPage.Content>
-        <ScrollView>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="5*"/>
+                <RowDefinition Height="90*"/>
+                <RowDefinition Height="5*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="90*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+            <ScrollView Grid.Row="1" Grid.Column="1">
             <StackLayout>
-
                 <Label Text="User Name: "/>
                 <Entry Placeholder="UserName" Text="{Binding UserName}"/>
                 <Label Text="{Binding UserNameErrorMessege}" IsVisible="{Binding UserNameErrorMessegeIsVisible}" TextColor="Red"/>
-
-          <!--      <Label Text="First Name: "/>
-                <Entry Placeholder="FirstName" Text="{Binding FirstName}"/>
-                <Label Text="{Binding FirstNameErrorMessege}" IsVisible="{Binding FirstNameErrorMessegeIsVisible}" TextColor="Red"/>
-
-                <Label Text="Last Name: "/>
-                <Entry Placeholder="LastName" Text="{Binding LastName}"/>
-                <Label Text="{Binding LastNameErrorMessege}" IsVisible="{Binding LastNameErrorMessegeIsVisible}" TextColor="Red"/>
--->
 
                 <Label Text="Email: "/>
                 <Entry Placeholder="Email" Text="{Binding Email}"/>
@@ -43,9 +45,8 @@
                 <Label Text="{Binding PhoneNumberErrorMessege}" IsVisible="{Binding PhoneNumberErrorMessegeIsVisible}" TextColor="Red"/>
 
                 <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
-
-
             </StackLayout>
         </ScrollView>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

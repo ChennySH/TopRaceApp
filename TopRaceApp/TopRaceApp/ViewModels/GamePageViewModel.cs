@@ -302,6 +302,7 @@ namespace TopRaceApp.ViewModels
         public Mover [,] Board { get; set; }
         public List<PlayersInGame> Players { get; set; }
         public List<bool> IsMovingList { get; set; }
+        public const int TIMER_TIME = 30;
         public ICommand SendMessageCommand { get; set; }
         public Position CurrentPos { get; set; }
         public Position PreviousPos { get; set; }
@@ -320,7 +321,7 @@ namespace TopRaceApp.ViewModels
             MovesCounter = ((App)App.Current).currentGame.MovesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
             LastRoll = 0;
-            Timer = 15;
+            Timer = TIMER_TIME;
             MessageText = "";
             SendMessageCommand = new Command(SendMessage);
             RollCommand = new Command(Roll);
@@ -701,7 +702,7 @@ namespace TopRaceApp.ViewModels
             {
                 await ResetGame();
             }
-            if (((App)App.Current).currentGame.StatusId == 2)
+            if (((App)App.Current).currentGame != null && ((App)App.Current).currentGame.StatusId == 2)
             {
                 return;
             }
@@ -709,7 +710,7 @@ namespace TopRaceApp.ViewModels
             await ((App)App.Current).MainPage.Navigation.PopAsync();
             NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
             LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
-            if (((App)App.Current).currentGame.StatusId != 3)
+            if (((App)App.Current).currentGame != null)
             {
                 vm.IsGameOn = false;
                 vm.IsInGamePage = false;
@@ -809,7 +810,7 @@ namespace TopRaceApp.ViewModels
                 }
                 if ((currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null) == false)
                 {
-                    this.Timer = 15;
+                    this.Timer = TIMER_TIME;
                 }
                 return currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null;
             });
@@ -840,7 +841,7 @@ namespace TopRaceApp.ViewModels
                 }
                 if ((currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null && playerInTurnID == CurrentPlayerInTurn.Id) == false)
                 {
-                    this.Timer = 15;
+                    this.Timer = TIMER_TIME;
                 }
                 return currentMovesCounter == this.MovesCounter && (!didTimerEnd) && (!DidQuit) && Winner == null && playerInTurnID == CurrentPlayerInTurn.Id;
             });

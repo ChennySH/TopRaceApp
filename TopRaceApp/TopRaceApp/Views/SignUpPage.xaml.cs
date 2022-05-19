@@ -15,6 +15,8 @@ namespace TopRaceApp.Views
     {
         public SignUpPage()
         {
+            ((App)App.Current).SetBackgrounds(this);
+
             this.BindingContext = new SignUpPageViewModel();
             InitializeComponent();
         }

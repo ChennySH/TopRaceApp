@@ -15,8 +15,20 @@ namespace TopRaceApp.Views
     {
         public MainPage()
         {
+            ((App)App.Current).SetBackgrounds(this);
+            
             this.BindingContext = new MainPageViewModel();
             InitializeComponent();
+            if (Device.RuntimePlatform == Device.UWP)
+            {
+                ProfilePic.WidthRequest = 200;
+                ProfilePic.HeightRequest = 200;
+            }
+            else
+            {
+                ProfilePic.WidthRequest = 150;
+                ProfilePic.HeightRequest = 150;
+            }
         }
     }
 }

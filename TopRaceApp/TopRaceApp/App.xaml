@@ -4,7 +4,24 @@
              x:Class="TopRaceApp.App">
     <Application.Resources>
         <ResourceDictionary>
-         
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarBackgroundColor" Value="DarkGreen"/>
+                <Setter Property="BarTextColor" Value="White"/>
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="FontSize" Value="Large"/>
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
+            <Style TargetType="Entry">
+                <Setter Property="FontSize" Value="Large"/>
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
+            <Style TargetType="Button">
+                <Setter Property="TextColor" Value="Black"/>
+            </Style>
+            <Style TargetType="CollectionView">
+                <Setter Property="BackgroundColor" Value="LightGray"/>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -15,16 +15,33 @@
                      />
     </ContentPage.ToolbarItems> 
     <ContentPage.Content>
-        <StackLayout>
-            <Label Text="UserName or Email:"></Label>
-            <Entry Placeholder="UserName/Email" Text="{Binding UserNameOrEmail}"/>
-            <Label Text="{Binding UserNameOrEmailErrorMessege}" IsVisible="{Binding UserNameOrEmailErrorMessegeIsVisible}" TextColor="Red"/>
+        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="80*"/>
+                <ColumnDefinition Width="10*"/>
+            </Grid.ColumnDefinitions>
+                <Frame Grid.Row="1" Grid.Column="1" Grid.RowSpan="7" BackgroundColor="White" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand"/>
+                <Label Text="UserName or Email:" Grid.Column="1" Grid.Row="1"/>
+                <Entry Placeholder="UserName/Email" Text="{Binding UserNameOrEmail}" Grid.Column="1" Grid.Row="2"/>
+                <Label Text="{Binding UserNameOrEmailErrorMessege}" IsVisible="{Binding UserNameOrEmailErrorMessegeIsVisible}" TextColor="Red" Grid.Column="1" Grid.Row="3"/>
 
-            <Label Text="Password:"/>
-            <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}"/>
-            <Label Text="{Binding PasswordErrorMessege}" IsVisible="{Binding PasswordErrorMessegeIsVisible}" TextColor="Red"/>
+                <Label Text="Password:" Grid.Column="1" Grid.Row="4"/>
+                <Entry Placeholder="Password" IsPassword="True" Text="{Binding Password}" Grid.Column="1" Grid.Row="5"/>
+                <Label Text="{Binding PasswordErrorMessege}" IsVisible="{Binding PasswordErrorMessegeIsVisible}" TextColor="Red" Grid.Column="1" Grid.Row="6"/>
 
-            <Button Text="Submit" HorizontalOptions="Center" Command="{Binding SubmitCommand}"></Button>
-        </StackLayout>
+            <Button Text="Submit" HorizontalOptions="Center" Command="{Binding SubmitCommand}" Grid.Column="1" Grid.Row="7"/>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

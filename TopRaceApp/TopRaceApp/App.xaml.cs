@@ -36,7 +36,17 @@ namespace TopRaceApp
             
 
         }
-
+        public void SetBackgrounds(Page page)
+        {
+            if (Device.RuntimePlatform == Device.UWP)
+            {
+                page.BackgroundImageSource = "https://i.pinimg.com/originals/b8/4e/e0/b84ee09c72fa8e77be081385deb4ab41.jpg";
+            }
+            else
+            {
+                page.BackgroundImageSource = "https://i.pinimg.com/originals/b8/4e/e0/b84ee09c72fa8e77be081385deb4ab41.jpg";
+            }
+        }
         protected override async void OnStart()
         {
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();

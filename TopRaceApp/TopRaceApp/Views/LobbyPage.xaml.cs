@@ -15,6 +15,8 @@ namespace TopRaceApp.Views
     {
         public LobbyPage()
         {
+            ((App)App.Current).SetBackgrounds(this);
+
             InitializeComponent();
         }
 

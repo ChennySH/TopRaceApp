@@ -34,20 +34,12 @@ namespace TopRaceApp.Views
         //public List<SKBitmap>[] BitmapListsArray;
         public GamePage()
         {
+            //((App)App.Current).SetBackgrounds(this);
             Proxy = TopRaceAPIProxy.CreateProxy();
             InitializeComponent();
             PositionsList = ((App)App.Current).Positions;
             DidStart = false;
-            //PositionsArray = new Position[100];
-            //for (int i = 0; i < PositionsArray.Length; i++)
-            //{
-            //    PositionsArray[i] = ((App)App.Current).Positions.Where(p => p.Id == i).FirstOrDefault();
-            //}
-            //BitmapListsArray = new List<SKBitmap>[100];
-            //for (int i = 0; i < BitmapListsArray.Length; i++)
-            //{
-            //    BitmapListsArray[i] = new List<SKBitmap>();
-            //}
+            
         }
         public void RemoveFromLists(int removedIndex)
         {

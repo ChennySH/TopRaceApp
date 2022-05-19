@@ -15,6 +15,8 @@ namespace TopRaceApp.Views
     {
         public LoginPage()
         {
+            ((App)App.Current).SetBackgrounds(this);
+
             this.BindingContext = new LoginPageViewModel();
             InitializeComponent();
         }
