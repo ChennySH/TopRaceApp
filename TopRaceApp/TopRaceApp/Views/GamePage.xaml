@@ -7,7 +7,7 @@
              xmlns:p="clr-namespace:TopRaceApp.ViewModels"
              x:Class="TopRaceApp.Views.GamePage"
              NavigationPage.HasBackButton="False"
-             BackgroundColor="LightGreen">
+             BackgroundColor="LightYellow">
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Quit Game"               
                  Order="Default"
