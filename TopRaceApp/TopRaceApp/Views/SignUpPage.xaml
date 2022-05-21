@@ -43,8 +43,20 @@
                 <Label Text="Phone Number: "/>
                 <Entry Placeholder="Phone Number" Text="{Binding PhoneNumber}"/>
                 <Label Text="{Binding PhoneNumberErrorMessege}" IsVisible="{Binding PhoneNumberErrorMessegeIsVisible}" TextColor="Red"/>
-
-                <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
+                    <Label Text="Profile Picture: "/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Text="Take Image" Grid.Column="0" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        <Button Text="Pick Image" Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                    </Grid>
+                    <Image HeightRequest="200" WidthRequest="200" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                    <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
             </StackLayout>
         </ScrollView>
         </Grid>

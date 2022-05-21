@@ -90,13 +90,21 @@ namespace TopRaceApp.ViewModels
                 await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
             }
         }
-        public  void Login()
+        public void Login()
         {
             LoginPage loginPage = new LoginPage();
             App.Current.MainPage.Navigation.PushAsync(loginPage);
         }
+        public async void PickImage()
+        {
+            FileResult result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+            {
+                Title = "Please pick an image"
+            });
+            var stream = await result.OpenReadAsync();
+            //ProfilePic = ImageSource.FromStream(() => stream);
+        }
         #region properties
-
         #region UserName
         private string userName;
         public string UserName
@@ -450,6 +458,24 @@ namespace TopRaceApp.ViewModels
                 if (phoneNumberErrorMessegeIsVisible != value)
                 {
                     phoneNumberErrorMessegeIsVisible = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+        #region ProfilePicture 
+        private string profilePic;
+        public string ProfilePic
+        {
+            get
+            {
+                return profilePic;
+            }
+            set
+            {
+                if(profilePic != value)
+                {
+                    profilePic = value;
                     OnPropertyChanged();
                 }
             }
