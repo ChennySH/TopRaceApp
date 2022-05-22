@@ -136,7 +136,7 @@ namespace TopRaceApp.ViewModels
         {
             this.PrivateKey = string.Empty;
             this.UserName = ((App)App.Current).currentUser.UserName;
-            this.ProfilePic = ((App)App.Current).currentUser.ProfilePic;
+            this.ProfilePic = ((App)App.Current).currentUser.ProfileImageSource;
             this.WinsCount = ((App)App.Current).currentUser.WinsNumber;
             this.LosesCount = ((App)App.Current).currentUser.LosesNumber;
             this.WinStreak = ((App)App.Current).currentUser.WinsStreak;

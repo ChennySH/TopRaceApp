@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using Xamarin.Forms;
+using TopRaceApp.Services;
 
 namespace TopRaceApp.Models
 {
@@ -10,7 +11,6 @@ namespace TopRaceApp.Models
         {
             PlayersInGames = new List<PlayersInGame>();
         }
-
         public int Id { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
@@ -20,7 +20,14 @@ namespace TopRaceApp.Models
         public int LosesNumber { get; set; }
         public int WinsStreak { get; set; }
         public string ProfilePic { get; set; }
-
+        public string ProfileImageSource
+        {
+            get
+            {
+                TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                return proxy.GetBasePhotoUri() + "ProfileImages/" + this.Email + ".jpg";
+            }
+        }
         public virtual List<PlayersInGame> PlayersInGames { get; set; }
     }
 }

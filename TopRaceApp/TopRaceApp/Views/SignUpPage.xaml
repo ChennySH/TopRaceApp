@@ -3,9 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:TopRaceApp.ViewModels"             
              x:Class="TopRaceApp.Views.SignUpPage">
-    <ContentPage.BindingContext>
-        <local:SignUpPageViewModel/>
-    </ContentPage.BindingContext>
     <ContentPage.Content>
         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
             <Grid.RowDefinitions>
@@ -52,10 +49,10 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Text="Take Image" Grid.Column="0" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
-                        <Button Text="Pick Image" Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                        <Button Text="Take Image" Grid.Column="0" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding CameraImageCommand}"/>
+                        <Button Text="Pick Image" Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding PickImageCommand}"/>
                     </Grid>
-                    <Image HeightRequest="200" WidthRequest="200" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                    <Image x:Name="ProfileImage" HeightRequest="200" WidthRequest="200" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
                     <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
             </StackLayout>
         </ScrollView>

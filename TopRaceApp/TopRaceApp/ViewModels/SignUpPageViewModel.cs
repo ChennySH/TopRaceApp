@@ -18,15 +18,16 @@ namespace TopRaceApp.ViewModels
         public SignUpPageViewModel()
         {
             UserName = "";
-            //FirstName = "";
-           // LastName = "";
             Email = "";
             Password = "";
             RepeatPassword = "";
             PhoneNumber = "";
             RegisterCommand = new Command(Register);
         }
+        public void SetDeafultImage()
+        {
 
+        }
         private async void Register()
         {
 
@@ -61,7 +62,6 @@ namespace TopRaceApp.ViewModels
                         else
                             error += "Email is already in use";
                         await App.Current.MainPage.DisplayAlert("Registeration Failed", error, "Okay");
-
                     }
                     else
                     {
@@ -74,11 +74,20 @@ namespace TopRaceApp.ViewModels
                             WinsNumber = 0,
                             LosesNumber = 0,
                             WinsStreak = 0,
-                            ProfilePic = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                            ProfilePic = "",
                         };
                         bool registered = await proxy.SignUpAsync(newUser);
                         if (registered)
-                            Login();
+                        {
+                            if (this.imageFileResult != null)
+                            {
+                                bool success = await proxy.UploadImage(new FileInfo()
+                                {
+                                    Name = this.imageFileResult.FullPath
+                                }, $"{newUser.Email}.jpg");
+                            }
+                            Login(); 
+                        }
                         else
                             await App.Current.MainPage.DisplayAlert("Registeration Failed", "Something went wrong", "Okay");
 
@@ -95,14 +104,42 @@ namespace TopRaceApp.ViewModels
             LoginPage loginPage = new LoginPage();
             App.Current.MainPage.Navigation.PushAsync(loginPage);
         }
-        public async void PickImage()
+
+        FileResult imageFileResult;
+        public event Action<ImageSource> SetImageSourceEvent;
+        public ICommand PickImageCommand => new Command(OnPickImage);
+        public async void OnPickImage()
         {
-            FileResult result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+            FileResult result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions()
             {
-                Title = "Please pick an image"
+                Title = "Pick an Image"
             });
-            var stream = await result.OpenReadAsync();
-            //ProfilePic = ImageSource.FromStream(() => stream);
+            if (result != null)
+            {
+                this.imageFileResult = result;
+
+                var stream = await result.OpenReadAsync();
+                ImageSource imgSource = ImageSource.FromStream(() => stream);
+                if (SetImageSourceEvent != null)
+                    SetImageSourceEvent(imgSource);
+            }
+        }
+        ///The following command handle the take photo button
+        public ICommand CameraImageCommand => new Command(OnCameraImage);
+        public async void OnCameraImage()
+        {
+            var result = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions()
+            {
+                Title = "Take an Image"
+            });
+            if (result != null)
+            {
+                this.imageFileResult = result;
+                var stream = await result.OpenReadAsync();
+                ImageSource imgSource = ImageSource.FromStream(() => stream);
+                if (SetImageSourceEvent != null)
+                    SetImageSourceEvent(imgSource);
+            }
         }
         #region properties
         #region UserName

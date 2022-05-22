@@ -16,9 +16,14 @@ namespace TopRaceApp.Views
         public SignUpPage()
         {
             ((App)App.Current).SetBackgrounds(this);
-
             this.BindingContext = new SignUpPageViewModel();
+            ((SignUpPageViewModel)this.BindingContext).SetImageSourceEvent += OnSetImageSource;
             InitializeComponent();
+            
+        }
+        public void OnSetImageSource(ImageSource imgSource)
+        {
+            ProfileImage.Source = imgSource;
         }
     }
 }
