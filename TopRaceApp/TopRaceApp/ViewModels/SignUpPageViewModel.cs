@@ -24,13 +24,8 @@ namespace TopRaceApp.ViewModels
             PhoneNumber = "";
             RegisterCommand = new Command(Register);
         }
-        public void SetDeafultImage()
-        {
-
-        }
         private async void Register()
         {
-
             TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
             try
             {
@@ -128,18 +123,34 @@ namespace TopRaceApp.ViewModels
         public ICommand CameraImageCommand => new Command(OnCameraImage);
         public async void OnCameraImage()
         {
-            var result = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions()
+            if (MediaPicker.IsCaptureSupported)
             {
-                Title = "Take an Image"
-            });
-            if (result != null)
-            {
-                this.imageFileResult = result;
-                var stream = await result.OpenReadAsync();
-                ImageSource imgSource = ImageSource.FromStream(() => stream);
-                if (SetImageSourceEvent != null)
-                    SetImageSourceEvent(imgSource);
+                var result = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions()
+                {
+                    Title = "Take an Image"
+                });
+                if (result != null)
+                {
+                    this.imageFileResult = result;
+                    var stream = await result.OpenReadAsync();
+                    ImageSource imgSource = ImageSource.FromStream(() => stream);
+                    if (SetImageSourceEvent != null)
+                        SetImageSourceEvent(imgSource);
+                }
             }
+            else
+            {
+                await App.Current.MainPage.DisplayAlert("Can not take an image", "Your device canwt take images", "Okay");
+            }
+        }
+        public ICommand SetDefaultImageCommand => new Command(SetDefualtImage);
+
+        public void SetDefualtImage(object obj)
+        {
+            TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+            this.imageFileResult = null;
+            if (SetImageSourceEvent != null)
+                SetImageSourceEvent(proxy.GetBasePhotoUri()+"DefaultProfilePic.jpg");
         }
         #region properties
         #region UserName

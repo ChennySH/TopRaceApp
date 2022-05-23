@@ -53,6 +53,7 @@
                         <Button Text="Pick Image" Grid.Column="1" Grid.Row="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding PickImageCommand}"/>
                     </Grid>
                     <Image x:Name="ProfileImage" HeightRequest="200" WidthRequest="200" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                    <Button Text="Set Default Image" HorizontalOptions="Center" Command="{Binding SetDefaultImageCommand}"/>
                     <Button Text="Sign Up" HorizontalOptions="Center" Command="{Binding RegisterCommand}"/>
             </StackLayout>
         </ScrollView>
