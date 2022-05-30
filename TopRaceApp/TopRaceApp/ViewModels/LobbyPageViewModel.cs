@@ -305,6 +305,7 @@ namespace TopRaceApp.ViewModels
             KickOutPlayerCommand = new Command<PlayersInGame>(KickOutPlayer);
             LeaveGameCommand = new Command(LeaveGame);
             StartGameCommand = new Command(StartGame);
+
         }
         public ICommand SendMessageCommand { get; set; }
         public ICommand OpenColorChangeViewCommand { get; set; }
@@ -387,6 +388,25 @@ namespace TopRaceApp.ViewModels
                 int index = this.PlayersInGameList.IndexOf(pl);
                 this.PlayersInGameList.Remove(pl);
                 this.PlayersInGameList.Insert(index, ((App)App.Current).currentPlayerInGame);
+                for (int i = 0; i < this.ChatMessages.Count; i++)
+                {
+                    Message message = ChatMessages[i];
+                    if (message.FromId == ((App)App.Current).currentPlayerInGame.Id)
+                    {
+                        Message newMessage = new Message
+                        {
+                            Id = message.Id,
+                            FromId = message.FromId,
+                            From = ((App)App.Current).currentPlayerInGame,
+                            Game = message.Game,
+                            GameId = message.GameId,
+                            Message1 = message.Message1,
+                            TimeSent = message.TimeSent,
+                        };
+                        this.ChatMessages.RemoveAt(i);
+                        this.ChatMessages.Insert(i, newMessage);
+                    }
+                }
             }
             CloseColorChangeView();
             if (!isUpdated)
@@ -455,13 +475,20 @@ namespace TopRaceApp.ViewModels
             {
                 if (isHost)
                 {
-                    IsInGamePage = true;
-                    IsGameOn = true;
-                    TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
-                    GameDTO game = await proxy.StartGameAsync(((App)App.Current).currentGame.Id);
-                    ((App)App.Current).currentGame = game;
-                    ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
-                    MoveToGamePage();
+                    if (PlayersInGameList.Count > 1)
+                    {
+                        IsInGamePage = true;
+                        IsGameOn = true;
+                        TopRaceAPIProxy proxy = TopRaceAPIProxy.CreateProxy();
+                        GameDTO game = await proxy.StartGameAsync(((App)App.Current).currentGame.Id);
+                        ((App)App.Current).currentGame = game;
+                        ((App)App.Current).currentPlayerInGame = game.PlayersInGames.Where(p => p.Id == ((App)App.Current).currentPlayerInGame.Id).FirstOrDefault();
+                        MoveToGamePage();
+                    }
+                    else
+                    {
+                        ShowMessage("Game can not be started", "Need at least 2 players");
+                    }
                 }
             }
             catch(Exception e)
@@ -503,7 +530,7 @@ namespace TopRaceApp.ViewModels
             Device.StartTimer(TimeSpan.FromSeconds(0.5), () =>
             {
 
-                // do something every 0.1 seconds
+                // do something every 0.5 seconds
                 Device.BeginInvokeOnMainThread(async () =>
                 {
                     if (IsGameActive && AreYouInGame && !DidLeaveTheGame)
@@ -602,6 +629,25 @@ namespace TopRaceApp.ViewModels
                         if (((App)App.Current).currentPlayerInGame.Id == p.Id)
                         {
                             ((App)App.Current).currentPlayerInGame = player;
+                        }
+                        for (int i = 0; i < this.ChatMessages.Count; i++)
+                        {
+                            Message message = ChatMessages[i];
+                            if(message.FromId == p.Id)
+                            {
+                                Message newMessage = new Message
+                                {
+                                    Id = message.Id,
+                                    FromId = message.FromId,
+                                    From = player,
+                                    Game = message.Game,
+                                    GameId = message.GameId,
+                                    Message1 = message.Message1,
+                                    TimeSent = message.TimeSent,
+                                };
+                                this.ChatMessages.RemoveAt(i);
+                                this.ChatMessages.Insert(i, newMessage);
+                            }
                         }
                     }
                 }

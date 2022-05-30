@@ -677,7 +677,7 @@ namespace TopRaceApp.ViewModels
                 WinnerCrewmate = proxy.GetBasePhotoUri() + WinnerCrewmate;
             }
             WinnerName = Winner.UserName;
-            WinnerProfilePic = Winner.ProfilePic;
+            WinnerProfilePic = Winner.ProfileImageSource;
             if(Winner.Id == ((App)App.Current).currentPlayerInGame.Id)
             {
                 WinnerOrLoser = "Winner!";
@@ -741,7 +741,7 @@ namespace TopRaceApp.ViewModels
                 await ((App)App.Current).MainPage.Navigation.PopAsync();
                 NavigationPage navigationPage = (NavigationPage)((App)App.Current).MainPage;
                 LobbyPageViewModel vm = ((LobbyPageViewModel)navigationPage.CurrentPage.BindingContext);
-                if (((App)App.Current).currentGame.StatusId != 3)
+                if (((App)App.Current).currentGame != null && ((App)App.Current).currentGame.StatusId != 3)
                 {
                     vm.LeaveGame();
                 }

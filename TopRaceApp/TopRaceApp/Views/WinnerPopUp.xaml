@@ -17,10 +17,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Image x:Name="WinnerCrewmate" Source="{Binding WinnerCrewmate}" Grid.Row="0" Grid.Column="0"/>
-        <Label x:Name="UserName" Text="{Binding WinnerName}" Grid.Row="0" Grid.Column="1"/>
-        <Label Text="Wins!" Grid.Column="2" Grid.Row="0"/>
-        <Image x:Name="WinnerPic" Source="{Binding WinnerProfilePic}" Grid.Row="0" Grid.Column="3"/>
-        <Label x:Name="WinnerOrLoser" Text="{Binding WinnerOrLoser}"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"/>
+        <Label x:Name="UserName" Text="{Binding WinnerName}" Grid.Row="0" Grid.Column="1" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
+            <Label Text="Wins!" Grid.Column="2" Grid.Row="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+            <Image x:Name="WinnerPic" Source="{Binding WinnerProfilePic}" Grid.Row="0" Grid.Column="3"/>
+        <Label x:Name="WinnerOrLoser" Text="{Binding WinnerOrLoser}"  Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" FontSize="100"/>
             <Button Text="Quit" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding QuitGameAfterGameIsOverCommand}"/>
             <Button Text="Rematch" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Command="{Binding BackToLobbyPageCommand}"/>
     </Grid>
