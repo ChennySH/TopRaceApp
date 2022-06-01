@@ -592,6 +592,7 @@ namespace TopRaceApp.ViewModels
                 if (!IsInChatMessages(m))
                 {
                     ChatMessages.Insert(ChatMessages.Count, m);
+
                     ScrollToButton(ChatMessages.IndexOf(m));
                 }
             }
