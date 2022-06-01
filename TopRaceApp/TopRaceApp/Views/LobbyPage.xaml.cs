@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TopRaceApp.ViewModels;
-
+using TopRaceApp.Models;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -19,6 +19,15 @@ namespace TopRaceApp.Views
 
             InitializeComponent();
         }
+        public void SetEvent()
+        {
+            ((LobbyPageViewModel)this.BindingContext).ScrollToButton += ScrollToButton;
+        }
+        public void ScrollToButton(int index)
+        {
+            ChatCollectionView.ScrollTo(index, position: ScrollToPosition.MakeVisible);
+        }
 
+        
     }
 }

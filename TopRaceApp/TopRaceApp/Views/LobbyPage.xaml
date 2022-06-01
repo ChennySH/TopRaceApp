@@ -81,7 +81,7 @@
                     <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
                     <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
                 </Grid>
-                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" BackgroundColor="Gray">
+                <CollectionView x:Name="ChatCollectionView" ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" BackgroundColor="Gray" ItemsUpdatingScrollMode="KeepLastItemInView">
                 <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Message">
                             <Grid Padding="8" HorizontalOptions="FillAndExpand">
@@ -93,9 +93,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Text="{Binding From.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0"/>
-                                <Label Text=": " Grid.Column="1" Grid.Row="0" TextColor="Black"/>
-                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black"/>
+                                <Label Text="{Binding From.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0" FontSize="Medium"/>
+                                <Label Text=": " Grid.Column="1" Grid.Row="0" TextColor="Black" FontSize="Medium"/>
+                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black" FontSize="Medium"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

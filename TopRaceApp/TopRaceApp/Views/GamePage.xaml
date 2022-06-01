@@ -61,7 +61,7 @@
                 <skiaforms:SKCanvasView x:Name="BoardCanvas" PaintSurface="BoardCanvas_PaintSurface" Grid.Column="0" Grid.Row="1"/>
                 <Grid Grid.Column="0" Grid.Row="2">
                     <Grid.RowDefinitions>
-                        <RowDefinition />
+                        <RowDefinition Height="auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -70,35 +70,8 @@
                     <Entry Text="{Binding MessageText}" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand"/>
                     <Button Text="Send" Grid.Column="1" Grid.Row="0" Command="{Binding SendMessageCommand}"/>
                 </Grid>
-                <AbsoluteLayout Grid.Row="2">
-                    <Grid x:Name="BoardGrid">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>                        
-                    </Grid>
-                </AbsoluteLayout>
-                <CollectionView ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="3" Grid.Column="0" BackgroundColor="Gray">
+                
+                <CollectionView x:Name="ChatCollectionView" ItemsSource="{Binding ChatMessages}" EmptyView="No Messages" Grid.Row="3" Grid.Column="0" BackgroundColor="Gray" ItemsUpdatingScrollMode="KeepScrollOffset" >
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <Grid Padding="8" HorizontalOptions="FillAndExpand">
@@ -110,9 +83,9 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Label Text="{Binding From.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0"/>
-                                <Label Text=": " Grid.Column="1" Grid.Row="0" TextColor="Black"/>
-                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black"/>
+                                <Label Text="{Binding From.UserName}" TextColor="{Binding From.Color.ColorCode}" Grid.Column="0" Grid.Row="0" FontSize="Medium"/>
+                                <Label Text=": " Grid.Column="1" Grid.Row="0" TextColor="Black" FontSize="Medium"/>
+                                <Label Text="{Binding Message1}" Grid.Column="2" Grid.Row="0" TextColor="Black" FontSize="Medium"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

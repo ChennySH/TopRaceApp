@@ -311,6 +311,7 @@ namespace TopRaceApp.ViewModels
         public ICommand BackToLobbyPageCommand { get; set; }
         public ICommand QuitGameAfterGameIsOverCommand { get; set; }
         public ICommand QuitDuringGameCommand { get; set; }
+        public event Action<int> ScrollToButton;
         #endregion
         public GamePageViewModel()
         {
@@ -524,7 +525,8 @@ namespace TopRaceApp.ViewModels
                 //if (!ChatMessages.Contains(m))
                 if (!IsInChatMessages(m))
                 {
-                    ChatMessages.Insert(0, m);
+                    ChatMessages.Add(m);
+                    ScrollToButton(ChatMessages.IndexOf(m));
                 }
             }
             // ChatMessages.OrderByDescending(m => m.TimeSent);

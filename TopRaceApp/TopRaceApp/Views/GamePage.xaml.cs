@@ -41,6 +41,14 @@ namespace TopRaceApp.Views
             DidStart = false;
             
         }
+        public void SetEvent()
+        {
+            ((GamePageViewModel)this.BindingContext).ScrollToButton += ScrollToButton;
+        }
+        public void ScrollToButton(int index)
+        {
+            ChatCollectionView.ScrollTo(index, position: ScrollToPosition.MakeVisible);
+        }
         public void RemoveFromLists(int removedIndex)
         {
             CrewmatesBitMaps.RemoveAt(removedIndex);

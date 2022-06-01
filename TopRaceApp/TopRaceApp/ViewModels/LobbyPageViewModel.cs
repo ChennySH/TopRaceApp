@@ -315,6 +315,7 @@ namespace TopRaceApp.ViewModels
         public ICommand KickOutPlayerCommand { get; set; }
         public ICommand LeaveGameCommand { get; set; }
         public ICommand StartGameCommand { get; set; }
+        public event Action<int> ScrollToButton;
         private async void SendMessage()
         {
             if (messageText != string.Empty)
@@ -462,6 +463,7 @@ namespace TopRaceApp.ViewModels
             GamePage gamePage = new GamePage();
             gamePage.BindingContext = new GamePageViewModel();
             gamePage.SetBorder();
+            gamePage.SetEvent();
             await gamePage.SetBitMaps();
             int currentIndex = ((GamePageViewModel)gamePage.BindingContext).GetCurrentIndex();
             gamePage.SetFramesBackground(currentIndex);
@@ -588,8 +590,9 @@ namespace TopRaceApp.ViewModels
             {
                 //if (!ChatMessages.Contains(m))
                 if (!IsInChatMessages(m))
-                { 
-                    ChatMessages.Insert(0, m);
+                {
+                    ChatMessages.Insert(ChatMessages.Count, m);
+                    ScrollToButton(ChatMessages.IndexOf(m));
                 }
             }
            // ChatMessages.OrderByDescending(m => m.TimeSent);

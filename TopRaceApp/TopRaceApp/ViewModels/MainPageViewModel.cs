@@ -176,6 +176,7 @@ namespace TopRaceApp.ViewModels
         {
             LobbyPage lobbyPage = new LobbyPage();
             lobbyPage.BindingContext = new LobbyPageViewModel();
+            lobbyPage.SetEvent();
             await ((LobbyPageViewModel)(lobbyPage.BindingContext)).Run();
             await App.Current.MainPage.Navigation.PushAsync(lobbyPage);
         }
