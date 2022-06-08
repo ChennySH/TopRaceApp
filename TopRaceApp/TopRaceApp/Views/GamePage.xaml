@@ -38,7 +38,8 @@
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Frame x:Name="Crewmate1Frame" Grid.Column="0"/>
                     <Image x:Name="Crewmate1" Grid.Column="0" Source="{Binding CrewmatePic1}" HeightRequest="50"/>
@@ -52,10 +53,10 @@
                     <Frame x:Name="Crewmate4Frame" Grid.Column="3"/>
                     <Image x:Name="Crewmate4" Grid.Column="3" Source="{Binding CrewmatePic4}" HeightRequest="50"/>
 
-                    <!--<Label Text="15" Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>-->
-                    <Entry Text="{Binding ResultSetter}"  Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Entry Text="{Binding ResultSetter}"  Grid.Column="4" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center" WidthRequest="100"/>
                     <Button Text="Roll" Grid.Column="5" Grid.Row="0" Command="{Binding RollTestCommand}" IsEnabled="{Binding IsMyTurn}"/>
-                    <Label Text="{Binding Timer}" Grid.Column="6" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Label Text="{Binding LastRoll}" Grid.Column="6" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
+                    <Label Text="{Binding Timer}" Grid.Column="7" Grid.Row="0" VerticalOptions="CenterAndExpand" FontSize="20" HorizontalOptions="Center"/>
                 </Grid>
                 <Frame BackgroundColor="LightGreen" Grid.Column="0" Grid.Row="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand"/>
                 <skiaforms:SKCanvasView x:Name="BoardCanvas" PaintSurface="BoardCanvas_PaintSurface" Grid.Column="0" Grid.Row="1"/>

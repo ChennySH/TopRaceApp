@@ -105,42 +105,56 @@ namespace TopRaceApp.ViewModels
         public ICommand PickImageCommand => new Command(OnPickImage);
         public async void OnPickImage()
         {
-            FileResult result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions()
+            try
             {
-                Title = "Pick an Image"
-            });
-            if (result != null)
-            {
-                this.imageFileResult = result;
-
-                var stream = await result.OpenReadAsync();
-                ImageSource imgSource = ImageSource.FromStream(() => stream);
-                if (SetImageSourceEvent != null)
-                    SetImageSourceEvent(imgSource);
-            }
-        }
-        ///The following command handle the take photo button
-        public ICommand CameraImageCommand => new Command(OnCameraImage);
-        public async void OnCameraImage()
-        {
-            if (MediaPicker.IsCaptureSupported)
-            {
-                var result = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions()
+                FileResult result = await MediaPicker.PickPhotoAsync(new MediaPickerOptions()
                 {
-                    Title = "Take an Image"
+                    Title = "Pick an Image"
                 });
                 if (result != null)
                 {
                     this.imageFileResult = result;
+
                     var stream = await result.OpenReadAsync();
                     ImageSource imgSource = ImageSource.FromStream(() => stream);
                     if (SetImageSourceEvent != null)
                         SetImageSourceEvent(imgSource);
                 }
             }
-            else
+            catch (Exception e)
             {
-                await App.Current.MainPage.DisplayAlert("Can not take an image", "Your device canwt take images", "Okay");
+
+            }
+        }
+        ///The following command handle the take photo button
+        public ICommand CameraImageCommand => new Command(OnCameraImage);
+        public async void OnCameraImage()
+        {
+            try
+            {
+                if (MediaPicker.IsCaptureSupported)
+                {
+                    var result = await MediaPicker.CapturePhotoAsync(new MediaPickerOptions()
+                    {
+                        Title = "Take an Image"
+                    });
+                    if (result != null)
+                    {
+                        this.imageFileResult = result;
+                        var stream = await result.OpenReadAsync();
+                        ImageSource imgSource = ImageSource.FromStream(() => stream);
+                        if (SetImageSourceEvent != null)
+                            SetImageSourceEvent(imgSource);
+                    }
+                }
+                else
+                {
+                    await App.Current.MainPage.DisplayAlert("Can not take an image", "Your device canwt take images", "Okay");
+                }
+            }
+            catch (Exception e)
+            {
+
             }
         }
         public ICommand SetDefaultImageCommand => new Command(SetDefualtImage);
