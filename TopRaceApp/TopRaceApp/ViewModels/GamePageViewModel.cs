@@ -321,7 +321,7 @@ namespace TopRaceApp.ViewModels
             UpdatesCounter = ((App)App.Current).currentGame.UpdatesCounter;
             MovesCounter = ((App)App.Current).currentGame.MovesCounter;
             LastUpdateTime = ((App)App.Current).currentGame.LastUpdateTime;
-            LastRoll = 0;
+            LastRoll = 1;
             Timer = TIMER_TIME;
             MessageText = "";
             SendMessageCommand = new Command(SendMessage);
@@ -611,7 +611,7 @@ namespace TopRaceApp.ViewModels
         {
             if (IsMyTurn)
             {
-                int result = 0;
+                int result = 1;
                 try
                 {
                     result = int.Parse(ResultSetter);
